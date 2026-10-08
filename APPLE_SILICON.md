@@ -2,7 +2,11 @@
 
 Target: native ARM64 (`aarch64-apple-darwin`), M-series Macs, macOS 13 or newer. No Rosetta required by the resulting application.
 
-**Current status: this package contains source and the Apple Silicon build setup. It does not contain a compiled Mac application or installer yet. The macOS build and native launch must still be completed on a Mac.**
+**Current status: the ARM64 release app and DMG were built on an Apple Silicon macOS runner on 2026-10-08. Bundle, signature, architecture, portable dependencies, DMG integrity, and native launch with saving all passed.**
+
+Download the `Atelier-macOS-AppleSilicon` artifact from [the successful build](https://github.com/dravani72/Atelier/actions/runs/37795193013). Unzip the download, open `Atelier_0.1.0_aarch64.dmg`, and drag Atelier into Applications. A separately packaged `.app.zip` is also included. No compiler, Node.js, Rust, or Rosetta is needed to run the built app.
+
+GitHub retains this build artifact until 2026-10-22. You can rebuild it by running the workflow again. The application itself does not expire.
 
 ## Build on your Mac
 
@@ -44,4 +48,4 @@ For publicly distributed, normally trusted downloads, build with your Developer 
 6. Launch a second copy and verify it focuses the existing instance.
 7. Check pan/zoom with the trackpad, Command shortcuts, native window closing, and recovery snapshots.
 
-These native checks have not been performed in the Linux preparation environment. Browser and Rust core tests do not prove Mac runtime behavior.
+Native startup and the real WebView-to-Rust-to-SQLite save path have passed on the Mac runner. The interactive native checks above (dialogs, media codecs, shortcuts, second-instance behavior, and close/reopen) still require manual acceptance testing on a user Mac.
