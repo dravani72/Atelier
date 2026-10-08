@@ -44,4 +44,8 @@ The application is local and single-user. Cloud synchronization, shared editing,
 - Playwright bridge tests cover catalog search/filtering, project fields, Retina Finder coordinate conversion, large-video references, generic original retrieval and persistence. These simulate native drag events; they are not a physical Finder automation test.
 - Rust tests exercise real source-to-managed copies, unchanged originals after source edits, large video imports without embedded previews, rejected folders/relative paths and bounded batch counts.
 - Existing browser canvas, advanced editing, storage, 3D viewer and native-video bridge regressions run before upload.
-- Apple Silicon artifact validation is recorded after the macOS CI build completes.
+- Real Apple Silicon build and native smoke tests passed on macOS 14 in [run 37811153055](https://github.com/dravani72/Atelier/actions/runs/37811153055), source commit `2c9ae67e8271b49b7708fdfad0e05bc133076e58`.
+- Packaging checks passed: arm64 executable/dependencies, minimum macOS 14 metadata, local code signature, relocated portable libmpv dependency paths and `hdiutil` DMG integrity.
+- The actual WebView launched and saved its workspace through Rust/SQLite. Native libmpv rendered H.264 MP4 (13 frames), HEVC MOV (11 frames, VideoToolbox-copy) and MPEG-4 AVI (13 frames), with display ICC applied and no playback errors.
+- Artifact `11564863687` SHA-256: `718d9d4ffba72f08b132adc1b924da03ebfb29350d95a022de6c9142f8f8ea0a`. Download integrity and all inner package checksums are verified before delivery.
+- The app has a local ad-hoc signature; Apple Developer ID signing and notarization were not performed. Physical Finder dragging on a personal Mac remains a manual acceptance check; event mapping is covered by browser bridge tests and Rust real-file copy tests.
