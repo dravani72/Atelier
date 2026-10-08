@@ -10,7 +10,7 @@ ATELIER_ARCH="$(lipo -archs "$ATELIER_EXECUTABLE")"
 /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$ATELIER_APP/Contents/Info.plist" | /usr/bin/grep -qx 'studio.atelier.boards'
 /usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$ATELIER_APP/Contents/Info.plist" | /usr/bin/grep -qx '13.0'
 codesign --verify --deep --strict --verbose=2 "$ATELIER_APP"
-ATELIER_LIBRARIES="$(otool -L "$ATELIER_EXECUTABLE")"
+ATELIER_LIBRARIES="$(otool -L "$ATELIER_EXECUTABLE" | /usr/bin/tail -n +2)"
 if printf '%s\n' "$ATELIER_LIBRARIES" | /usr/bin/grep -E '(/opt/homebrew/|/usr/local/|/Users/|/workspace/)' >/dev/null; then
   echo 'The application references a nonportable build-machine library.' >&2
   exit 1
