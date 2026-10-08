@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Relocate the actual linked Homebrew dylib closure, with source/license records."""
-import json, pathlib, shutil, subprocess, sys, urllib.request, hashlib, zipfile
+import json, pathlib, shutil, subprocess, sys, urllib.request, hashlib, zipfile, tempfile, re
 app=pathlib.Path(sys.argv[1]); frameworks=app/'Contents/Frameworks'; frameworks.mkdir(exist_ok=True)
 binary=app/'Contents/MacOS/atelier'; pending=[binary]; visited=set(); formulas=set()
 def command(*args): return subprocess.check_output(args,text=True).strip()
@@ -37,11 +37,30 @@ for record in records:
  for f in prefix.rglob('*'):
   if f.is_file() and (f.name.lower().startswith(('copying','license','copyright'))): shutil.copy2(f,notice_dir/f.name)
  url=record['urls']['stable']['url'];expected=record['urls']['stable'].get('checksum')
- if not url or not expected: raise RuntimeError('No checksummed source archive for '+name)
- filename=name+'-'+stable+'-'+url.split('/')[-1].split('?')[0]
- archive=source_dir/filename
- subprocess.check_call(['curl','--fail','--location','--retry','3',url,'-o',str(archive)])
- if hashlib.sha256(archive.read_bytes()).hexdigest()!=expected: raise RuntimeError('Source checksum mismatch for '+name)
+ if not url: raise RuntimeError('No source URL for '+name)
+ revision=record['urls']['stable'].get('revision') or record['urls']['stable'].get('tag')
+ if expected:
+  filename=name+'-'+stable+'-'+url.split('/')[-1].split('?')[0]
+  archive=source_dir/filename
+  subprocess.check_call(['curl','--fail','--location','--retry','3',url,'-o',str(archive)])
+  if hashlib.sha256(archive.read_bytes()).hexdigest()!=expected: raise RuntimeError('Source checksum mismatch for '+name)
+ elif revision and url.endswith('.git'):
+  archive=(source_dir/(name+'-'+stable+'.tar.gz')).resolve()
+  with tempfile.TemporaryDirectory() as temp:
+   subprocess.check_call(['git','init','--bare',temp])
+   subprocess.check_call(['git','-C',temp,'fetch','--depth=1',url,revision])
+   actual=command('git','-C',temp,'rev-parse','FETCH_HEAD')
+   if len(revision)==40 and actual!=revision: raise RuntimeError('Source commit mismatch for '+name)
+   subprocess.check_call(['git','-C',temp,'archive','--format=tar.gz','--prefix='+name+'/', '-o',str(archive),'FETCH_HEAD'])
+  (source_dir/(name+'-source-commit.txt')).write_text(actual+'\n')
+ else: raise RuntimeError('No source checksum or pinned Git revision for '+name)
+ if recipe.exists():
+  for i,patch in enumerate(re.findall(r'patch(?:\s+:[^\s]+)?\s+do(.*?)^\s*end',recipe.read_text(),re.S|re.M)):
+   patch_url=re.search(r'url\s+"([^"]+)"',patch);patch_hash=re.search(r'sha256\s+"([a-f0-9]{64})"',patch)
+   if patch_url and patch_hash:
+    target=source_dir/(name+'-patch-'+str(i)+'.patch')
+    subprocess.check_call(['curl','--fail','--location','--retry','3',patch_url.group(1),'-o',str(target)])
+    if hashlib.sha256(target.read_bytes()).hexdigest()!=patch_hash.group(1): raise RuntimeError('Patch checksum mismatch for '+name)
 # Exact formula recipes retain configuration and dependency build instructions.
 shutil.copy2('scripts/bundle-mpv.py',source_dir/'bundle-mpv.py')
 (licenses/'README.txt').write_text('This combined application includes GPL/LGPL media libraries. Atelier source is MIT; the combined binary is distributed under GPL-3.0-or-later. Corresponding media sources, exact Homebrew recipes, checksums and build records accompany this installer in Atelier_0.3.0_MediaSources.zip. Application source: https://github.com/dravani72/Atelier . Build instructions: README.md and scripts/build-macos.sh. No dependency is downloaded at runtime.\n')
