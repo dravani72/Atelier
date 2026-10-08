@@ -1,0 +1,22 @@
+{
+  "name": "atelier-boards",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "test": "node --test tests/model.test.mjs",
+    "test:ui": "node tests/ui.mjs",
+    "desktop": "tauri dev",
+    "build": "tauri build",
+    "check": "cargo test --manifest-path src-tauri/Cargo.toml --no-default-features",
+    "test:bridge": "node tests/native-bridge.mjs",
+    "test:advanced": "node tests/advanced-ui.mjs",
+    "build:mac": "bash scripts/build-macos.sh",
+    "verify:mac": "bash scripts/verify-macos.sh"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "playwright": "1.51.1"
+  }
+}

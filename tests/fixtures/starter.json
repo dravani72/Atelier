@@ -1,0 +1,297 @@
+{
+  "version": 1,
+  "active": "9b7f9e17-c91b-4a34-9929-a981b80dfdb7",
+  "boards": [
+    {
+      "id": "9b7f9e17-c91b-4a34-9929-a981b80dfdb7",
+      "name": "The next great idea",
+      "parent": null,
+      "description": "Collect the sparks. Give them a shape.",
+      "color": "sage",
+      "cards": [
+        {
+          "id": "e7f5911f-9080-418f-a8d2-d91ccf9abbee",
+          "type": "heading",
+          "x": 60,
+          "y": 40,
+          "w": 650,
+          "h": 70,
+          "title": "A little room to think",
+          "body": "Your ideas belong somewhere better than an open tab.",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "b543f03c-eceb-46a4-8e70-b8fb8afa9ace",
+          "type": "note",
+          "x": 60,
+          "y": 155,
+          "w": 250,
+          "h": 240,
+          "title": "It starts with a spark.",
+          "body": "A passing thought. A color. A line of dialogue.\n\nBring it all here. Move things around. See what connects.",
+          "color": "sage",
+          "tags": [
+            "inspiration"
+          ],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "63891d25-2581-4613-b615-dd6575f09621",
+          "type": "task",
+          "x": 370,
+          "y": 155,
+          "w": 270,
+          "h": 240,
+          "title": "Make it yours",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [
+            {
+              "id": "2a2bb372-6539-4c8f-bc02-06b15eff9cda",
+              "text": "Drop an image onto the canvas",
+              "done": true
+            },
+            {
+              "id": "178098f9-4426-43dd-96e7-069469524fc1",
+              "text": "Add a note or a link",
+              "done": false
+            },
+            {
+              "id": "166ceb1b-7920-45d1-bdf1-6239988b1828",
+              "text": "Connect two ideas",
+              "done": false
+            },
+            {
+              "id": "c502619c-0113-4352-a2bf-74b28ceb6390",
+              "text": "Create a board for your project",
+              "done": false
+            }
+          ],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "48cf081a-2bc9-4d54-8641-bd297b942c60",
+          "type": "note",
+          "x": 60,
+          "y": 450,
+          "w": 250,
+          "h": 195,
+          "title": "A thought worth keeping",
+          "body": "“Creativity is intelligence having fun.”\n\nOr perhaps it is simply paying attention.",
+          "color": "sand",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "d04ccd0d-9411-413b-96cf-228be242f76b",
+          "type": "board",
+          "x": 370,
+          "y": 450,
+          "w": 270,
+          "h": 195,
+          "title": "Visual references",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": "74f684da-0c30-473f-bd2b-56ee1ebe870f"
+        }
+      ],
+      "edges": [
+        {
+          "id": "6de4a0a0-66fc-4328-9ade-eac846806724",
+          "from": "b543f03c-eceb-46a4-8e70-b8fb8afa9ace",
+          "to": "63891d25-2581-4613-b615-dd6575f09621",
+          "label": "Make it happen"
+        }
+      ],
+      "view": {
+        "x": 60,
+        "y": 50,
+        "zoom": 1
+      },
+      "updated": 1791469642416
+    },
+    {
+      "id": "74f684da-0c30-473f-bd2b-56ee1ebe870f",
+      "name": "Visual references",
+      "parent": "9b7f9e17-c91b-4a34-9929-a981b80dfdb7",
+      "description": "A collection of textures, moods, and possibilities.",
+      "color": "sage",
+      "cards": [],
+      "edges": [],
+      "view": {
+        "x": 60,
+        "y": 50,
+        "zoom": 1
+      },
+      "updated": 1791469642417
+    },
+    {
+      "id": "d6eb9b2d-efab-4620-8f04-e9d3122f04cf",
+      "name": "Story development",
+      "parent": null,
+      "description": "A place for your next idea.",
+      "color": "sage",
+      "cards": [
+        {
+          "id": "9fcaa7b7-8999-4973-8fd2-44dba6aa3dde",
+          "type": "heading",
+          "x": 60,
+          "y": 50,
+          "w": 280,
+          "h": 70,
+          "title": "The premise",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "027b80ab-ce02-4867-893e-7ed2384f2e2f",
+          "type": "note",
+          "x": 60,
+          "y": 145,
+          "w": 280,
+          "h": 220,
+          "title": "What changes?",
+          "body": "Start with the central tension.",
+          "color": "sage",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "b1d9f32b-ffee-46e1-ab57-77b0aedff040",
+          "type": "heading",
+          "x": 380,
+          "y": 50,
+          "w": 280,
+          "h": 70,
+          "title": "Characters",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "59e4d477-e4c3-4561-b030-c7149cb707c1",
+          "type": "note",
+          "x": 380,
+          "y": 145,
+          "w": 280,
+          "h": 220,
+          "title": "The protagonist",
+          "body": "Want. Need. Contradiction. Cost.",
+          "color": "sand",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "28544aaf-ab91-4161-8638-f3b672a103ee",
+          "type": "heading",
+          "x": 700,
+          "y": 50,
+          "w": 280,
+          "h": 70,
+          "title": "World & structure",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "53f74547-3e25-462b-862d-d095d51cf25e",
+          "type": "task",
+          "x": 700,
+          "y": 145,
+          "w": 280,
+          "h": 220,
+          "title": "Story beats",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [
+            {
+              "id": "b65190be-8ca8-406e-94eb-2bdd5d2ed34d",
+              "text": "Research & references",
+              "done": false
+            },
+            {
+              "id": "fe08070a-d6da-4082-bc14-b279f653abb9",
+              "text": "First draft",
+              "done": false
+            },
+            {
+              "id": "13e85819-7d61-426d-8c21-a97806e5749c",
+              "text": "Review & refine",
+              "done": false
+            }
+          ],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        }
+      ],
+      "edges": [],
+      "view": {
+        "x": 60,
+        "y": 50,
+        "zoom": 1
+      },
+      "updated": 1791469642417
+    }
+  ]
+}

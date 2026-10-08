@@ -1,0 +1,35 @@
+name: Build Apple Silicon macOS app
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, atelier-macos-build]
+permissions:
+  contents: read
+concurrency:
+  group: atelier-macos-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  apple-silicon:
+    runs-on: macos-14
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify native Apple Silicon runner
+        run: test "$(uname -m)" = arm64
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+      - name: Build and verify app and DMG
+        run: bash scripts/build-macos.sh
+      - name: Native launch smoke test on fresh runner
+        run: bash scripts/smoke-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Atelier-macOS-AppleSilicon
+          path: dist/apple-silicon/
+          if-no-files-found: error
+          retention-days: 14

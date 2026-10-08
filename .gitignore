@@ -2,3 +2,5 @@ node_modules/
 src-tauri/target/
 artifacts/
 .DS_Store
+src-tauri/gen/schemas/
+dist/apple-silicon/
