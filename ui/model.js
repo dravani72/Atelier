@@ -30,10 +30,11 @@ export function validate(w){
   for(const c of b.cards){
    if(!safeId(c.id)||allCards.has(c.id)||!TYPES.includes(c.type)||!['x','y','w','h'].every(k=>Number.isFinite(c[k])&&Math.abs(c[k])<=100000)||c.w<20||c.h<20||typeof c.title!=='string'||typeof c.body!=='string'||typeof c.color!=='string'||typeof c.media!=='string'||typeof c.url!=='string'||typeof c.filename!=='string'||!Array.isArray(c.tags)||!c.tags.every(x=>typeof x==='string')||!Array.isArray(c.comments)||!c.comments.every(x=>typeof x.text==='string'&&typeof x.author==='string'&&Number.isFinite(x.date))||!Array.isArray(c.items)||!c.items.every(x=>safeId(x.id)&&typeof x.text==='string'&&typeof x.done==='boolean'))throw Error('Invalid card');
    if(c.type==='board'&&!ids.has(c.boardId))throw Error('Missing linked board');
-   if(c.media&&!/^data:(image\/(png|jpeg|webp|gif)|video\/(mp4|webm|ogg)|application\/octet-stream|application\/pdf|text\/plain);base64,[A-Za-z0-9+/=]*$/.test(c.media))throw Error('Unsupported embedded media');
+   if(c.media&&!/^data:(image\/(png|jpeg|webp|gif)|video\/(mp4|webm|ogg|quicktime|x-msvideo|x-matroska)|application\/octet-stream|application\/pdf|text\/plain);base64,[A-Za-z0-9+/=]*$/.test(c.media))throw Error('Unsupported embedded media');
    if(c.assets!==undefined&&(!Array.isArray(c.assets)||c.assets.length>100||c.assets.some(a=>typeof a.name!=='string'||a.name.length>1024||typeof a.data!=='string'||!/^data:(image\/(png|jpeg|webp|gif)|application\/octet-stream|text\/plain);base64,[A-Za-z0-9+/=]*$/.test(a.data))))throw Error('Invalid model resources');
    if(c.preview&&!/^data:image\/png;base64,[A-Za-z0-9+/=]*$/.test(c.preview))throw Error('Invalid model preview');
    if(c.modelView&&Object.entries(c.modelView).some(([k,v])=>!['position','rotation','scale','camera','target'].includes(k)||!Array.isArray(v)||v.length!==3||v.some(n=>!Number.isFinite(n)||Math.abs(n)>100000000)))throw Error('Invalid model view');
+   if(c.localVideo!==undefined&&!safeId(c.localVideo))throw Error('Invalid managed video');
    cs.add(c.id);allCards.add(c.id);
   }
   const es=new Set();for(const e of b.edges){if(!safeId(e.id)||typeof e.label!=='string'||es.has(e.id)||!cs.has(e.from)||!cs.has(e.to)||e.from===e.to)throw Error('Invalid connector');es.add(e.id);}

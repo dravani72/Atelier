@@ -1,3 +1,5 @@
+#[cfg(feature = "desktop")]
+mod video;
 use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -116,6 +118,11 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
             {
                 return Err("Invalid card tags, tasks, or annotations".into());
             }
+            if let Some(id) = card.get("localVideo") {
+                if !id.as_str().is_some_and(safe_id) {
+                    return Err("Invalid managed video".into());
+                }
+            }
             let media = card["media"].as_str().unwrap_or("");
             if !media.is_empty() {
                 let (prefix, bytes) = media
@@ -126,6 +133,9 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
                     "data:image/jpeg",
                     "data:image/webp",
                     "data:image/gif",
+                    "data:video/quicktime",
+                    "data:video/x-msvideo",
+                    "data:video/x-matroska",
                     "data:video/mp4",
                     "data:video/webm",
                     "data:video/ogg",
@@ -366,6 +376,8 @@ mod desktop {
                 let store =
                     Store::open(&dir.join("atelier.sqlite3")).map_err(std::io::Error::other)?;
                 app.manage(State(Mutex::new(store)));
+                #[cfg(target_os = "macos")]
+                crate::video::smoke(app.handle());
                 Ok(())
             })
             .invoke_handler(tauri::generate_handler![
@@ -375,7 +387,13 @@ mod desktop {
                 restore_revision,
                 export_file,
                 open_link,
-                save_attachment
+                save_attachment,
+                crate::video::import_video,
+                crate::video::video_open,
+                crate::video::video_rect,
+                crate::video::video_control,
+                crate::video::video_status,
+                crate::video::video_close
             ])
             .run(tauri::generate_context!())
             .expect("Atelier failed to start");
@@ -389,6 +407,16 @@ mod tests {
     use super::*;
     fn sample() -> String {
         serde_json::json!({"version":1,"active":"a","boards":[{"id":"a","name":"Test","parent":null,"description":"","color":"sage","cards":[],"edges":[],"view":{"x":0,"y":0,"zoom":1},"updated":0}]}).to_string()
+    }
+    #[test]
+    fn managed_video_references_are_validated() {
+        let mut w: serde_json::Value =
+            serde_json::from_str(include_str!("../../tests/fixtures/starter.json")).unwrap();
+        w["boards"][0]["cards"][0]["type"] = "video".into();
+        w["boards"][0]["cards"][0]["localVideo"] = "video-123456".into();
+        validate(&w.to_string()).unwrap();
+        w["boards"][0]["cards"][0]["localVideo"] = "../private-file".into();
+        assert!(validate(&w.to_string()).is_err());
     }
     #[test]
     fn frontend_fixture_matches_backend_contract() {

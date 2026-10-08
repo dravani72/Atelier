@@ -1,6 +1,6 @@
 [package]
 name = "atelier"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 rust-version = "1.80"
 description = "Offline visual workspace for creative projects"
@@ -31,6 +31,7 @@ rfd = { version = "0.15", optional = true }
 open = { version = "5", optional = true }
 
 [build-dependencies]
+cc = "1"
 tauri-build = { version = "2", optional = true , features = [] }
 
 [dev-dependencies]
