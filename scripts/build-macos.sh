@@ -17,28 +17,28 @@ for ATELIER_TOOL in node npm cargo rustup; do
   fi
 done
 node -e 'if(Number(process.versions.node.split(".")[0])<22){console.error("Node.js 22 or newer is required");process.exit(1)}'
-export MACOSX_DEPLOYMENT_TARGET=14.0
-rustup target add aarch64-apple-darwin
+source scripts/macos-env.sh
+[ "$(uname -m)" = "$ATELIER_NATIVE_ARCH" ] || { echo "Build on a native $ATELIER_NATIVE_ARCH Mac to bundle matching media libraries." >&2; exit 1; }
+export MACOSX_DEPLOYMENT_TARGET="$ATELIER_MIN_MACOS"
+rustup target add "$ATELIER_TARGET"
 command -v brew >/dev/null || { echo "Homebrew is needed on the build Mac (not end-user Macs)." >&2; exit 1; }
 brew install mpv
 export ATELIER_MPV_PREFIX="$(brew --prefix)"
 npm ci
 npm test
 cargo test --locked --manifest-path src-tauri/Cargo.toml --no-default-features
-npm exec -- tauri build --target aarch64-apple-darwin --config src-tauri/tauri.macos.conf.json --bundles app
-ATELIER_APP="$ATELIER_ROOT/src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Atelier.app"
+npm exec -- tauri build --target "$ATELIER_TARGET" --config "$ATELIER_MACOS_CONFIG" --bundles app
 python3 scripts/bundle-mpv.py "$ATELIER_APP"
-ATELIER_DMG_DIR="$ATELIER_ROOT/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg"
+ATELIER_DMG_DIR="$ATELIER_BUNDLE_ROOT/dmg"
 mkdir -p "$ATELIER_DMG_DIR"
 ATELIER_STAGE="$(mktemp -d)"
 ditto "$ATELIER_APP" "$ATELIER_STAGE/Atelier.app"
 ln -s /Applications "$ATELIER_STAGE/Applications"
-hdiutil create -ov -volname Atelier -srcfolder "$ATELIER_STAGE" -format UDZO "$ATELIER_DMG_DIR/Atelier_0.4.0_aarch64.dmg"
+hdiutil create -ov -volname Atelier -srcfolder "$ATELIER_STAGE" -format UDZO "$ATELIER_DMG_DIR/Atelier_${ATELIER_VERSION}_${ATELIER_PACKAGE_ARCH}.dmg"
 rm -rf "$ATELIER_STAGE"
 bash scripts/verify-macos.sh
-ATELIER_BUNDLE_ROOT="$ATELIER_ROOT/src-tauri/target/aarch64-apple-darwin/release/bundle"
-mkdir -p "$ATELIER_ROOT/dist/apple-silicon"
-ditto -c -k --sequesterRsrc --keepParent "$ATELIER_BUNDLE_ROOT/macos/Atelier.app" "$ATELIER_ROOT/dist/apple-silicon/Atelier_0.4.0_AppleSilicon.app.zip"
-find "$ATELIER_BUNDLE_ROOT/dmg" -maxdepth 1 -name '*.dmg' -exec cp {} "$ATELIER_ROOT/dist/apple-silicon/" \;
-(cd "$ATELIER_ROOT/dist/apple-silicon" && shasum -a 256 ./*.zip ./*.dmg > SHA256SUMS.txt)
-echo "Apple Silicon packages: $ATELIER_ROOT/dist/apple-silicon"
+mkdir -p "$ATELIER_DIST"
+ditto -c -k --sequesterRsrc --keepParent "$ATELIER_BUNDLE_ROOT/macos/Atelier.app" "$ATELIER_DIST/Atelier_${ATELIER_VERSION}_${ATELIER_LABEL}.app.zip"
+find "$ATELIER_BUNDLE_ROOT/dmg" -maxdepth 1 -name '*.dmg' -exec cp {} "$ATELIER_DIST/" \;
+(cd "$ATELIER_DIST" && shasum -a 256 ./*.zip ./*.dmg > SHA256SUMS.txt)
+echo "$ATELIER_LABEL packages: $ATELIER_DIST"

@@ -4,7 +4,13 @@ fn main() {
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos")
         && std::env::var_os("CARGO_FEATURE_DESKTOP").is_some()
     {
-        let prefix = std::env::var("ATELIER_MPV_PREFIX").unwrap_or_else(|_| "/opt/homebrew".into());
+        let prefix = std::env::var("ATELIER_MPV_PREFIX").unwrap_or_else(|_| {
+            if std::env::var("CARGO_CFG_TARGET_ARCH").as_deref() == Ok("x86_64") {
+                "/usr/local".into()
+            } else {
+                "/opt/homebrew".into()
+            }
+        });
         cc::Build::new()
             .file("native/mpv_view.m")
             .include(format!("{prefix}/include"))

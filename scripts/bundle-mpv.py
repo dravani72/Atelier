@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Relocate the actual linked Homebrew dylib closure, with source/license records."""
-import json, pathlib, shutil, subprocess, sys, urllib.request, hashlib, zipfile, tempfile, re
+import json, pathlib, shutil, subprocess, sys, urllib.request, hashlib, zipfile, tempfile, re, os
+dist=pathlib.Path(os.environ.get('ATELIER_DIST','dist/apple-silicon'));media_name=os.environ.get('ATELIER_MEDIA_SOURCES','Atelier_0.4.0_MediaSources')
 app=pathlib.Path(sys.argv[1]); frameworks=app/'Contents/Frameworks'; frameworks.mkdir(exist_ok=True)
 binary=app/'Contents/MacOS/atelier'; pending=[binary]; visited=set(); formulas=set()
 def command(*args): return subprocess.check_output(args,text=True).strip()
@@ -32,9 +33,10 @@ while pending:
   subprocess.check_call(['install_name_tool','-change',dep,replacement,str(target)])
  if target!=binary: subprocess.check_call(['install_name_tool','-id','@rpath/'+target.name,str(target)])
 records=json.loads(command('brew','info','--json=v2','--formula',*sorted(formulas)))['formulae']
-source_dir=pathlib.Path('dist/apple-silicon/media-sources');source_dir.mkdir(parents=True,exist_ok=True)
+source_dir=dist/'media-sources';source_dir.mkdir(parents=True,exist_ok=True)
 licenses=app/'Contents/Resources/MediaLicenses';licenses.mkdir(parents=True,exist_ok=True)
 (source_dir/'SOURCE-BUILD.txt').write_text('Sources correspond to the recorded installed media libraries. Build them using the included Homebrew formula recipes with their declared dependencies and patches. Archive downloads are SHA-256 checked. Git sources are pinned to recorded commits. GitLab archive downloads returning invalid bytes are replaced by source exported from their upstream release tag; the resolved commit and original checksum are retained. Then build Atelier from the public repository using scripts/build-macos.sh.\n')
+(source_dir/'TARGET-BUILD.json').write_text(json.dumps({'target':os.environ.get('ATELIER_TARGET'),'minimum_macos':os.environ.get('ATELIER_MIN_MACOS'),'homebrew_core_commit':os.environ.get('ATELIER_MEDIA_CORE_COMMIT')},indent=2))
 (source_dir/'formulas.json').write_text(json.dumps(records,indent=2))
 (licenses/'formulas.json').write_text(json.dumps(records,indent=2))
 for record in records:
@@ -74,11 +76,11 @@ for record in records:
     if hashlib.sha256(target.read_bytes()).hexdigest()!=patch_hash.group(1): raise RuntimeError('Patch checksum mismatch for '+name)
 # Exact formula recipes retain configuration and dependency build instructions.
 shutil.copy2('scripts/bundle-mpv.py',source_dir/'bundle-mpv.py')
-(licenses/'README.txt').write_text('This combined application includes GPL/LGPL media libraries. Atelier source is MIT; the combined binary is distributed under GPL-3.0-or-later. Corresponding media sources, exact Homebrew recipes, checksums and build records accompany this installer in Atelier_0.4.0_MediaSources.zip. Application source: https://github.com/dravani72/Atelier . Build instructions: README.md and scripts/build-macos.sh. No dependency is downloaded at runtime.\n')
+(licenses/'README.txt').write_text('This combined application includes GPL/LGPL media libraries. Atelier source is MIT; the combined binary is distributed under GPL-3.0-or-later. Corresponding media sources, exact Homebrew recipes, checksums and build records accompany this installer in '+media_name+'.zip. Application source: https://github.com/dravani72/Atelier . Build instructions: README.md and scripts/build-macos.sh. No dependency is downloaded at runtime.\n')
 shutil.copy2('COPYING-GPL-3.0',licenses/'COPYING-GPL-3.0')
 shutil.copy2('LICENSE',licenses/'Atelier-MIT-LICENSE')
 shutil.copy2('node_modules/three/LICENSE',licenses/'Three-MIT-LICENSE')
-shutil.make_archive('dist/apple-silicon/Atelier_0.4.0_MediaSources','zip',source_dir)
+shutil.make_archive(str(dist/media_name),'zip',source_dir)
 shutil.rmtree(source_dir)
 for target in visited:
  if target!=binary: subprocess.check_call(['codesign','--force','--sign','-',str(target)])

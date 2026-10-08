@@ -1,0 +1,39 @@
+name: Build Intel macOS app
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, atelier-macos-build]
+permissions:
+  contents: read
+concurrency:
+  group: atelier-intel-macos-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  intel:
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+    env:
+      ATELIER_TARGET: x86_64-apple-darwin
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify native Intel runner
+        run: test "$(uname -m)" = x86_64
+      - name: Install pinned Intel media dependencies
+        run: bash scripts/setup-intel-media-ci.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+      - name: Build and verify Intel app and DMG
+        run: bash scripts/build-macos.sh
+      - name: Native launch and libmpv playback smoke test
+        run: bash scripts/smoke-macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Atelier-macOS-Intel
+          path: dist/intel/
+          if-no-files-found: error
+          retention-days: 14

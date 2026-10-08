@@ -6,3 +6,7 @@ src-tauri/gen/schemas/
 dist/apple-silicon/
 
 ui/viewer.js
+
+dist/intel/
+__pycache__/
+*.pyc
