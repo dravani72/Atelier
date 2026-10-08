@@ -23,7 +23,7 @@ case "$ATELIER_TARGET" in
     ATELIER_PACKAGE_ARCH=x86_64
     ATELIER_LABEL=Intel
     ATELIER_DIST_NAME=intel
-    ATELIER_MIN_MACOS=14.0
+    ATELIER_MIN_MACOS=15.0
     ATELIER_MACOS_CONFIG=src-tauri/tauri.macos-intel.conf.json
     ATELIER_MEDIA_LABEL=_Intel
     ;;
