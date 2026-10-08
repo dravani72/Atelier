@@ -46,6 +46,8 @@ for record in records:
 shutil.copy2('scripts/bundle-mpv.py',source_dir/'bundle-mpv.py')
 (licenses/'README.txt').write_text('This combined application includes GPL/LGPL media libraries. Atelier source is MIT; the combined binary is distributed under GPL-3.0-or-later. Corresponding media sources, exact Homebrew recipes, checksums and build records accompany this installer in Atelier_0.3.0_MediaSources.zip. Application source: https://github.com/dravani72/Atelier . Build instructions: README.md and scripts/build-macos.sh. No dependency is downloaded at runtime.\n')
 shutil.copy2('COPYING-GPL-3.0',licenses/'COPYING-GPL-3.0')
+shutil.copy2('LICENSE',licenses/'Atelier-MIT-LICENSE')
+shutil.copy2('node_modules/three/LICENSE',licenses/'Three-MIT-LICENSE')
 shutil.make_archive('dist/apple-silicon/Atelier_0.3.0_MediaSources','zip',source_dir)
 shutil.rmtree(source_dir)
 for target in visited:

@@ -16,6 +16,7 @@
 @property(nonatomic,copy) NSString *error;
 @property(nonatomic) NSUInteger frames;
 @property(nonatomic) BOOL dirty;
+@property(nonatomic,strong) NSMutableDictionary *properties;
 @end
 static AtelierMPVView *active;
 char *atelier_mpv_status(void);
@@ -39,6 +40,13 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     for (;;) {
         mpv_event *event=mpv_wait_event(self.player,0);
         if (event->event_id==MPV_EVENT_NONE) break;
+        if (event->event_id==MPV_EVENT_PROPERTY_CHANGE) {
+            mpv_event_property *p=event->data;NSString *name=[NSString stringWithUTF8String:p->name];
+            if(p->format==MPV_FORMAT_DOUBLE)self.properties[name]=@(*(double *)p->data);
+            else if(p->format==MPV_FORMAT_FLAG)self.properties[name]=@(*(int *)p->data);
+            else if(p->format==MPV_FORMAT_STRING){char *v=*(char **)p->data;self.properties[name]=v?[NSString stringWithUTF8String:v]:@"";}
+        }
+        if(event->event_id==MPV_EVENT_COMMAND_REPLY && event->error<0)self.error=[NSString stringWithUTF8String:mpv_error_string(event->error)];
         if (event->event_id==MPV_EVENT_END_FILE) { mpv_event_end_file *end=event->data; if(end->error<0)self.error=[NSString stringWithUTF8String:mpv_error_string(end->error)]; }
     }
     uint64_t updates=mpv_render_context_update(self.render);
@@ -53,7 +61,7 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     self.frames++;
     const char *smoke=getenv("ATELIER_MPV_SMOKE_LOG");
     if(smoke && self.frames>10) {
-        double time=0;mpv_get_property(self.player,"time-pos",MPV_FORMAT_DOUBLE,&time);
+        double time=[self.properties[@"time-pos"] doubleValue];
         unsigned char pixel[4]={0};glReadPixels((int)r.size.width/2,(int)r.size.height/2,1,1,GL_RGBA,GL_UNSIGNED_BYTE,pixel);
         if(time>0.15 && (pixel[0]+pixel[1]+pixel[2])>30 && self.profile.length>0) {
             char *json=atelier_mpv_status();FILE *f=fopen(smoke,"w");if(f){fputs(json,f);fclose(f);}free(json);
@@ -92,7 +100,12 @@ int atelier_mpv_open(void *window_ptr,const char *path,double x,double y,double 
     mpv_render_param params[]={{MPV_RENDER_PARAM_API_TYPE,MPV_RENDER_API_TYPE_OPENGL},{MPV_RENDER_PARAM_OPENGL_INIT_PARAMS,&gl},{0,NULL}};
     mpv_render_context *context=NULL;result=mpv_render_context_create(&context,active.player,params);active.render=context;
     if(result<0){atelier_mpv_close();return result;}
-    active.dirty=YES;active.error=@"";
+    active.dirty=YES;active.error=@"";active.properties=[NSMutableDictionary dictionary];
+    mpv_observe_property(active.player,100,"time-pos",MPV_FORMAT_DOUBLE);
+    mpv_observe_property(active.player,101,"duration",MPV_FORMAT_DOUBLE);
+    mpv_observe_property(active.player,102,"pause",MPV_FORMAT_FLAG);
+    const char *properties[]={"video-codec","hwdec-current","video-params/primaries","video-params/gamma","video-params/colormatrix","video-params/colorlevels","width","height"};
+    for(size_t i=0;i<sizeof(properties)/sizeof(properties[0]);i++)mpv_observe_property(active.player,110+i,properties[i],MPV_FORMAT_STRING);
     const char *args[]={"loadfile",path,NULL};result=mpv_command_async(active.player,1,args);
     active.timer=[NSTimer timerWithTimeInterval:1.0/60 target:active selector:@selector(tick) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop]addTimer:active.timer forMode:NSRunLoopCommonModes];
@@ -110,10 +123,10 @@ int atelier_mpv_control(const char *command,double value) {
     if(!strcmp(command,"volume")||!strcmp(command,"speed"))return mpv_set_property_async(active.player,5,command,MPV_FORMAT_DOUBLE,&value);
     return -2;
 }
-static NSString *strprop(const char *name){char *s=mpv_get_property_string(active.player,name);if(!s)return @"";NSString *out=[NSString stringWithUTF8String:s];mpv_free(s);return out?:@"";}
+static NSString *strprop(const char *name){return active.properties[[NSString stringWithUTF8String:name]]?:@"";}
 char *atelier_mpv_status(void) {
     if(!active)return strdup("{}");
-    double time=0,duration=0;int pause=0;mpv_get_property(active.player,"time-pos",MPV_FORMAT_DOUBLE,&time);mpv_get_property(active.player,"duration",MPV_FORMAT_DOUBLE,&duration);mpv_get_property(active.player,"pause",MPV_FORMAT_FLAG,&pause);
+    double time=[active.properties[@"time-pos"] doubleValue],duration=[active.properties[@"duration"] doubleValue];int pause=[active.properties[@"pause"] intValue];
     NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
     NSData *json=[NSJSONSerialization dataWithJSONObject:data options:0 error:nil];return strndup(json.bytes,json.length);
 }
