@@ -49,3 +49,17 @@ The application is local and single-user. Cloud synchronization, shared editing,
 - The actual WebView launched and saved its workspace through Rust/SQLite. Native libmpv rendered H.264 MP4 (13 frames), HEVC MOV (11 frames, VideoToolbox-copy) and MPEG-4 AVI (13 frames), with display ICC applied and no playback errors.
 - Artifact `11564863687` SHA-256: `718d9d4ffba72f08b132adc1b924da03ebfb29350d95a022de6c9142f8f8ea0a`. Download integrity and all inner package checksums are verified before delivery.
 - The app has a local ad-hoc signature; Apple Developer ID signing and notarization were not performed. Physical Finder dragging on a personal Mac remains a manual acceptance check; event mapping is covered by browser bridge tests and Rust real-file copy tests.
+
+
+## Intel macOS delivery — Atelier 0.4.0
+
+Completed 2026-10-08. Source commit: `483e027196241841a234fd7684a6d7a844493f36`.
+
+- Native Intel build passed in [run 37817700851](https://github.com/dravani72/Atelier/actions/runs/37817700851), on `macos-15-intel`. Rust target and all bundled media libraries were checked for `x86_64` architecture.
+- The Intel app and DMG require **macOS 15.0+**. Its dependency inspection found a bundled library requiring 15.0, so both the deployment target and installer metadata were set to 15.0. The verifier checks every bundled Mach-O file against the declared minimum; it does not merely check the app's plist.
+- All bundle identity, local signature, relocated-library-path and DMG integrity checks passed. The actual WKWebView launched and saved data through Rust/SQLite.
+- Native libmpv rendered H.264 MP4 (11 frames), HEVC MOV (15 frames, VideoToolbox-copy) and MPEG-4 AVI (13 frames), with display ICC applied and no playback errors.
+- Intel artifact `11568197250` SHA-256: `087477e676ab727e1610d4ad05ef7aaf89d0af5de35b63f39614bd6705aafea0a`. The downloaded artifact ZIP and every inner package matched their recorded SHA-256 checksums.
+- Delivered installer: `Atelier_0.4.0_x86_64.dmg` (39,631,468 bytes). Corresponding media sources/recipes/patches/build records: `Atelier_0.4.0_Intel_MediaSources.zip` (233,024,952 bytes).
+- The architecture-aware packaging changes also passed the Apple Silicon regression build and native smoke tests in [run 37817700764](https://github.com/dravani72/Atelier/actions/runs/37817700764). Apple Silicon retains its macOS 14.0 minimum.
+- Intel and Apple Silicon packages are separate native installers and share the workspace schema. Developer ID signing, notarization and installation on every supported personal Mac model were not performed.
