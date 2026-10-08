@@ -1,0 +1,75 @@
+name: Publish download
+# Keeps one public release with fixed file names, so the newest installers always have the same direct links:
+#   https://github.com/<owner>/<repo>/releases/latest/download/Atelier-AppleSilicon.dmg
+#   https://github.com/<owner>/<repo>/releases/latest/download/Atelier-Intel.dmg
+# Runs after either macOS build succeeds on main, and can be run by hand to republish the latest successful builds.
+on:
+  workflow_run:
+    workflows: ["Build Apple Silicon macOS app", "Build Intel macOS app"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: publish-download
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: download
+      FINISHED_RUN: ${{ github.event.workflow_run.id }}
+    steps:
+      - name: Collect the installers
+        run: |
+          set -euo pipefail
+          if [ -n "$FINISHED_RUN" ]; then
+            runs="$FINISHED_RUN"
+          else
+            runs=""
+            for workflow in apple-silicon.yml intel-macos.yml; do
+              id="$(gh run list --workflow "$workflow" --branch main --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+              runs="$runs $id"
+            done
+          fi
+          mkdir -p build out
+          for id in $runs; do gh run download "$id" --dir "build/$id"; done
+          keep() {
+            local file
+            file="$(find build -type f -name "$1" ${3:+! -name "$3"} -print -quit)"
+            if [ -n "$file" ]; then cp "$file" "out/$2"; fi
+          }
+          keep '*_aarch64.dmg' Atelier-AppleSilicon.dmg
+          keep '*_x86_64.dmg' Atelier-Intel.dmg
+          # The installers bundle GPL media libraries, so their source archives are published beside them.
+          keep '*_MediaSources*.zip' Atelier-MediaSources-AppleSilicon.zip '*_Intel_*'
+          keep '*_Intel_MediaSources*.zip' Atelier-MediaSources-Intel.zip
+          ls -l out
+          test -n "$(find out -name '*.dmg' -print -quit)" || { echo 'No installer found in the build artifacts.' >&2; exit 1; }
+      - name: Publish to the download release
+        run: |
+          set -euo pipefail
+          cat > notes.md <<'EOF'
+          **Download the file for your Mac, open it, and drag Atelier into Applications.**
+
+          - `Atelier-AppleSilicon.dmg`: Macs with an Apple M-series chip (macOS 14 or newer)
+          - `Atelier-Intel.dmg`: Macs with an Intel processor (macOS 15 or newer)
+
+          Not sure which you have? Apple menu → About This Mac.
+
+          If macOS blocks the app the first time, open System Settings → Privacy & Security and choose Open Anyway. The app is not notarized by Apple.
+
+          These files are replaced automatically after each successful build of `main`. The MediaSources archives hold the source code and license records for the bundled GPL media libraries; you do not need them to use the app.
+          EOF
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Atelier for Mac" --notes-file notes.md --latest
+          else
+            gh release edit "$TAG" --notes-file notes.md --latest
+          fi
+          gh release upload "$TAG" out/* --clobber
