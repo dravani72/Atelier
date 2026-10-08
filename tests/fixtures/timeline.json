@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "active": "board-timeline",
+  "boards": [
+    {
+      "id": "board-timeline",
+      "name": "Launch film",
+      "parent": null,
+      "description": "Timecode and schedule timelines.",
+      "color": "sage",
+      "cards": [
+        {
+          "id": "tl-spot",
+          "type": "timeline",
+          "x": 60,
+          "y": 60,
+          "w": 900,
+          "h": 250,
+          "title": "30-second spot",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null,
+          "timeline": {
+            "mode": "timecode",
+            "fps": [
+              30000,
+              1001
+            ],
+            "drop": true,
+            "start": 107892,
+            "end": 108792,
+            "links": true,
+            "items": [
+              {
+                "id": "item-a",
+                "card": "shot-1",
+                "at": 107892,
+                "len": 90,
+                "lane": 0
+              },
+              {
+                "id": "item-b",
+                "card": "shot-2",
+                "at": 107982,
+                "len": 0,
+                "lane": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "tl-dates",
+          "type": "timeline",
+          "x": 60,
+          "y": 360,
+          "w": 900,
+          "h": 250,
+          "title": "Production schedule",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null,
+          "timeline": {
+            "mode": "date",
+            "fps": [
+              24,
+              1
+            ],
+            "drop": false,
+            "start": 20734,
+            "end": 20776,
+            "links": false,
+            "items": [
+              {
+                "id": "item-c",
+                "card": "shot-1",
+                "at": 20740,
+                "len": 5,
+                "lane": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "shot-1",
+          "type": "note",
+          "x": 60,
+          "y": 680,
+          "w": 250,
+          "h": 200,
+          "title": "Opening shot",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        },
+        {
+          "id": "shot-2",
+          "type": "image",
+          "x": 340,
+          "y": 680,
+          "w": 250,
+          "h": 200,
+          "title": "Hero frame",
+          "body": "",
+          "color": "paper",
+          "tags": [],
+          "comments": [],
+          "items": [],
+          "url": "",
+          "media": "",
+          "filename": "",
+          "boardId": null
+        }
+      ],
+      "edges": [],
+      "view": {
+        "x": 60,
+        "y": 50,
+        "zoom": 1
+      },
+      "updated": 1791500000000
+    }
+  ]
+}

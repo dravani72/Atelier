@@ -12,6 +12,7 @@
     "check": "cargo test --manifest-path src-tauri/Cargo.toml --no-default-features",
     "test:bridge": "node tests/native-bridge.mjs",
     "test:advanced": "node tests/advanced-ui.mjs",
+    "test:timeline": "node tests/timeline-ui.mjs",
     "build:mac": "bash scripts/build-macos.sh",
     "verify:mac": "bash scripts/verify-macos.sh",
     "build:ui": "node scripts/build-ui.mjs"

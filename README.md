@@ -11,6 +11,7 @@ A standalone visual workspace for creative projects. Original interface inspired
 - Columns act as visual containers: dragging a column also moves cards fully inside it.
 - Card colors, tags, personal annotations, moving between boards, multi-selection, alignment, and grid arrangement.
 - Directed connectors with editable labels; delete and duplication preserve connection integrity.
+- Timeline cards that run left to right in timecode or calendar dates, with any card on the board connected as a clip or marker.
 - Workspace-wide search across board titles, notes, tasks, tags, links, and annotations.
 - Undo/redo (60 steps per session), copy/paste within the app, keyboard shortcuts, and light/dark workspace preferences.
 - Blank, film pre-production, moodboard, story-development, and creative-campaign templates.
@@ -68,6 +69,7 @@ npm run dev
 # In another terminal:
 npm run test:ui
 npm run test:advanced
+npm run test:timeline
 npm run test:bridge
 ```
 
@@ -92,6 +94,7 @@ This is a local single-user application, not full parity with Milanote's hosted 
 ## Architecture
 
 - `ui/model.js`: workspace schema, validation, history, templates, and pure board operations.
+- `ui/timeline.js`: timecode and calendar arithmetic, ruler ticks, and timeline connection rules. No DOM.
 - `ui/app.js`: canvas rendering, pointer interaction, inspector, dialogs, and exports.
 - `ui/storage.js`: Tauri command bridge with an IndexedDB preview adapter.
 - `src-tauri/src/lib.rs`: Rust validation, SQLite transactions and recovery history, native commands.
@@ -141,7 +144,7 @@ Finder drops now use Tauri's native event API, convert physical Retina coordinat
 
 Previews are bounded to 60 MB of raw bytes per native batch and the existing 100 MB serialized workspace limit. If that workspace limit would be exceeded, split the import or export and remove older media first. Large native originals occupy additional local disk space and are not included in JSON exports; when migrating, close Atelier and copy the complete application-data folder, including the database and `video-media` directory. No automatic managed-file garbage collection occurs, so recovery snapshots and duplicated references remain valid.
 
-The starter pack is represented by `ui/template-data.js`; the adapter is in `ui/model.js`. The supplied catalog, implementation brief, example treatment and handoff notes are preserved in `template-pack/`. The templates are editable planning scaffolds. Outline/presentation/timeline tools, PDF rendering/export, arbitrary 3D or splat rendering, and executable node graphs are not enabled merely by choosing their template.
+The starter pack is represented by `ui/template-data.js`; the adapter is in `ui/model.js`. The supplied catalog, implementation brief, example treatment and handoff notes are preserved in `template-pack/`. The templates are editable planning scaffolds. Outline/presentation tools, animatic playback, PDF rendering/export, arbitrary 3D or splat rendering, and executable node graphs are not enabled merely by choosing their template, and a template does not add a Timeline card for you.
 
 ## Intel macOS delivery
 
@@ -150,3 +153,22 @@ The same Atelier 0.4.0 app can be built natively for `x86_64-apple-darwin`, with
 The Intel CI workflow runs on `macos-15-intel`, installs existing Intel bottles from pinned Homebrew core commit `f4288f5dcc2195b4088c2352bc42446ce7c2728f`, and tests actual native video rendering. Its setup helper is restricted to a fresh GitHub Actions runner and must not be run on a personal Mac. Homebrew stopped routine Intel bottle updates; pinning the complete media graph keeps versions and source records consistent. The end-user app needs no Homebrew, mpv or FFmpeg installation. The Intel media-source archive includes its exact formulas, source archives, patches and target build records.
 
 Intel and Apple Silicon installers use the same bundle identifier and local database schema. Choose the installer matching the Mac's processor; these are separate native builds, not a universal binary. Both use local ad-hoc signatures; Developer ID signing and Apple notarization require a separate release-signing setup.
+
+## Timelines (after 0.4.0, not yet in a released installer)
+
+Use **Timeline** in the toolbar to add a timeline card: a ruler that runs left to right with lanes underneath. Choose its scale in the inspector. **Timecode** has a frame rate (23.976, 24, 25, 29.97, 30, 48, 50, 59.94 or 60 fps, with drop-frame for 29.97 and 59.94), a start timecode and a duration. **Calendar dates** has a first and last day, labelled by day, week, month, quarter or year depending on how much room the range has; today is shaded when it falls inside the range.
+
+Connect any card on the same board except a column or another timeline:
+
+- Drag the card by its header and release it over the track. It connects at the time under the pointer and returns to where it was on the board.
+- Drop files from Finder or the browser onto the track. Each becomes a card just below the timeline, already connected.
+- Choose **Connect ideas**, click the card, then click the timeline (or the other way round).
+- Double-click an empty part of the track, or use **Connect a card** in the inspector, to pick from the board's cards.
+
+A connection is a clip with a position, a length and a lane; the card itself stays on the board, and a dashed line joins the two unless you switch lines off for that timeline. The same card can be connected more than once. Drag a clip to retime it, drag either edge to trim it, and drag it up or down to change lane. Dragging snaps to whole days, or to a timecode step fine enough for the current width; the inspector fields take exact values. There, the in point (or first day) moves a clip and the out point (or last day) sets its length; an out point equal to the in point makes a zero-length marker. With a clip highlighted, ← and → nudge it by a frame or a day (Shift: a second or a week), and Backspace/Delete disconnects it without deleting its card. Double-click a clip to select its card. Selecting a card highlights its clips.
+
+Timecode entry accepts `HH:MM:SS:FF`, `HH:MM:SS`, `MM:SS`, plain seconds, or a frame count such as `48f`. Timecode counts at the whole-number base, so 23.976 fps counts 24 frames per second. Drop-frame skips labels, not frames: a label that drop-frame omits, such as `00:01:00;00`, resolves to the next real frame. Changing the frame rate keeps every timecode label where it was and rescales the frame part. Changing the start timecode carries the clips with it; changing a date range leaves clips on their calendar days, and the footer reports any that fall outside the range. Switching between timecode and dates keeps each clip at the same fraction of the way along.
+
+Deleting or moving a card removes its clips; duplicating a timeline together with its cards reconnects the copy to the copied cards. SVG export draws the ruler, clips and lines; Markdown export lists each clip with its time. A timeline is stored on its card as `timeline: {mode, fps: [numerator, denominator], drop, start, end, links, items: [{id, card, at, len, lane}]}`. Positions are whole frames counted from `00:00:00:00`, or whole days since 1970-01-01, and the range is `[start, end)`. The JavaScript and Rust validators both reject connections to missing cards, non-integer positions, unknown frame rates and more than 500 connections or 12 lanes per timeline.
+
+This is a planning ruler, not an editor. Nothing plays back along it, there are no audio tracks, and a video card's real duration is not read: a new clip is about one eighth of the range long (one day on a date timeline) until you trim it. A timeline always shows its whole range across the card's width, so widen the card or zoom the board for more room. Date timelines work in whole days without times of day or time zones. A timecode timeline ends by frame 21,600,000, which is 100 hours at 60 fps.

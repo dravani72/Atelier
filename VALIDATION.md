@@ -63,3 +63,15 @@ Completed 2026-10-08. Source commit: `483e027196241841a234fd7684a6d7a844493f36`.
 - Delivered installer: `Atelier_0.4.0_x86_64.dmg` (39,631,468 bytes). Corresponding media sources/recipes/patches/build records: `Atelier_0.4.0_Intel_MediaSources.zip` (233,024,952 bytes).
 - The architecture-aware packaging changes also passed the Apple Silicon regression build and native smoke tests in [run 37817700764](https://github.com/dravani72/Atelier/actions/runs/37817700764). Apple Silicon retains its macOS 14.0 minimum.
 - Intel and Apple Silicon packages are separate native installers and share the workspace schema. Developer ID signing, notarization and installation on every supported personal Mac model were not performed.
+
+## Timeline cards — validation (after 0.4.0)
+
+Completed 2026-10-08 in a Linux container against the uncommitted working tree. No macOS build or native launch was run for this change, and no installer contains it yet.
+
+- 14 Node.js model tests pass, four of them new: drop-frame and non-drop timecode round trips at every supported rate, calendar ticks and Monday-aligned weeks, connection integrity through delete/duplicate/validation, and rate, start and scale changes.
+- 11 Rust tests pass (`cargo test --no-default-features`), two of them new. `tests/fixtures/timeline.json` is validated by both the JavaScript and the Rust validator and survives a SQLite save and reload byte for byte.
+- `tests/timeline-ui.mjs` passes in headless Chromium: drag-to-connect, retime/trim/lane drags, undo/redo, range, start timecode, frame-rate and scale edits, date entry, the Connect tool, the picker, keyboard nudge and disconnect, a browser file drop, JSON/SVG/Markdown export, reload, re-import, and source-card deletion. Its second half drives the mocked Tauri bridge: hover feedback and a Finder drop of a managed video plus a text file onto the track.
+- The existing main, advanced, template/drop, native-bridge and video-bridge browser suites still pass. `tests/viewer-ui.mjs` passes intermittently in this container before and after the change: it reloads 600 ms after saving a model view, which races the 400 ms autosave under software WebGL.
+
+Not checked: WKWebView rendering and its native date picker, real Finder drops and trackpad gestures in the desktop app, very large boards, and boards with hundreds of clips.
+

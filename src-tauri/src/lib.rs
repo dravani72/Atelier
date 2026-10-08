@@ -3,7 +3,7 @@ mod imports;
 mod video;
 use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 pub const MAX_BYTES: usize = 100 * 1024 * 1024;
@@ -42,6 +42,90 @@ fn safe_id(id: &str) -> bool {
         && id
             .bytes()
             .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
+}
+
+// Mirrors ui/timeline.js: positions are whole frames (timecode) or whole days since 1970-01-01 (date).
+const TIMELINE_ITEMS: usize = 500;
+const TIMELINE_LANES: i64 = 12;
+const TIMECODE_MAX: i64 = 21_600_000;
+const DATE_MIN: i64 = -354_285;
+const DATE_MAX: i64 = 2_932_896;
+const TIMELINE_RATES: [(i64, i64, bool); 11] = [
+    (24000, 1001, false),
+    (24, 1, false),
+    (25, 1, false),
+    (30000, 1001, true),
+    (30000, 1001, false),
+    (30, 1, false),
+    (48, 1, false),
+    (50, 1, false),
+    (60000, 1001, true),
+    (60000, 1001, false),
+    (60, 1, false),
+];
+
+fn whole(value: &serde_json::Value) -> Option<i64> {
+    value.as_i64().or_else(|| {
+        value
+            .as_f64()
+            .filter(|n| n.fract() == 0.0 && n.abs() < 1e15)
+            .map(|n| n as i64)
+    })
+}
+
+fn validate_timeline(
+    timeline: &serde_json::Value,
+    own: &str,
+    kinds: &HashMap<&str, &str>,
+) -> Result<(), String> {
+    let bad = || "Invalid timeline".to_string();
+    let (lo, hi, shortest) = match timeline["mode"].as_str() {
+        Some("timecode") => (0, TIMECODE_MAX, 0),
+        Some("date") => (DATE_MIN, DATE_MAX, 1),
+        _ => return Err(bad()),
+    };
+    let fps = timeline["fps"].as_array().ok_or_else(bad)?;
+    let drop = timeline["drop"].as_bool().ok_or_else(bad)?;
+    if fps.len() != 2
+        || !timeline["links"].is_boolean()
+        || !TIMELINE_RATES.contains(&(
+            whole(&fps[0]).ok_or_else(bad)?,
+            whole(&fps[1]).ok_or_else(bad)?,
+            drop,
+        ))
+    {
+        return Err(bad());
+    }
+    let start = whole(&timeline["start"]).ok_or_else(bad)?;
+    let end = whole(&timeline["end"]).ok_or_else(bad)?;
+    let items = timeline["items"].as_array().ok_or_else(bad)?;
+    if start < lo || end > hi || start >= end || items.len() > TIMELINE_ITEMS {
+        return Err(bad());
+    }
+    let mut seen = HashSet::new();
+    for item in items {
+        let id = item["id"].as_str().ok_or_else(bad)?;
+        let card = item["card"].as_str().ok_or_else(bad)?;
+        let at = whole(&item["at"]).ok_or_else(bad)?;
+        let len = whole(&item["len"]).ok_or_else(bad)?;
+        let lane = whole(&item["lane"]).ok_or_else(bad)?;
+        let connectable = kinds
+            .get(card)
+            .is_some_and(|kind| *kind != "timeline" && *kind != "column");
+        if !safe_id(id)
+            || !seen.insert(id)
+            || card == own
+            || !connectable
+            || at < lo
+            || at > hi
+            || len < shortest
+            || len > hi - lo
+            || !(0..TIMELINE_LANES).contains(&lane)
+        {
+            return Err(bad());
+        }
+    }
+    Ok(())
 }
 
 pub fn validate(raw: &str) -> Result<Workspace, String> {
@@ -89,6 +173,7 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
                 .and_then(|b| b.parent.as_deref());
         }
         let mut cards = HashSet::new();
+        let mut kinds = HashMap::new();
         for card in &board.cards {
             let id = card["id"].as_str().ok_or("Card has no ID")?;
             if !safe_id(id) || !cards.insert(id) || !all_cards.insert(id) {
@@ -215,12 +300,16 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
             let kind = card["type"].as_str().ok_or("Card has no type")?;
             if ![
                 "note", "task", "image", "video", "file", "link", "heading", "column", "board",
-                "sketch", "model",
+                "sketch", "model", "timeline",
             ]
             .contains(&kind)
             {
                 return Err("Unknown card type".into());
             }
+            if (kind == "timeline") != card.get("timeline").is_some() {
+                return Err("Invalid timeline".into());
+            }
+            kinds.insert(id, kind);
             for field in ["x", "y", "w", "h"] {
                 let n = card[field].as_f64().ok_or("Invalid card geometry")?;
                 if !n.is_finite()
@@ -232,6 +321,11 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
             }
             if kind == "board" && !ids.contains(card["boardId"].as_str().unwrap_or("")) {
                 return Err("Board card points to a missing board".into());
+            }
+        }
+        for card in &board.cards {
+            if let Some(timeline) = card.get("timeline") {
+                validate_timeline(timeline, card["id"].as_str().unwrap_or(""), &kinds)?;
             }
         }
         let mut edges = HashSet::new();
@@ -469,6 +563,57 @@ mod tests {
         w["boards"][0]["parent"] = serde_json::Value::Null;
         w["version"] = 2.into();
         assert!(validate(&w.to_string()).is_err());
+    }
+    #[test]
+    fn timeline_fixture_matches_backend_contract() {
+        let fixture = include_str!("../../tests/fixtures/timeline.json");
+        validate(fixture).unwrap();
+        let mut store = Store::open(Path::new(":memory:")).unwrap();
+        store.save(fixture).unwrap();
+        assert_eq!(store.load().unwrap().unwrap(), fixture);
+    }
+    #[test]
+    fn timelines_reject_broken_connections_and_ranges() {
+        let fixture = include_str!("../../tests/fixtures/timeline.json");
+        let broken = |edit: &dyn Fn(&mut serde_json::Value)| {
+            let mut w: serde_json::Value = serde_json::from_str(fixture).unwrap();
+            edit(&mut w["boards"][0]["cards"][0]["timeline"]);
+            validate(&w.to_string()).is_err()
+        };
+        assert!(broken(&|t| t["items"][0]["card"] = "missing".into()));
+        assert!(broken(&|t| t["items"][0]["card"] = "tl-spot".into()));
+        assert!(broken(&|t| t["items"][0]["card"] = "tl-dates".into()));
+        assert!(broken(&|t| t["items"][1]["id"] = "item-a".into()));
+        assert!(broken(&|t| t["items"][0]["lane"] = 12.into()));
+        assert!(broken(&|t| t["items"][0]["at"] = 1.5.into()));
+        assert!(broken(&|t| t["items"][0]["len"] = (-1).into()));
+        assert!(broken(&|t| t["end"] = 0.into()));
+        assert!(broken(&|t| t["start"] = (-24).into()));
+        assert!(broken(&|t| t["fps"] = serde_json::json!([23, 1])));
+        assert!(
+            broken(&|t| t["fps"] = serde_json::json!([24, 1])),
+            "24 fps has no drop-frame"
+        );
+        assert!(broken(&|t| t["links"] = "yes".into()));
+        assert!(broken(&|t| t["mode"] = "weeks".into()));
+        let mut w: serde_json::Value = serde_json::from_str(fixture).unwrap();
+        w["boards"][0]["cards"][1]["timeline"]["items"][0]["len"] = 0.into();
+        assert!(
+            validate(&w.to_string()).is_err(),
+            "dated items span whole days"
+        );
+        let mut w: serde_json::Value = serde_json::from_str(fixture).unwrap();
+        w["boards"][0]["cards"][2]["timeline"] = w["boards"][0]["cards"][0]["timeline"].clone();
+        assert!(
+            validate(&w.to_string()).is_err(),
+            "only timeline cards carry one"
+        );
+        let mut w: serde_json::Value = serde_json::from_str(fixture).unwrap();
+        w["boards"][0]["cards"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("timeline");
+        assert!(validate(&w.to_string()).is_err(), "timeline cards need one");
     }
     #[test]
     fn rejects_dangling_edges() {
