@@ -56,6 +56,7 @@ for record in records:
   if hashlib.sha256(archive.read_bytes()).hexdigest()!=expected:
    if '/-/archive/' not in url: raise RuntimeError('Source checksum mismatch for '+name)
    repository,tail=url.split('/-/archive/',1);tag=tail.split('/',1)[0]
+   archive.unlink();archive=source_dir/(name+'-'+stable+'-git.tar.gz')
    actual=git_source(repository+'.git',tag,archive,name)
    (source_dir/(name+'-source-commit.txt')).write_text(actual+'\nOriginal archive checksum: '+expected+'\n')
 
