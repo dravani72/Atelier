@@ -1,3 +1,4 @@
+import * as canvas from './canvas-model.js';
 import {catalog,recipes} from './template-data.js';
 import * as timeline from './timeline.js';
 export {recipes};
@@ -9,9 +10,9 @@ export const uid=()=>{
  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 };
 export const clone=x=>JSON.parse(JSON.stringify(x));
-export const TYPES=['note','task','image','video','file','link','heading','column','board','sketch','model','timeline'];
+export const TYPES=['note','task','image','video','file','link','heading','column','board','sketch','model','timeline','sticky','shape','frame','table'];
 export function board(name='Untitled board',parent=null){return {id:uid(),name,parent,description:'A place for your next idea.',color:'sage',cards:[],edges:[],view:{x:60,y:50,zoom:1},updated:Date.now()};}
-export function card(type,x=80,y=80){const c={id:uid(),type,x,y,w:type==='timeline'?900:type==='column'?300:250,h:type==='timeline'?250:type==='column'?540:type==='heading'?70:200,title:({note:'Untitled note',task:'To do',link:'Website',heading:'New section',column:'Ideas',image:'Image',video:'Video',file:'Attachment',model:'3D model',sketch:'Sketch',board:'New board',timeline:'Timeline'})[type],body:'',color:type==='column'?'stone':'paper',tags:[],comments:[],items:type==='task'?[{id:uid(),text:'Add your first task',done:false}]:[],url:'',media:'',filename:'',boardId:null};if(type==='timeline')c.timeline=timeline.defaults();return c;}
+export function card(type,x=80,y=80){const c={id:uid(),type,x,y,w:type==='timeline'?900:type==='column'?300:250,h:type==='timeline'?250:type==='column'?540:type==='heading'?70:200,title:({note:'Untitled note',task:'To do',link:'Website',heading:'New section',column:'Ideas',image:'Image',video:'Video',file:'Attachment',model:'3D model',sketch:'Sketch',board:'New board',timeline:'Timeline'})[type],body:'',color:type==='column'?'stone':'paper',tags:[],comments:[],items:type==='task'?[{id:uid(),text:'Add your first task',done:false}]:[],url:'',media:'',filename:'',boardId:null};if(type==='sticky'){c.title='Sticky note';c.color='sand';c.w=220;c.h=220;}if(type==='frame'){c.title='Frame';c.w=900;c.h=560;}if(type==='shape'){c.title='Shape';c.shape='rectangle';}if(type==='table'){c.title='Table';c.w=480;c.h=280;c.cells=[['Column 1','Column 2','Column 3'],['','',''],['','','']];}if(type==='timeline')c.timeline=timeline.defaults();return c;}
 export class History{
  constructor(limit=60){this.past=[];this.future=[];this.limit=limit;}
  push(w){this.past.push(clone(w));if(this.past.length>this.limit)this.past.shift();this.future=[];}
@@ -46,14 +47,15 @@ export function validate(w){
    if((c.type==='timeline')!==(c.timeline!==undefined))throw Error('Invalid timeline');
    cs.add(c.id);allCards.add(c.id);
   }
+  canvas.checkCanvas(b,safeId);
   const types=new Map(b.cards.map(c=>[c.id,c.type]));for(const c of b.cards)if(c.type==='timeline')timeline.check(c.timeline,c.id,types);
   const es=new Set();for(const e of b.edges){if(!safeId(e.id)||typeof e.label!=='string'||es.has(e.id)||!cs.has(e.from)||!cs.has(e.to)||e.from===e.to)throw Error('Invalid connector');es.add(e.id);}
  }
  return w;
 }
-export function removeCards(b,ids){b.cards=b.cards.filter(c=>!ids.has(c.id));b.edges=b.edges.filter(e=>!ids.has(e.from)&&!ids.has(e.to));timeline.prune(b.cards);}
-export function duplicateCards(b,ids){const map=new Map(),copies=[];for(const c of b.cards.filter(c=>ids.has(c.id))){const n=clone(c);n.id=uid();n.x+=30;n.y+=30;map.set(c.id,n.id);copies.push(n);}for(const n of copies)if(n.timeline)timeline.recopy(n.timeline,uid,map);b.cards.push(...copies);b.edges.push(...b.edges.filter(e=>map.has(e.from)&&map.has(e.to)).map(e=>({...e,id:uid(),from:map.get(e.from),to:map.get(e.to)})));return copies.map(c=>c.id);}
-export function markdown(b){return `# ${b.name}\n\n${b.description}\n\n`+b.cards.filter(c=>c.type!=='column').map(c=>`## ${c.title}\n\n${c.body}${c.url?'\n'+c.url:''}${c.type==='task'?'\n'+c.items.map(i=>`- [${i.done?'x':' '}] ${i.text}`).join('\n'):''}${c.type==='timeline'?'\n'+timeline.describe(c.timeline,b.cards):''}${c.tags.length?'\n\nTags: '+c.tags.join(', '):''}\n`).join('\n');}
+export function removeCards(b,ids){b.cards=b.cards.filter(c=>!ids.has(c.id));b.edges=b.edges.filter(e=>!ids.has(e.from)&&!ids.has(e.to));for(const c of b.cards)if(ids.has(c.sectionId))delete c.sectionId;if(b.presentationOrder)b.presentationOrder=b.presentationOrder.filter(id=>!ids.has(id));timeline.prune(b.cards);}
+export function duplicateCards(b,ids){const map=new Map(),copies=[];for(const c of b.cards.filter(c=>ids.has(c.id))){const n=clone(c);n.id=uid();n.x+=30;n.y+=30;map.set(c.id,n.id);copies.push(n);}canvas.remap(copies,map,uid);for(const n of copies)if(n.timeline)timeline.recopy(n.timeline,uid,map);b.cards.push(...copies);b.edges.push(...b.edges.filter(e=>map.has(e.from)&&map.has(e.to)).map(e=>({...e,id:uid(),from:map.get(e.from),to:map.get(e.to)})));return copies.map(c=>c.id);}
+export function markdown(b){return `# ${b.name}\n\n${b.description}\n\n`+b.cards.filter(c=>c.type!=='column').map(c=>`## ${c.title}\n\n${c.body}${c.type==='table'?'\n'+c.cells.map(row=>'| '+row.map(v=>v.replaceAll('|','\\|').replaceAll('\n',' ')).join(' | ')+' |').join('\n'):''}${c.url?'\n'+c.url:''}${c.type==='task'?'\n'+c.items.map(i=>`- [${i.done?'x':' '}] ${i.text}`).join('\n'):''}${c.type==='timeline'?'\n'+timeline.describe(c.timeline,b.cards):''}${c.tags.length?'\n\nTags: '+c.tags.join(', '):''}\n`).join('\n');}
 export const templates=[
  {id:'blank',name:'Blank canvas',label:'Start with a little space.',icon:'spark'},
  {id:'film',name:'Film pre-production',label:'Story, references, shots, and the plan.',icon:'film'},

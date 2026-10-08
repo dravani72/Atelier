@@ -144,7 +144,7 @@ Finder drops now use Tauri's native event API, convert physical Retina coordinat
 
 Previews are bounded to 60 MB of raw bytes per native batch and the existing 100 MB serialized workspace limit. If that workspace limit would be exceeded, split the import or export and remove older media first. Large native originals occupy additional local disk space and are not included in JSON exports; when migrating, close Atelier and copy the complete application-data folder, including the database and `video-media` directory. No automatic managed-file garbage collection occurs, so recovery snapshots and duplicated references remain valid.
 
-The starter pack is represented by `ui/template-data.js`; the adapter is in `ui/model.js`. The supplied catalog, implementation brief, example treatment and handoff notes are preserved in `template-pack/`. The templates are editable planning scaffolds. Outline/presentation tools, animatic playback, PDF rendering/export, arbitrary 3D or splat rendering, and executable node graphs are not enabled merely by choosing their template, and a template does not add a Timeline card for you.
+The starter pack is represented by `ui/template-data.js`; the adapter is in `ui/model.js`. The supplied catalog, implementation brief, example treatment and handoff notes are preserved in `template-pack/`. The templates are editable planning scaffolds. Animatic playback, PDF rendering/export, arbitrary 3D or splat rendering, and executable node graphs are not enabled merely by choosing their template, and a template does not add a Timeline card for you.
 
 ## Intel macOS delivery
 
@@ -172,3 +172,13 @@ Timecode entry accepts `HH:MM:SS:FF`, `HH:MM:SS`, `MM:SS`, plain seconds, or a f
 Deleting or moving a card removes its clips; duplicating a timeline together with its cards reconnects the copy to the copied cards. SVG export draws the ruler, clips and lines; Markdown export lists each clip with its time. A timeline is stored on its card as `timeline: {mode, fps: [numerator, denominator], drop, start, end, links, items: [{id, card, at, len, lane}]}`. Positions are whole frames counted from `00:00:00:00`, or whole days since 1970-01-01, and the range is `[start, end)`. The JavaScript and Rust validators both reject connections to missing cards, non-integer positions, unknown frame rates and more than 500 connections or 12 lanes per timeline.
 
 This is a planning ruler, not an editor. Nothing plays back along it, there are no audio tracks, and a video card's real duration is not read: a new clip is about one eighth of the range long (one day on a date timeline) until you trim it. A timeline always shows its whole range across the card's width, so widen the card or zoom the board for more room. Date timelines work in whole days without times of day or time zones. A timecode timeline ends by frame 21,600,000, which is 100 hours at 60 fps.
+
+## Canvas organization (after 0.4.0, not yet in a released installer)
+
+The toolbar now includes **Sticky note**, **Shape**, **Frame**, and **Table**. Use **Frames & layers** for the object outline, layer visibility/locking, and frame order; **Map** for a clickable minimap; and **Present** for static local frame slides. Drag empty canvas to marquee-select cards; use Shift to extend selection. Space/middle drag still pans.
+
+The inspector and right-click menu provide grouping (Cmd/Ctrl G; Shift Cmd/Ctrl G to ungroup), locks, stacking, alignment, equal-gap distribution, framing a selection, and explicit column reflow. Frames move fully enclosed visible, unlocked cards. Tables use plain text cells with an editable header row. Shapes support rectangle, ellipse and diamond. Double-click a connector to choose curved, straight or elbow routing and toggle its arrowhead.
+
+These features use the existing autosave, undo and JSON backup model. Old version-1 workspaces remain compatible. Locked objects are protected from ordinary canvas edits, not secured against workspace imports or file access. Existing installers do not include these additions until a new build is released. See [UI_UX_PARITY.md](UI_UX_PARITY.md) for the audited comparison and remaining gaps; this is not complete Milanote/Miro feature parity.
+
+Run `npm test`, `npm run check`, and `npm run test:canvas` alongside the existing browser suites.
