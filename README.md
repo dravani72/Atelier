@@ -1,6 +1,6 @@
 # Atelier
 
-The native Apple Silicon app and DMG are built and verified for macOS 13+. Download the `Atelier-macOS-AppleSilicon` artifact from [the successful Mac build](https://github.com/dravani72/Atelier/actions/runs/37795193013), or rebuild with `bash scripts/build-macos.sh`. See `APPLE_SILICON.md` for installation and signing details.
+The native Apple Silicon app and DMG are built and verified for macOS 13+. Download the `Atelier-macOS-AppleSilicon` artifact from [the successful Mac build](https://github.com/dravani72/Atelier/actions/runs/37798399100), or rebuild with `bash scripts/build-macos.sh`. See `APPLE_SILICON.md` for installation and signing details.
 
 A standalone visual workspace for creative projects. Original interface inspired by spatial creative tools such as Milanote. Rust powers the desktop shell, SQLite storage, recovery history, native export dialogs, and safe external link opening. The canvas UI is HTML/CSS/JavaScript inside Tauri's system webview. This is not an all-Rust GUI.
 
@@ -20,7 +20,7 @@ A standalone visual workspace for creative projects. Original interface inspired
 
 ## Included Linux installer
 
-The previous standalone ZIP includes `dist/Atelier_0.1.0_amd64.deb`, an unsigned development build compiled for Ubuntu 24.04 / x86-64. Install it with `sudo apt install ./dist/Atelier_0.1.0_amd64.deb` on a compatible Linux desktop. It requires GTK 3 and WebKitGTK 4.1, which the package manager resolves. This installer was compiled and inspected, but its native window was not launched in the build environment. macOS and Windows installers are not included.
+The previous standalone ZIP includes `dist/Atelier_0.1.0_amd64.deb`, an unsigned development build compiled for Ubuntu 24.04 / x86-64. Install it with `sudo apt install ./dist/Atelier_0.1.0_amd64.deb` on a compatible Linux desktop. It requires GTK 3 and WebKitGTK 4.1, which the package manager resolves. This installer was compiled and inspected, but its native window was not launched in the build environment. The current macOS installer is delivered separately; a Windows installer is not included.
 
 ## Run the desktop application
 

@@ -4,7 +4,7 @@ Target: native ARM64 (`aarch64-apple-darwin`), M-series Macs, macOS 13 or newer.
 
 **Current status: the ARM64 release app and DMG were built on an Apple Silicon macOS runner on 2026-10-08. Bundle, signature, architecture, portable dependencies, DMG integrity, and native launch with saving all passed.**
 
-Download the `Atelier-macOS-AppleSilicon` artifact from [the successful build](https://github.com/dravani72/Atelier/actions/runs/37795193013). Unzip the download, open `Atelier_0.1.0_aarch64.dmg`, and drag Atelier into Applications. A separately packaged `.app.zip` is also included. No compiler, Node.js, Rust, or Rosetta is needed to run the built app.
+Download the `Atelier-macOS-AppleSilicon` artifact from [the successful build](https://github.com/dravani72/Atelier/actions/runs/37798399100). Unzip the download, open `Atelier_0.2.0_aarch64.dmg`, and drag Atelier into Applications. A separately packaged `.app.zip` is also included. No compiler, Node.js, Rust, or Rosetta is needed to run the built app.
 
 GitHub retains this build artifact until 2026-10-22. You can rebuild it by running the workflow again. The application itself does not expire.
 
@@ -20,7 +20,7 @@ Alternatively, double-click `Build-Apple-Silicon.command`. It checks prerequisit
 
 Successful output appears in `dist/apple-silicon/`:
 
-- `Atelier_0.1.0_AppleSilicon.app.zip`: zipped Mac application, preserving bundle metadata.
+- `Atelier_0.2.0_AppleSilicon.app.zip`: zipped Mac application, preserving bundle metadata.
 - An ARM64 `.dmg`: drag `Atelier.app` into Applications.
 - `SHA256SUMS.txt`: checksums of the packaged files.
 
