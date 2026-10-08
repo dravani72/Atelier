@@ -1,10 +1,10 @@
 {
   "name": "atelier-boards",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/serve.mjs",
+    "dev": "npm run build:ui && node scripts/serve.mjs",
     "test": "node --test tests/model.test.mjs",
     "test:ui": "node tests/ui.mjs",
     "desktop": "tauri dev",
@@ -13,10 +13,15 @@
     "test:bridge": "node tests/native-bridge.mjs",
     "test:advanced": "node tests/advanced-ui.mjs",
     "build:mac": "bash scripts/build-macos.sh",
-    "verify:mac": "bash scripts/verify-macos.sh"
+    "verify:mac": "bash scripts/verify-macos.sh",
+    "build:ui": "node scripts/build-ui.mjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",
+    "esbuild": "0.28.2",
     "playwright": "1.51.1"
+  },
+  "dependencies": {
+    "three": "0.186.1"
   }
 }

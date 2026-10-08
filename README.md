@@ -83,7 +83,7 @@ Attachments can be uploaded, pasted from the clipboard, or dropped onto the canv
 
 The desktop database is `atelier.sqlite3` in the OS application-data directory for `studio.atelier.boards`: typically `~/Library/Application Support/studio.atelier.boards/` on macOS, `%APPDATA%/studio.atelier.boards/` on Windows, or `~/.local/share/studio.atelier.boards/` on Linux. Close the app before copying database files; prefer the portable JSON backup for transfers.
 
-Each attachment is limited to 15 MB; the complete serialized workspace is limited to 100 MB. Files are embedded as base64, so their stored size is larger than their original size. Recovery snapshots also retain embedded media and can occupy additional disk space. Local data is not encrypted. Your OS account and disk encryption protect it. Undo history lasts for the current session; recovery snapshots and backups survive restarts.
+Each ordinary attachment is limited to 15 MB (3D models: 50 MB); the complete serialized workspace is limited to 100 MB. Files are embedded as base64, so their stored size is larger than their original size. Recovery snapshots also retain embedded media and can occupy additional disk space. Local data is not encrypted. Your OS account and disk encryption protect it. Undo history lasts for the current session; recovery snapshots and backups survive restarts.
 
 ## Scope of this release
 
@@ -103,3 +103,21 @@ No remote scripts, fonts, trackers, account service, or media hosts are used. Im
 ## License
 
 MIT. Milanote is a trademark of its owner; this independent application has no affiliation with Milanote.
+
+## 3D reference viewer (0.2.0)
+
+Use **3D model + resources** in the toolbar or drop files onto a board. Select the primary model together with its material libraries and textures in one import. Each model is stored in the workspace along with the selected resources, so viewing and backups work offline. Double-click its card or choose **Explore in 3D**. Orbit by dragging, pan by right-dragging, and zoom with the scroll wheel. Fit, wireframe, grid, animation clip selection, play/pause, timeline scrubbing, and position/rotation/scale controls are available. **Save view** stores transforms, camera, and a board thumbnail. Imported source files are preserved; transformations affect the preview only.
+
+| Format | Preview support |
+| --- | --- |
+| FBX | ASCII 7+ and binary 6400+, mesh/material preview and supported skeleton/animation clips. Embedded or selected textures. |
+| OBJ + MTL | Static geometry with basic materials and selected texture resources. |
+| USD / USDA / USDC | ASCII and binary scene geometry and supported USD materials. |
+| USDZ | Packaged ASCII or binary USD with bundled resources; preferred for portable USD references. |
+| USDT | Accepted as an alias for ASCII USDA content. The standard text USD extension is `.usda`. |
+
+This is a visualization tool, not a full Autodesk FBX SDK or OpenUSD authoring engine. Advanced composition, custom schemas/shaders, some deformation features, and USD animation may not reproduce completely. Package externally composed USD scenes as USDZ or flatten them before importing. Missing or ambiguous resources and scenes with no supported meshes show an explicit message. Resource lookup uses local embedded files and does not fetch remote model dependencies. File names must be unique when models reference textures by basename.
+
+3D source files may be up to 50 MB, accompanying resources up to 15 MB each, and an import up to 100 files. The complete workspace still has a 100 MB serialized limit, including base64 and saved thumbnails. Large scenes require more memory while rendering. The viewer uses bundled Three.js; the desktop application and local persistence remain Rust/Tauri/SQLite. Run `npm run build:ui` before standalone browser tests; native development and packaging build the bundle automatically.
+
+Validation: real WebGL browser tests cover OBJ/MTL, ASCII USD aliases, transforms, saved thumbnails, persistence, malformed files, and existing workspace features. Animated binary FBX and packaged USDZ reference assets are also exercised during release validation. The macOS workflow separately checks native ARM64 packaging, signing, launch, and local persistence.

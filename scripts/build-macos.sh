@@ -26,7 +26,7 @@ npm exec -- tauri build --target aarch64-apple-darwin --config src-tauri/tauri.m
 bash scripts/verify-macos.sh
 ATELIER_BUNDLE_ROOT="$ATELIER_ROOT/src-tauri/target/aarch64-apple-darwin/release/bundle"
 mkdir -p "$ATELIER_ROOT/dist/apple-silicon"
-ditto -c -k --sequesterRsrc --keepParent "$ATELIER_BUNDLE_ROOT/macos/Atelier.app" "$ATELIER_ROOT/dist/apple-silicon/Atelier_0.1.0_AppleSilicon.app.zip"
+ditto -c -k --sequesterRsrc --keepParent "$ATELIER_BUNDLE_ROOT/macos/Atelier.app" "$ATELIER_ROOT/dist/apple-silicon/Atelier_0.2.0_AppleSilicon.app.zip"
 find "$ATELIER_BUNDLE_ROOT/dmg" -maxdepth 1 -name '*.dmg' -exec cp {} "$ATELIER_ROOT/dist/apple-silicon/" \;
 (cd "$ATELIER_ROOT/dist/apple-silicon" && shasum -a 256 ./*.zip ./*.dmg > SHA256SUMS.txt)
 echo "Apple Silicon packages: $ATELIER_ROOT/dist/apple-silicon"

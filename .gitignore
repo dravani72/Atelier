@@ -4,3 +4,5 @@ artifacts/
 .DS_Store
 src-tauri/gen/schemas/
 dist/apple-silicon/
+
+ui/viewer.js

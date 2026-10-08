@@ -1,0 +1,40 @@
+import * as T from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
+import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+import {MTLLoader} from 'three/addons/loaders/MTLLoader.js';
+import {USDLoader} from 'three/addons/loaders/USDLoader.js';
+export const isModel=name=>/\.(fbx|obj|usd|usda|usdt|usdc|usdz)$/i.test(name);
+const bytes=data=>Uint8Array.from(atob(data.split(',')[1]),c=>c.charCodeAt(0));
+const text=data=>new TextDecoder().decode(bytes(data));
+const key=s=>decodeURIComponent(s).replace(/\\/g,'/').replace(/^\.\//,'');
+export function openViewer(host,card,onSave){
+ let renderer,root,mixer,action,playing=true,closed=false,frame;const urls=[],warnings=new Set();
+ host.innerHTML=`<div class="viewer-toolbar"><button data-fit>Fit view</button><label><input data-wire type="checkbox"> Wireframe</label><label><input data-grid type="checkbox" checked> Grid</label><label>Animation <select data-clips><option>No animation</option></select></label><button data-play>Pause</button><input data-time type="range" min="0" max="1" step="0.01" value="0" aria-label="Animation time"><button data-save>Save view</button></div><div class="viewer-stage"></div><div class="viewer-status" role="status">Loading local model…</div><div class="viewer-transforms">${['position','rotation','scale'].map(k=>`<label>${k} ${['X','Y','Z'].map((a,i)=>`<input aria-label="${k} ${a}" data-transform="${k}" data-axis="${i}" type="number" min="-10000" max="10000" step="0.1" value="${k==='scale'?1:0}">`).join('')}</label>`).join('')}</div>`;
+ const q=s=>host.querySelector(s),stage=q('.viewer-stage'),status=q('.viewer-status');
+ const cleanup=()=>{closed=true;cancelAnimationFrame(frame);resize?.disconnect();controls?.dispose();mixer?.stopAllAction();scene?.traverse(o=>{o.geometry?.dispose();for(const m of [].concat(o.material||[])){for(const v of Object.values(m))if(v?.isTexture)v.dispose();m.dispose();}});renderer?.dispose();renderer?.forceContextLoss();urls.forEach(URL.revokeObjectURL);};
+ let scene,controls,resize;
+ try{
+ renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0x20282a);renderer.outputColorSpace=T.SRGBColorSpace;stage.append(renderer.domElement);
+ scene=new T.Scene();scene.add(new T.HemisphereLight(0xffffff,0x485552,3));const light=new T.DirectionalLight(0xffffff,3);light.position.set(4,8,6);scene.add(light);
+ const camera=new T.PerspectiveCamera(45,1,.001,1e7);controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;
+ const grid=new T.GridHelper(10,20,0x76847e,0x465650);scene.add(grid);
+ const manager=new T.LoadingManager();const assets=card.assets||[];manager.setURLModifier(url=>{if(/^(blob:|data:)/.test(url))return url;const path=key(url),matches=assets.filter(a=>key(a.name)===path||key(a.name).split('/').pop()===path.split('/').pop());if(matches.length===1)return matches[0].data;warnings.add('Missing or ambiguous resource: '+path);return 'data:application/octet-stream;base64,';});manager.onError=url=>{warnings.add('Could not decode resource: '+url.slice(0,90));updateStatus();};
+ let meshes=0,triangles=0;const ext=card.filename.split('.').pop().toLowerCase();let model;
+ if(ext==='obj'){const loader=new OBJLoader(manager);const source=text(card.media),names=[...source.matchAll(/^mtllib\s+(.+)$/gm)].map(m=>m[1].trim());const materials={};for(const name of names){const asset=assets.find(a=>key(a.name)===key(name)||key(a.name).split('/').pop()===key(name).split('/').pop());if(asset){const parsed=new MTLLoader(manager).parse(text(asset.data),name.includes('/')?name.slice(0,name.lastIndexOf('/')+1):'');parsed.preload();Object.assign(materials,parsed.materials);}else warnings.add('Missing material library: '+name);}if(Object.keys(materials).length)loader.setMaterials({create:name=>materials[name]});model=loader.parse(source);}
+ else if(ext==='fbx')model=new FBXLoader(manager).parse(bytes(card.media).buffer,'');
+ else model=new USDLoader(manager).parse(bytes(card.media).buffer,'',()=>updateStatus(),e=>{warnings.add(String(e));updateStatus();});
+ root=new T.Group();root.add(model);scene.add(root);model.traverse(o=>{if(o.isMesh){meshes++;triangles+=(o.geometry.index?.count||o.geometry.attributes.position?.count||0)/3;for(const m of [].concat(o.material||[]))m.side=T.DoubleSide;}});if(!meshes)throw Error('No renderable mesh found. This scene may use unsupported composition or geometry.');
+ function updateStatus(){if(!closed)status.textContent=`${meshes||0} meshes · ${Math.round(triangles||0).toLocaleString()} triangles${warnings.size?' · '+[...warnings].join(' · '):''}`;}
+ const fit=()=>{root.updateMatrixWorld(true);const box=new T.Box3().setFromObject(root),size=box.getSize(new T.Vector3()),center=box.getCenter(new T.Vector3()),radius=Math.max(size.length()/2,.01);camera.near=Math.max(radius/1000,.00001);camera.far=Math.max(radius*1000,100);camera.updateProjectionMatrix();camera.position.copy(center).add(new T.Vector3(1,.7,1).normalize().multiplyScalar(radius/Math.sin(camera.fov*Math.PI/360)*1.3));controls.target.copy(center);controls.update();grid.scale.setScalar(Math.max(size.length()/10,.001));grid.position.y=box.min.y;};
+ const saved=card.modelView||{};for(const kind of ['position','rotation','scale']){const values=saved[kind]||[kind==='scale'?1:0,kind==='scale'?1:0,kind==='scale'?1:0];host.querySelectorAll(`[data-transform="${kind}"]`).forEach((input,i)=>{input.value=values[i];input.onchange=()=>{const n=Number(input.value);if(!Number.isFinite(n)||Math.abs(n)>10000||(kind==='scale'&&n===0)){input.value=kind==='scale'?1:0;return;}root[kind].setComponent?root[kind].setComponent(i,n):root.rotation[['x','y','z'][i]]=n*Math.PI/180;fit();};});if(kind==='rotation')root.rotation.set(...values.map(v=>v*Math.PI/180));else root[kind].fromArray(values);}
+ fit();if(saved.camera&&saved.target){camera.position.fromArray(saved.camera);controls.target.fromArray(saved.target);controls.update();}q('[data-fit]').onclick=fit;
+ q('[data-wire]').onchange=e=>model.traverse(o=>{for(const m of [].concat(o.material||[]))m.wireframe=e.target.checked;});q('[data-grid]').onchange=e=>grid.visible=e.target.checked;
+ const clips=model.animations||[];q('[data-clips]').replaceChildren(...(clips.length?clips.map((c,i)=>new Option(c.name||`Clip ${i+1}`,i)):[new Option('No animation','')]));q('[data-play]').disabled=q('[data-time]').disabled=!clips.length;
+ const clip=()=>{mixer?.stopAllAction();if(clips.length){mixer??=new T.AnimationMixer(model);action=mixer.clipAction(clips[Number(q('[data-clips]').value)]);action.play();q('[data-time]').max=action.getClip().duration;}};clip();q('[data-clips]').onchange=clip;q('[data-play]').onclick=()=>{playing=!playing;q('[data-play]').textContent=playing?'Pause':'Play';};q('[data-time]').oninput=e=>{playing=false;q('[data-play]').textContent='Play';mixer?.setTime(Number(e.target.value));};
+ q('[data-save]').onclick=()=>{renderer.render(scene,camera);onSave({position:root.position.toArray(),rotation:[root.rotation.x,root.rotation.y,root.rotation.z].map(v=>v*180/Math.PI),scale:root.scale.toArray(),camera:camera.position.toArray(),target:controls.target.toArray()},renderer.domElement.toDataURL('image/png'));status.textContent='View and thumbnail saved locally.';};
+ resize=new ResizeObserver(()=>{const w=stage.clientWidth,h=stage.clientHeight;if(w&&h){renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}});resize.observe(stage);
+ const clock=new T.Clock();function tick(){if(closed)return;frame=requestAnimationFrame(tick);const delta=Math.min(clock.getDelta(),.1);if(playing&&mixer){mixer.update(delta);q('[data-time]').value=action.time;}controls.update();renderer.render(scene,camera);stage.dataset.rendered='true';}tick();updateStatus();
+ }catch(e){status.textContent='Unable to preview: '+e.message;status.dataset.error='true';}
+ return cleanup;
+}

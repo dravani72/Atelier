@@ -141,10 +141,65 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
                     return Err("Unsupported embedded media".into());
                 }
             }
+            if let Some(assets) = card.get("assets") {
+                let assets = assets.as_array().ok_or("Invalid model resources")?;
+                if assets.len() > 100 {
+                    return Err("Too many model resources".into());
+                }
+                for asset in assets {
+                    let name = asset["name"].as_str().ok_or("Invalid resource name")?;
+                    let data = asset["data"].as_str().ok_or("Invalid resource data")?;
+                    let (prefix, encoded) = data
+                        .split_once(";base64,")
+                        .ok_or("Invalid resource encoding")?;
+                    if name.len() > 1024
+                        || ![
+                            "data:application/octet-stream",
+                            "data:text/plain",
+                            "data:image/png",
+                            "data:image/jpeg",
+                            "data:image/webp",
+                            "data:image/gif",
+                        ]
+                        .contains(&prefix)
+                        || !encoded.bytes().all(|b| {
+                            b.is_ascii_alphanumeric() || b == b'+' || b == b'/' || b == b'='
+                        })
+                    {
+                        return Err("Invalid model resource".into());
+                    }
+                }
+            }
+            if let Some(view) = card.get("modelView") {
+                for (key, value) in view.as_object().ok_or("Invalid model view")? {
+                    if !["position", "rotation", "scale", "camera", "target"]
+                        .contains(&key.as_str())
+                        || !value.as_array().is_some_and(|v| {
+                            v.len() == 3
+                                && v.iter().all(|n| {
+                                    n.as_f64()
+                                        .is_some_and(|n| n.is_finite() && n.abs() <= 100_000_000.0)
+                                })
+                        })
+                    {
+                        return Err("Invalid model view".into());
+                    }
+                }
+            }
+            if let Some(preview) = card.get("preview") {
+                let preview = preview.as_str().ok_or("Invalid model preview")?;
+                if !preview.starts_with("data:image/png;base64,")
+                    || !preview[22..]
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b == b'+' || b == b'/' || b == b'=')
+                {
+                    return Err("Invalid model preview".into());
+                }
+            }
             let kind = card["type"].as_str().ok_or("Card has no type")?;
             if ![
                 "note", "task", "image", "video", "file", "link", "heading", "column", "board",
-                "sketch",
+                "sketch", "model",
             ]
             .contains(&kind)
             {
@@ -269,7 +324,7 @@ mod desktop {
     #[tauri::command]
     async fn save_attachment(name: String, data: String) -> Result<bool, String> {
         use base64::Engine;
-        if data.len() > 22 * 1024 * 1024 {
+        if data.len() > 70 * 1024 * 1024 {
             return Err("Attachment exceeds the export limit".into());
         }
         let (_, encoded) = data.split_once(";base64,").ok_or("Invalid attachment")?;
