@@ -20,5 +20,6 @@ try{
  await page.locator('#sketch-eraser').click();await page.mouse.click(r.x+r.width/2,r.y+r.height/2);assert.deepEqual(await pixel(),[255,255,255,255]);await page.locator('#sketch-undo').click();
  await page.screenshot({path:'artifacts/palette-drawing.png'});await page.locator('#save-sketch').click();await page.locator('#replace-media').click();await page.waitForFunction(()=>!document.querySelector('#save-sketch').disabled);assert.deepEqual(await pixel(),[37,99,235,255]);
  await page.locator('#sketch-paper').evaluate(e=>{e.value='#fef08a';e.dispatchEvent(new Event('change',{bubbles:true}));});assert.deepEqual(await pixel(),[254,240,138,255]);await page.locator('#sketch-undo').click();assert.deepEqual(await pixel(),[37,99,235,255]);await page.locator('#save-sketch').click();
+ await page.evaluate(async()=>{const {videoPlayer}=await import('/video.js');const host=document.createElement('div');document.body.append(host);videoPlayer(host,{}) ();host.remove();});
  assert.deepEqual(errors,[]);console.log('PASS: custom fill/labels persist, theme reset, drawing palette, undo/redo, eraser and existing sketch editing.');
 }finally{await browser.close();}

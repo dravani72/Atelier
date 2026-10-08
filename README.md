@@ -134,7 +134,7 @@ Play/pause, exact seeking, frame stepping, playback speed, volume, and source co
 
 Version 0.3.0 requires macOS 14+ because the bundled Homebrew media dependencies target that version. Users need no separate mpv, FFmpeg or Homebrew installation. Build Macs require Homebrew; `scripts/build-macos.sh` obtains libmpv, relocates its actual dylib dependency closure, signs the result, and creates the DMG. Media license notices, versions, recipes and source archives are shipped separately as `Atelier_0.3.0_MediaSources.zip`. Atelier source remains MIT; the combined binary containing GPL media libraries is distributed under GPL-3.0-or-later (see `COPYING-GPL-3.0`).
 
-The macOS workflow tests real H.264 MP4, HEVC MOV and MPEG-4 AVI decoding, OpenGL output pixels, display ICC availability, native startup and SQLite persistence. Frontend bridge tests cover import references, controls, metadata, resizing, teardown and saved video cards. Source transfer metadata and build records accompany the corresponding media source archive.
+The macOS workflow tests real H.264 MP4, HEVC MOV and MPEG-4 AVI decoding, OpenGL framebuffer pixels and captured WindowServer colors, display ICC availability, native startup and SQLite persistence. Frontend bridge tests cover import references, controls, metadata, resizing, teardown and saved video cards. Source transfer metadata and build records accompany the corresponding media source archive.
 
 ## Templates and Finder drag and drop (0.4.0)
 
@@ -182,3 +182,13 @@ The inspector and right-click menu provide grouping (Cmd/Ctrl G; Shift Cmd/Ctrl 
 These features use the existing autosave, undo and JSON backup model. Old version-1 workspaces remain compatible. Locked objects are protected from ordinary canvas edits, not secured against workspace imports or file access. Existing installers do not include these additions until a new build is released. See [UI_UX_PARITY.md](UI_UX_PARITY.md) for the audited comparison and remaining gaps; this is not complete Milanote/Miro feature parity.
 
 Run `npm test`, `npm run check`, and `npm run test:canvas` alongside the existing browser suites.
+
+## Color controls and graphite icon
+
+Select a card to choose Graphite, Signal, Soft, Earth or recent custom colors. Apply a palette to its fill, text, or labels/tags; use individual color pickers for precise colors. Changing fill also chooses contrasting text, which you can then customize. **Use theme colors** clears overrides. Custom colors persist in workspace backups and remain consistent in light and dark themes.
+
+The sketch editor provides ink/paper colors, brush size, eraser and ten strokes of undo/redo. **Edit sketch** preserves the current drawing. Changing Paper fills the canvas and can be undone.
+
+The application icon is a white Geist sans serif A on graphite. Reproduce icon assets with `python scripts/make-icon.py` (Pillow, fontTools and brotli required). The bundled font license is in `ui/fonts/OFL.txt`.
+
+For the proposed human-readable Markdown repository and optional Obsidian Canvas exchange, see [OBSIDIAN_EXCHANGE.md](OBSIDIAN_EXCHANGE.md). Vault exchange is not implemented yet.
