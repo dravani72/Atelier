@@ -1,7 +1,13 @@
 #!/bin/bash
 # Shared architecture settings for build, verification and native smoke tests.
 ATELIER_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ATELIER_TARGET="${ATELIER_TARGET:-$(case "$(uname -m)" in arm64) echo aarch64-apple-darwin;; x86_64) echo x86_64-apple-darwin;; esac)}"
+if [ -z "${ATELIER_TARGET:-}" ]; then
+  case "$(uname -m)" in
+    arm64) ATELIER_TARGET=aarch64-apple-darwin;;
+    x86_64) ATELIER_TARGET=x86_64-apple-darwin;;
+    *) echo 'Unsupported build host architecture.' >&2; return 1;;
+  esac
+fi
 case "$ATELIER_TARGET" in
   aarch64-apple-darwin)
     ATELIER_NATIVE_ARCH=arm64
@@ -23,7 +29,7 @@ case "$ATELIER_TARGET" in
     ;;
   *) echo "Unsupported macOS target: $ATELIER_TARGET" >&2; return 1;;
 esac
-ATELIER_VERSION="$(node -p "JSON.parse(require('fs').readFileSync('$ATELIER_ROOT/package.json','utf8')).version")"
+ATELIER_VERSION="$(node -p "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).version" "$ATELIER_ROOT/package.json")"
 export ATELIER_TARGET ATELIER_NATIVE_ARCH ATELIER_MIN_MACOS ATELIER_VERSION
 export ATELIER_DIST="$ATELIER_ROOT/dist/$ATELIER_DIST_NAME"
 export ATELIER_MEDIA_SOURCES="Atelier_${ATELIER_VERSION}${ATELIER_MEDIA_LABEL}_MediaSources"

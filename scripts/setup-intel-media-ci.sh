@@ -7,12 +7,15 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 export HOMEBREW_NO_INSTALL_CLEANUP=1
 ATELIER_MEDIA_CORE_COMMIT=f4288f5dcc2195b4088c2352bc42446ce7c2728f
 ATELIER_CORE="$(brew --repository)/Library/Taps/homebrew/homebrew-core"
-if [ ! -d "$ATELIER_CORE/.git" ]; then
-  mkdir -p "$ATELIER_CORE"
-  git -C "$ATELIER_CORE" init
-  git -C "$ATELIER_CORE" remote add origin https://github.com/Homebrew/homebrew-core.git
+# Runner images can ship patched core definitions. Preserve that entire checkout
+# and make a separate clean one; never reset or discard those changes.
+if [ -e "$ATELIER_CORE" ]; then
+  [ ! -e "$RUNNER_TEMP/atelier-original-homebrew-core" ] || { echo 'Core backup already exists.' >&2; exit 1; }
+  mv "$ATELIER_CORE" "$RUNNER_TEMP/atelier-original-homebrew-core"
 fi
-[ -z "$(git -C "$ATELIER_CORE" status --porcelain)" ] || { echo 'The runner core tap has local changes; refusing to replace it.' >&2; exit 1; }
+mkdir -p "$ATELIER_CORE"
+git -C "$ATELIER_CORE" init
+git -C "$ATELIER_CORE" remote add origin https://github.com/Homebrew/homebrew-core.git
 git -C "$ATELIER_CORE" fetch --depth=1 origin "$ATELIER_MEDIA_CORE_COMMIT"
 git -C "$ATELIER_CORE" checkout --detach "$ATELIER_MEDIA_CORE_COMMIT"
 [ "$(git -C "$ATELIER_CORE" rev-parse HEAD)" = "$ATELIER_MEDIA_CORE_COMMIT" ]
