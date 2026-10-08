@@ -27,7 +27,7 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
 - (void)refreshProfile {
     NSData *data=self.window.screen.colorSpace.ICCProfileData;
     if (data && ![data isEqual:self.profile]) {
-        self.profile=data;
+        self.profile=data;self.dirty=YES;
         mpv_byte_array bytes={(void *)data.bytes,data.length};
         mpv_render_param p={MPV_RENDER_PARAM_ICC_PROFILE,&bytes};
         if (mpv_render_context_set_parameter(self.render,p)<0) self.error=@"Display ICC profile could not be applied";
