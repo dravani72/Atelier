@@ -1,0 +1,44 @@
+name: Canvas and storage checks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  canvas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm ci
+      - run: npm run build:ui
+      - run: npm test
+      - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - name: Browser integration checks
+        run: |
+          node scripts/serve.mjs &
+          ATELIER_SERVER_PID=$!
+          trap 'kill "$ATELIER_SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          npm run test:ui
+          npm run test:advanced
+          npm run test:timeline
+          npm run test:canvas
+          npm run test:bridge
+          node tests/video-bridge.mjs
+          node tests/templates-drop.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canvas-screenshots
+          path: artifacts/
+          if-no-files-found: ignore

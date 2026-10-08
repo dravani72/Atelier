@@ -27,6 +27,8 @@ pub struct Board {
     pub edges: Vec<Edge>,
     pub view: serde_json::Value,
     pub updated: f64,
+    #[serde(flatten)]
+    pub extra: HashMap<String, serde_json::Value>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Edge {
@@ -34,6 +36,8 @@ pub struct Edge {
     pub from: String,
     pub to: String,
     pub label: String,
+    #[serde(flatten)]
+    pub extra: HashMap<String, serde_json::Value>,
 }
 
 fn safe_id(id: &str) -> bool {
@@ -42,6 +46,84 @@ fn safe_id(id: &str) -> bool {
         && id
             .bytes()
             .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
+}
+
+fn validate_canvas(board: &Board) -> Result<(), String> {
+    let mut layer_ids = HashSet::new();
+    if let Some(layers) = board.extra.get("layers") {
+        let layers = layers.as_array().ok_or("Invalid layers")?;
+        if layers.len() > 100 {
+            return Err("Too many layers".into());
+        }
+        for layer in layers {
+            let id = layer["id"].as_str().ok_or("Invalid layer ID")?;
+            if !safe_id(id)
+                || !layer_ids.insert(id)
+                || !layer["name"]
+                    .as_str()
+                    .is_some_and(|s| s.chars().count() <= 1000)
+                || !layer["hidden"].is_boolean()
+                || !layer["locked"].is_boolean()
+            {
+                return Err("Invalid layer".into());
+            }
+        }
+    }
+    for card in &board.cards {
+        if card.get("locked").is_some_and(|v| !v.is_boolean()) {
+            return Err("Invalid lock".into());
+        }
+        if card
+            .get("groupId")
+            .is_some_and(|v| !v.as_str().is_some_and(safe_id))
+        {
+            return Err("Invalid group".into());
+        }
+        if card
+            .get("layerId")
+            .is_some_and(|v| !v.as_str().is_some_and(|id| layer_ids.contains(id)))
+        {
+            return Err("Missing layer".into());
+        }
+        if card["type"] == "shape"
+            && !card["shape"]
+                .as_str()
+                .is_some_and(|s| ["rectangle", "ellipse", "diamond"].contains(&s))
+        {
+            return Err("Invalid shape".into());
+        }
+        if card["type"] == "table" {
+            let rows = card["cells"].as_array().ok_or("Invalid table")?;
+            let width = rows
+                .first()
+                .and_then(|r| r.as_array())
+                .map_or(0, |r| r.len());
+            if rows.is_empty()
+                || rows.len() > 100
+                || width == 0
+                || width > 20
+                || rows.iter().any(|row| {
+                    !row.as_array().is_some_and(|r| {
+                        r.len() == width
+                            && r.iter()
+                                .all(|v| v.as_str().is_some_and(|s| s.chars().count() <= 10000))
+                    })
+                })
+            {
+                return Err("Invalid table".into());
+            }
+        }
+    }
+    for edge in &board.edges {
+        if edge.extra.get("style").is_some_and(|v| {
+            !v.as_str()
+                .is_some_and(|s| ["curve", "straight", "elbow"].contains(&s))
+        }) || edge.extra.get("arrow").is_some_and(|v| !v.is_boolean())
+        {
+            return Err("Invalid connector style".into());
+        }
+    }
+    Ok(())
 }
 
 // Mirrors ui/timeline.js: positions are whole frames (timecode) or whole days since 1970-01-01 (date).
@@ -143,6 +225,7 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
     }
     let mut all_cards = HashSet::new();
     for board in &workspace.boards {
+        validate_canvas(board)?;
         if !safe_id(&board.id)
             || !board.updated.is_finite()
             || !["x", "y", "zoom"]
@@ -300,7 +383,7 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
             let kind = card["type"].as_str().ok_or("Card has no type")?;
             if ![
                 "note", "task", "image", "video", "file", "link", "heading", "column", "board",
-                "sketch", "model", "timeline",
+                "sketch", "model", "timeline", "sticky", "shape", "frame", "table",
             ]
             .contains(&kind)
             {
@@ -507,6 +590,36 @@ pub use desktop::run;
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn canvas_fields_roundtrip_and_invalid_tables_fail() {
+        let mut w: serde_json::Value =
+            serde_json::from_str(include_str!("../../tests/fixtures/starter.json")).unwrap();
+        w["boards"][0]["layers"] =
+            serde_json::json!([{"id":"creative","name":"Creative","hidden":false,"locked":true}]);
+        w["boards"][0]["template"] = serde_json::json!({"id":"pitch","version":"1.0.0"});
+        let c = &mut w["boards"][0]["cards"][0];
+        c["type"] = "table".into();
+        c["cells"] = serde_json::json!([["Header", "Cost"], ["Shoot", "500"]]);
+        c["layerId"] = "creative".into();
+        c["groupId"] = "group-1".into();
+        c["locked"] = true.into();
+        w["boards"][0]["edges"][0]["style"] = "elbow".into();
+        w["boards"][0]["edges"][0]["arrow"] = false.into();
+        let parsed = validate(&w.to_string()).unwrap();
+        let restored = serde_json::to_value(parsed).unwrap();
+        for field in ["layers", "template", "cards", "edges"] {
+            assert_eq!(restored["boards"][0][field], w["boards"][0][field]);
+        }
+        let mut store = Store::open(Path::new(":memory:")).unwrap();
+        store.save(&w.to_string()).unwrap();
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&store.load().unwrap().unwrap()).unwrap(),
+            w
+        );
+        w["boards"][0]["cards"][0]["cells"] = serde_json::json!([["a"], ["b", "c"]]);
+        assert!(validate(&w.to_string()).is_err());
+        assert!(store.save(&w.to_string()).is_err());
+    }
     fn sample() -> String {
         serde_json::json!({"version":1,"active":"a","boards":[{"id":"a","name":"Test","parent":null,"description":"","color":"sage","cards":[],"edges":[],"view":{"x":0,"y":0,"zoom":1},"updated":0}]}).to_string()
     }
