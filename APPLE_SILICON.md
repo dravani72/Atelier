@@ -2,9 +2,9 @@
 
 Target: native ARM64 (`aarch64-apple-darwin`), M-series Macs, macOS 14 or newer. No Rosetta required by the resulting application.
 
-**Current status: the ARM64 release app and DMG were built on an Apple Silicon macOS runner on 2026-10-08. The libmpv integration is being validated by the native build workflow; the preceding 0.2.0 app passed bundle, signature, architecture, DMG and native launch checks.**
+**Current status: the ARM64 release app and DMG were built on an Apple Silicon macOS runner on 2026-10-08. Version 0.3.0 passed native ARM64 packaging, signature, dependency relocation, DMG integrity, startup and SQLite saving. Real libmpv playback passed for H.264 MP4, HEVC MOV and MPEG-4 AVI, including rendered pixels and a supplied display ICC profile. HEVC used VideoToolbox hardware decoding on the runner; the H.264 and AVI samples used software decoding.**
 
-Download the `Atelier-macOS-AppleSilicon` artifact from [the successful build](https://github.com/dravani72/Atelier/actions/runs/37798399100). Unzip the download, open `Atelier_0.3.0_aarch64.dmg`, and drag Atelier into Applications. A separately packaged `.app.zip` is also included. No compiler, Node.js, Rust, or Rosetta is needed to run the built app.
+Download the `Atelier-macOS-AppleSilicon` artifact from [the successful build](https://github.com/dravani72/Atelier/actions/runs/37804173322). Unzip the download, open `Atelier_0.3.0_aarch64.dmg`, and drag Atelier into Applications. A separately packaged `.app.zip` is also included. No compiler, Node.js, Rust, or Rosetta is needed to run the built app.
 
 GitHub retains this build artifact until 2026-10-22. You can rebuild it by running the workflow again. The application itself does not expire.
 

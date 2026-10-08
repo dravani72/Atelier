@@ -1,6 +1,6 @@
 # Atelier
 
-The native Apple Silicon app and DMG are built and verified for macOS 13+. Download the `Atelier-macOS-AppleSilicon` artifact from [the successful Mac build](https://github.com/dravani72/Atelier/actions/runs/37798399100), or rebuild with `bash scripts/build-macos.sh`. See `APPLE_SILICON.md` for installation and signing details.
+The native Apple Silicon app and DMG are built and verified for macOS 14+. Download the `Atelier-macOS-AppleSilicon` artifact from [the successful Mac build](https://github.com/dravani72/Atelier/actions/runs/37804173322), or rebuild with `bash scripts/build-macos.sh`. See `APPLE_SILICON.md` for installation and signing details.
 
 A standalone visual workspace for creative projects. Original interface inspired by spatial creative tools such as Milanote. Rust powers the desktop shell, SQLite storage, recovery history, native export dialogs, and safe external link opening. The canvas UI is HTML/CSS/JavaScript inside Tauri's system webview. This is not an all-Rust GUI.
 
