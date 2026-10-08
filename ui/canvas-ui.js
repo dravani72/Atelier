@@ -1,3 +1,4 @@
+import {paletteHTML,bindPalette,contrast,remember,colorTarget,setColorTarget} from './palette.js';
 import {uid,clone,card} from './model.js';
 import * as C from './canvas-model.js';
 const $=s=>document.querySelector(s);
@@ -35,6 +36,13 @@ export function createCanvasUX(a){
   root.append(section);bindActions(section);
   $('#object-layer').onchange=e=>{const id=e.target.value;a.change(()=>editable().forEach(c=>{if(id)c.layerId=id;else delete c.layerId;}));};
   const c=cs.length===1?cs[0]:null;
+  if(c){
+   const colorPanel=document.createElement('div');colorPanel.className='object-colors';colorPanel.innerHTML=`<div class="label">Custom colors</div><label for="color-target">Apply palette to</label><select id="color-target"><option value="fill">Card / shape fill</option><option value="ink">Text</option><option value="label">Labels / tags</option></select>${paletteHTML('card-palette')}<div class="color-fields">${[['fill','Fill','#ffffff'],['ink','Text','#18181b'],['label','Labels','#52525b']].map(([key,label,fallback])=>`<label>${label}<input type="color" data-style="${key}" value="${c.style?.[key]||fallback}" aria-label="${label} color"></label>`).join('')}</div><button class="button" id="color-reset">Use theme colors</button>`;
+   (root.querySelector('.swatches')?.closest('.field')||section).after(colorPanel);$('#color-target').value=colorTarget;$('#color-target').onchange=e=>setColorTarget(e.target.value);
+   const apply=(key,value)=>{remember(value);a.change(()=>{c.style??={};c.style[key]=value;if(key==='fill')c.style.ink=contrast(value);});};
+   bindPalette(colorPanel,'card-palette',color=>apply($('#color-target').value,color));
+   colorPanel.querySelectorAll('[data-style]').forEach(input=>input.onchange=()=>apply(input.dataset.style,input.value));$('#color-reset').onclick=()=>a.change(()=>delete c.style);
+  }
   if(c?.type==='shape'){
    section.insertAdjacentHTML('afterbegin',`<div class="field"><label for="shape-kind">Shape</label><select id="shape-kind">${C.SHAPES.map(s=>`<option ${s===c.shape?'selected':''}>${s}</option>`).join('')}</select></div>`);
    $('#shape-kind').onchange=e=>{const shape=e.target.value;a.change(()=>c.shape=shape);};

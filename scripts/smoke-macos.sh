@@ -41,8 +41,17 @@ for ATELIER_VIDEO in "$ATELIER_TEST_MEDIA"/*; do
   [ "$ATELIER_PLAYED" = yes ] || { echo "libmpv failed to render $ATELIER_VIDEO"; cat "$ATELIER_DIST/native-launch.log"; exit 1; }
   python3 - "$ATELIER_LOG" <<'PYTEST'
 import json,sys
-s=json.load(open(sys.argv[1]));assert s['frames']>10 and s['time']>0.15 and s['icc'] and s['codec'] and not s['error'];print('Native libmpv rendered:',s)
+s=json.load(open(sys.argv[1]));assert s['frames']>10 and s['time']>0.15 and s['icc'] and s['codec'] and s['surfaceVisible'] and s['surfaceWindow'] > 0 and not s['error'];print('Native libmpv rendered:',s)
 PYTEST
+  ATELIER_SURFACE_ID="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["surfaceWindow"])' "$ATELIER_LOG")"
+  ATELIER_CAPTURE="$ATELIER_DIST/mpv-$(basename "$ATELIER_VIDEO").png"
+  /usr/sbin/screencapture -x -l "$ATELIER_SURFACE_ID" "$ATELIER_CAPTURE"
+  case "$(basename "$ATELIER_VIDEO")" in
+    h264.mp4) ATELIER_EXPECTED=red ;;
+    hevc.mov) ATELIER_EXPECTED=green ;;
+    mpeg4.avi) ATELIER_EXPECTED=blue ;;
+  esac
+  swift "$ATELIER_ROOT/scripts/check-video-capture.swift" "$ATELIER_CAPTURE" "$ATELIER_EXPECTED"
   kill "$ATELIER_PID" 2>/dev/null || true
   wait "$ATELIER_PID" 2>/dev/null || true
 done

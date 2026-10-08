@@ -19,11 +19,26 @@
 @property(nonatomic,strong) NSMutableDictionary *properties;
 @end
 static AtelierMPVView *active;
+// A dedicated child surface avoids mixing an NSOpenGL drawable with WKWebView's
+// layer tree. It stays in the video viewport and never takes keyboard focus.
+@interface AtelierVideoWindow : NSWindow
+@end
+@implementation AtelierVideoWindow
+- (BOOL)canBecomeKeyWindow { return NO; }
+- (BOOL)canBecomeMainWindow { return NO; }
+@end
+static AtelierVideoWindow *surface;
+static NSRect screen_rect(NSWindow *parent,double x,double y,double w,double h) {
+    NSView *content=parent.contentView;
+    NSRect local=NSMakeRect(x,content.isFlipped?y:content.bounds.size.height-y-h,w,h);
+    return [parent convertRectToScreen:[content convertRect:local toView:nil]];
+}
 char *atelier_mpv_status(void);
 static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, name); }
 @implementation AtelierMPVView
 - (BOOL)acceptsFirstResponder { return NO; }
-- (void)reshape { [super reshape]; self.dirty=YES; }
+- (BOOL)isOpaque { return YES; }
+- (void)reshape { [super reshape]; [self.openGLContext update]; self.dirty=YES; }
 - (void)refreshProfile {
     NSData *data=self.window.screen.colorSpace.ICCProfileData;
     if (data && ![data isEqual:self.profile]) {
@@ -42,6 +57,7 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
         if (event->event_id==MPV_EVENT_NONE) break;
         if (event->event_id==MPV_EVENT_PROPERTY_CHANGE) {
             mpv_event_property *p=event->data;NSString *name=[NSString stringWithUTF8String:p->name];
+            if(!p->data)continue;
             if(p->format==MPV_FORMAT_DOUBLE)self.properties[name]=@(*(double *)p->data);
             else if(p->format==MPV_FORMAT_FLAG)self.properties[name]=@(*(int *)p->data);
             else if(p->format==MPV_FORMAT_STRING){char *v=*(char **)p->data;self.properties[name]=v?[NSString stringWithUTF8String:v]:@"";}
@@ -51,13 +67,20 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     }
     uint64_t updates=mpv_render_context_update(self.render);
     if (!(updates&MPV_RENDER_UPDATE_FRAME) && !self.dirty) return;
+    [self setNeedsDisplay:YES];
+    [self displayIfNeeded];
+}
+- (void)drawRect:(NSRect)dirtyRect {
+    if(!self.render)return;
+    [self.openGLContext makeCurrentContext];
     self.dirty=NO;
     NSRect r=[self convertRectToBacking:self.bounds];
     if(r.size.width<1||r.size.height<1)return;
     mpv_opengl_fbo fbo={0,(int)r.size.width,(int)r.size.height,0};
     int flip=1,block=0;
     mpv_render_param params[]={{MPV_RENDER_PARAM_OPENGL_FBO,&fbo},{MPV_RENDER_PARAM_FLIP_Y,&flip},{MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME,&block},{0,NULL}};
-    mpv_render_context_render(self.render,params);
+    int result=mpv_render_context_render(self.render,params);
+    if(result<0){self.error=[NSString stringWithUTF8String:mpv_error_string(result)];return;}
     self.frames++;
     const char *smoke=getenv("ATELIER_MPV_SMOKE_LOG");
     if(smoke && self.frames>10) {
@@ -71,7 +94,7 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
 }
 @end
 void atelier_mpv_close(void) {
-    if(!active)return;
+    if(active){
     [active.timer invalidate];active.timer=nil;
     [active.openGLContext makeCurrentContext];
     if(active.render)mpv_render_context_free(active.render);
@@ -79,18 +102,30 @@ void atelier_mpv_close(void) {
     if(active.player)mpv_terminate_destroy(active.player);
     active.player=NULL;
     [active removeFromSuperview];[active clearGLContext];active=nil;
+    }
+    [surface.parentWindow removeChildWindow:surface];
+    [surface orderOut:nil];[surface close];surface=nil;
 }
 int atelier_mpv_open(void *window_ptr,const char *path,double x,double y,double w,double h) {
     atelier_mpv_close();
     NSWindow *window=(__bridge NSWindow *)window_ptr;
     NSOpenGLPixelFormatAttribute attrs[]={NSOpenGLPFAOpenGLProfile,NSOpenGLProfileVersion3_2Core,NSOpenGLPFADoubleBuffer,NSOpenGLPFAColorSize,24,NSOpenGLPFAAlphaSize,8,0};
     NSOpenGLPixelFormat *format=[[NSOpenGLPixelFormat alloc]initWithAttributes:attrs];
-    active=[[AtelierMPVView alloc]initWithFrame:NSMakeRect(x,window.contentView.bounds.size.height-y-h,w,h) pixelFormat:format];
-    if(!active){return -100;}
+    if(!format)return -102;
+    surface=[[AtelierVideoWindow alloc]initWithContentRect:screen_rect(window,x,y,w,h) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO];
+    surface.releasedWhenClosed=NO;surface.opaque=YES;surface.backgroundColor=NSColor.blackColor;
+    surface.hasShadow=NO;surface.ignoresMouseEvents=YES;surface.level=window.level;
+    surface.collectionBehavior=NSWindowCollectionBehaviorFullScreenAuxiliary;
+    active=[[AtelierMPVView alloc]initWithFrame:NSMakeRect(0,0,w,h) pixelFormat:format];
+    if(!surface || !active || !active.openGLContext){atelier_mpv_close();return -100;}
     active.wantsBestResolutionOpenGLSurface=YES;
-    [window.contentView addSubview:active positioned:NSWindowAbove relativeTo:nil];
+    active.autoresizingMask=NSViewWidthSizable|NSViewHeightSizable;
+    surface.contentView=active;
+    [window addChildWindow:surface ordered:NSWindowAbove];
+    [surface orderFront:nil];
     [active.openGLContext setView:active];
     [active.openGLContext makeCurrentContext];
+    GLint opaque=1;[active.openGLContext setValues:&opaque forParameter:NSOpenGLContextParameterSurfaceOpacity];
     GLint interval=1;[active.openGLContext setValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
     active.player=mpv_create();if(!active.player){atelier_mpv_close();return -101;}
     const char *options[][2]={{"config","no"},{"terminal","no"},{"vo","libmpv"},{"hwdec","videotoolbox-copy"},{"icc-profile-auto","yes"},{"keep-open","yes"},{"input-default-bindings","no"},{"input-vo-keyboard","no"},{"audio-display","no"},{"access-references","no"},{"ytdl","no"},{"osc","no"},{"target-colorspace-hint","no"}};
@@ -113,7 +148,8 @@ int atelier_mpv_open(void *window_ptr,const char *path,double x,double y,double 
 }
 int atelier_mpv_rect(double x,double y,double w,double h) {
     if(!active)return -1;
-    [active setFrame:NSMakeRect(x,active.window.contentView.bounds.size.height-y-h,w,h)];active.dirty=YES;return 0;
+    [surface setFrame:screen_rect(surface.parentWindow,x,y,w,h) display:YES];
+    [active.openGLContext update];active.dirty=YES;return 0;
 }
 int atelier_mpv_control(const char *command,double value) {
     if(!active)return -1;
@@ -127,7 +163,7 @@ static NSString *strprop(const char *name){return active.properties[[NSString st
 char *atelier_mpv_status(void) {
     if(!active)return strdup("{}");
     double time=[active.properties[@"time-pos"] doubleValue],duration=[active.properties[@"duration"] doubleValue];int pause=[active.properties[@"pause"] intValue];
-    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
+    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"surfaceWindow":@(surface.windowNumber),@"surfaceVisible":@(surface.visible),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
     NSData *json=[NSJSONSerialization dataWithJSONObject:data options:0 error:nil];return strndup(json.bytes,json.length);
 }
 void atelier_mpv_free(char *ptr){free(ptr);}
