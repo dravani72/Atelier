@@ -1,3 +1,5 @@
+import {catalog,recipes} from './template-data.js';
+export {recipes};
 export const uid=()=>{
  if(globalThis.crypto.randomUUID)return globalThis.crypto.randomUUID();
  const bytes=globalThis.crypto.getRandomValues(new Uint8Array(16));
@@ -24,6 +26,10 @@ export function validate(w){
  for(const b of w.boards){
   if(typeof b.id!=='string'||typeof b.name!=='string'||b.name.length>1000||typeof b.description!=='string'||typeof b.color!=='string'||!Number.isFinite(b.updated)||!Array.isArray(b.cards)||!Array.isArray(b.edges))throw Error('Invalid board');
   if(!b.view||!['x','y','zoom'].every(k=>Number.isFinite(b.view[k]))||b.view.zoom<.2||b.view.zoom>2)throw Error('Invalid board view');
+  if(b.template&&(!safeId(b.template.id)||typeof b.template.version!=='string'))throw Error('Invalid template provenance');
+  if(b.projectFields&&(!b.projectFields||Array.isArray(b.projectFields)||Object.entries(b.projectFields).some(([k,v])=>!safeId(k)||typeof v!=='string'||v.length>10000)))throw Error('Invalid project fields');
+  if(b.projectId!==undefined&&!safeId(b.projectId))throw Error('Invalid project ID');
+  if(b.presentationOrder&&(!Array.isArray(b.presentationOrder)||b.presentationOrder.some(id=>!safeId(id))))throw Error('Invalid presentation order');
   const seen=new Set();let current=b;
   while(current){if(seen.has(current.id))throw Error('Board hierarchy contains a cycle');seen.add(current.id);if(current.parent!==null&&!ids.has(current.parent))throw Error('Missing parent board');current=w.boards.find(x=>x.id===current.parent);}
   const cs=new Set();
@@ -34,6 +40,7 @@ export function validate(w){
    if(c.assets!==undefined&&(!Array.isArray(c.assets)||c.assets.length>100||c.assets.some(a=>typeof a.name!=='string'||a.name.length>1024||typeof a.data!=='string'||!/^data:(image\/(png|jpeg|webp|gif)|application\/octet-stream|text\/plain);base64,[A-Za-z0-9+/=]*$/.test(a.data))))throw Error('Invalid model resources');
    if(c.preview&&!/^data:image\/png;base64,[A-Za-z0-9+/=]*$/.test(c.preview))throw Error('Invalid model preview');
    if(c.modelView&&Object.entries(c.modelView).some(([k,v])=>!['position','rotation','scale','camera','target'].includes(k)||!Array.isArray(v)||v.length!==3||v.some(n=>!Number.isFinite(n)||Math.abs(n)>100000000)))throw Error('Invalid model view');
+   if(c.localAttachment!==undefined&&!safeId(c.localAttachment))throw Error('Invalid managed attachment');
    if(c.localVideo!==undefined&&!safeId(c.localVideo))throw Error('Invalid managed video');
    cs.add(c.id);allCards.add(c.id);
   }
@@ -50,9 +57,22 @@ export const templates=[
  {id:'mood',name:'Moodboard',label:'Find the look. Set the feeling.',icon:'image'},
  {id:'writing',name:'Story development',label:'Characters, world, and structure.',icon:'pen'},
  {id:'campaign',name:'Creative campaign',label:'From the brief to the launch.',icon:'target'}
+,...catalog.templates.map(t=>({id:t.id,name:t.title,label:t.description,icon:'board',family:t.family,tags:t.tags,media:t.suggested_node_kinds}))
 ];
 export function applyTemplate(b,id){
+ const source=catalog.templates.find(t=>t.id===id);
+ if(source){
+  b.description=source.description;b.template={id:source.id,version:source.version};
+  b.projectFields=Object.fromEntries(source.project_fields.map(key=>[key,'']));
+  const map=new Map();
+  for(const section of source.sections){const c=card('column',section.x+60,section.y+50);c.title=section.label;c.w=section.width;c.h=section.height;c.color='stone';map.set(section.id,c.id);b.cards.push(c);}
+  for(const node of source.nodes){const section=source.sections.find(s=>s.id===node.section_id);const c=card('note',section.x+node.x+60,section.y+node.y+50);c.w=node.width;c.h=node.height;c.title=node.content.title;c.body=node.content.value||node.content.prompt;c.prompt=node.content.prompt;c.sectionId=map.get(node.section_id);map.set(node.id,c.id);b.cards.push(c);}
+  b.presentationOrder=source.presentation.order.map(id=>map.get(id));
+  b.edges.push(...source.edges.map(e=>({...e,id:uid(),from:map.get(e.from),to:map.get(e.to)})));
+  return b;
+ }
  if(id==='blank')return b;
+ if(!templates.some(t=>t.id===id))throw Error('Unknown template');
  const sections=({film:['The story','Visual direction','Production'],mood:['The feeling','Color & texture','References'],writing:['The premise','Characters','World & structure'],campaign:['The brief','Creative territory','Delivery']})[id];
  sections.forEach((s,i)=>{let h=card('heading',60+i*320,50);h.title=s;h.w=280;b.cards.push(h);let n=card(i===2?'task':'note',60+i*320,145);n.w=280;n.h=220;n.title=({film:['Logline','Visual language','Before the shoot'],mood:['Three words','Palette notes','Collect inspiration'],writing:['What changes?','The protagonist','Story beats'],campaign:['The challenge','The big idea','Launch checklist']})[id][i];n.body=({film:['One sentence. A character, a desire, and what stands in the way.','Light, lens, movement, contrast. What should the audience feel?',''],mood:['Describe the feeling you want to create.','Gather colors, materials, and lighting references.',''],writing:['Start with the central tension.','Want. Need. Contradiction. Cost.',''],campaign:['Who is this for? What should they think, feel, or do?','A strong idea in a single sentence.','']})[id][i];n.color=i===0?'sage':i===1?'sand':'paper';if(n.type==='task')n.items=['Research & references','First draft','Review & refine'].map(text=>({id:uid(),text,done:false}));b.cards.push(n);});return b;
 }
@@ -67,4 +87,13 @@ export function initial(){
  b.cards.push(h,n,k,p,bc);b.edges.push({id:uid(),from:n.id,to:k.id,label:'Make it happen'});
  const m=board('Story development');applyTemplate(m,'writing');
  return {version:1,active:b.id,boards:[b,sub,m]};
+}
+
+export function applyRecipe(w,id){
+ const recipe=recipes.find(r=>r.id===id);if(!recipe)throw Error('Unknown project recipe');
+ if(w.boards.length+recipe.template_ids.length+1>1000)throw Error('Too many boards');
+ const root=board(id.split('_').map(s=>s[0].toUpperCase()+s.slice(1)).join(' '));root.recipe={id,version:'1.0.0'};root.projectId=root.id;root.projectFields={project_title:root.name,owner:'',due_date:'',status:''};
+ w.boards.push(root);
+ recipe.template_ids.forEach((id,i)=>{const t=templates.find(t=>t.id===id),b=applyTemplate(board(t.name,root.id),id);b.projectId=root.id;w.boards.push(b);const c=card('board',60+(i%3)*300,60+Math.floor(i/3)*240);c.title=t.name;c.body=t.label;c.boardId=b.id;root.cards.push(c);});
+ w.active=root.id;return root;
 }

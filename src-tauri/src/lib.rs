@@ -1,3 +1,4 @@
+mod imports;
 #[cfg(feature = "desktop")]
 mod video;
 use rusqlite::{params, Connection};
@@ -117,6 +118,11 @@ pub fn validate(raw: &str) -> Result<Workspace, String> {
                 })
             {
                 return Err("Invalid card tags, tasks, or annotations".into());
+            }
+            if let Some(id) = card.get("localAttachment") {
+                if !id.as_str().is_some_and(safe_id) {
+                    return Err("Invalid managed attachment".into());
+                }
             }
             if let Some(id) = card.get("localVideo") {
                 if !id.as_str().is_some_and(safe_id) {
@@ -389,6 +395,8 @@ mod desktop {
                 open_link,
                 save_attachment,
                 crate::video::import_video,
+                crate::video::import_dropped_files,
+                crate::video::save_managed_attachment,
                 crate::video::video_open,
                 crate::video::video_rect,
                 crate::video::video_control,

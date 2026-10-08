@@ -36,3 +36,12 @@ Native interactive file dialogs, external-browser opening, Mac trackpad gestures
 No Developer ID signing, Apple notarization, clean-machine installation, Windows build, production performance profiling, accessibility audit, or large-workspace QA has been performed. The Mac build has a valid local ad-hoc signature and may require Gatekeeper approval after download. It is not a notarized commercial release.
 
 The application is local and single-user. Cloud synchronization, shared editing, and other hosted Milanote service features are outside this release's scope.
+
+
+## 0.4.0 template and native-drop validation
+
+- Node tests cover all 44 catalog adapters, section-relative geometry, fresh IDs, provenance, four recipe hierarchies, JSON round-tripping and managed-ID traversal rejection.
+- Playwright bridge tests cover catalog search/filtering, project fields, Retina Finder coordinate conversion, large-video references, generic original retrieval and persistence. These simulate native drag events; they are not a physical Finder automation test.
+- Rust tests exercise real source-to-managed copies, unchanged originals after source edits, large video imports without embedded previews, rejected folders/relative paths and bounded batch counts.
+- Existing browser canvas, advanced editing, storage, 3D viewer and native-video bridge regressions run before upload.
+- Apple Silicon artifact validation is recorded after the macOS CI build completes.

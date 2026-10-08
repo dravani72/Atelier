@@ -35,6 +35,43 @@ fn media_path(app: &AppHandle, id: &str) -> Result<PathBuf, String> {
     Ok(media_dir(app)?.join(id))
 }
 #[tauri::command]
+pub async fn import_dropped_files(app: AppHandle, paths: Vec<String>) -> Result<Value, String> {
+    let directory = media_dir(&app)?;
+    tauri::async_runtime::spawn_blocking(move || super::imports::import_paths(&paths, &directory))
+        .await
+        .map_err(|e| e.to_string())?
+}
+#[tauri::command]
+pub async fn save_managed_attachment(
+    app: AppHandle,
+    id: String,
+    name: String,
+) -> Result<bool, String> {
+    let source = media_path(&app, &id)?;
+    if !source.is_file() {
+        return Err("The original file is missing. Re-import it on this Mac.".into());
+    }
+    let name = std::path::Path::new(&name)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("attachment");
+    let Some(destination) = rfd::AsyncFileDialog::new()
+        .set_file_name(name)
+        .save_file()
+        .await
+    else {
+        return Ok(false);
+    };
+    let destination = destination.path().to_path_buf();
+    tauri::async_runtime::spawn_blocking(move || {
+        std::fs::copy(source, destination)
+            .map(|_| true)
+            .map_err(|e| e.to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+#[tauri::command]
 pub async fn import_video(app: AppHandle) -> Result<Option<Value>, String> {
     let Some(file) = rfd::AsyncFileDialog::new()
         .add_filter("Video", &["mov", "mp4", "m4v", "avi", "mkv", "webm", "mxf"])

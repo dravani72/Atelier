@@ -33,12 +33,12 @@ mkdir -p "$ATELIER_DMG_DIR"
 ATELIER_STAGE="$(mktemp -d)"
 ditto "$ATELIER_APP" "$ATELIER_STAGE/Atelier.app"
 ln -s /Applications "$ATELIER_STAGE/Applications"
-hdiutil create -ov -volname Atelier -srcfolder "$ATELIER_STAGE" -format UDZO "$ATELIER_DMG_DIR/Atelier_0.3.0_aarch64.dmg"
+hdiutil create -ov -volname Atelier -srcfolder "$ATELIER_STAGE" -format UDZO "$ATELIER_DMG_DIR/Atelier_0.4.0_aarch64.dmg"
 rm -rf "$ATELIER_STAGE"
 bash scripts/verify-macos.sh
 ATELIER_BUNDLE_ROOT="$ATELIER_ROOT/src-tauri/target/aarch64-apple-darwin/release/bundle"
 mkdir -p "$ATELIER_ROOT/dist/apple-silicon"
-ditto -c -k --sequesterRsrc --keepParent "$ATELIER_BUNDLE_ROOT/macos/Atelier.app" "$ATELIER_ROOT/dist/apple-silicon/Atelier_0.3.0_AppleSilicon.app.zip"
+ditto -c -k --sequesterRsrc --keepParent "$ATELIER_BUNDLE_ROOT/macos/Atelier.app" "$ATELIER_ROOT/dist/apple-silicon/Atelier_0.4.0_AppleSilicon.app.zip"
 find "$ATELIER_BUNDLE_ROOT/dmg" -maxdepth 1 -name '*.dmg' -exec cp {} "$ATELIER_ROOT/dist/apple-silicon/" \;
 (cd "$ATELIER_ROOT/dist/apple-silicon" && shasum -a 256 ./*.zip ./*.dmg > SHA256SUMS.txt)
 echo "Apple Silicon packages: $ATELIER_ROOT/dist/apple-silicon"

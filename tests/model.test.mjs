@@ -10,3 +10,13 @@ import {renderMarkdown} from '../ui/format.js';
 test('note formatting renders safely without executing imported HTML',()=>{const html=renderMarkdown('**Bold** and *italic*\n- list\n> quote\n<script>alert(1)</script>');assert.match(html,/<strong>Bold<\/strong>/);assert.match(html,/<em>italic<\/em>/);assert.match(html,/<li>list<\/li>/);assert.doesNotMatch(html,/<script>/);assert.match(html,/&lt;script&gt;/);});
 
 test('UUID generation falls back to WebKit-compatible cryptographic bytes',()=>{const original=globalThis.crypto.randomUUID;try{globalThis.crypto.randomUUID=undefined;const id=uid();assert.match(id,/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);}finally{globalThis.crypto.randomUUID=original;}});
+
+import {templates,recipes,applyRecipe} from '../ui/model.js';
+test('all 44 pack templates adapt relative section coordinates and instantiate independent IDs',()=>{
+ assert.equal(templates.filter(t=>t.id.startsWith('at-')).length,44);
+ const ids=new Set();for(const t of templates){const b=applyTemplate(board(t.name),t.id);validate({version:1,active:b.id,boards:[b]});for(const c of b.cards){assert.ok(!ids.has(c.id));ids.add(c.id);if(c.sectionId){const section=b.cards.find(s=>s.id===c.sectionId);assert.ok(section);assert.ok(c.x>=section.x&&c.y>=section.y&&c.x+c.w<=section.x+section.w&&c.y+c.h<=section.y+section.h);}}if(t.id.startsWith('at-')){assert.deepEqual(b.template,{id:t.id,version:'1.0.0'});assert.equal(b.presentationOrder.length,b.cards.filter(c=>c.type==='column').length);}}
+});
+test('four recipes create linked board hierarchies with pinned provenance and stable save/reload',()=>{
+ assert.equal(recipes.length,4);for(const recipe of recipes){const w=initial(),root=applyRecipe(w,recipe.id);assert.equal(root.cards.length,recipe.template_ids.length);assert.equal(w.active,root.id);for(const c of root.cards){const child=w.boards.find(b=>b.id===c.boardId);assert.equal(child.parent,root.id);assert.equal(child.projectId,root.id);assert.ok(recipe.template_ids.includes(child.template.id));}assert.deepEqual(validate(JSON.parse(JSON.stringify(w))),w);}
+});
+test('managed attachment identifiers cannot traverse directories',()=>{const w=initial();w.boards[0].cards[1].localAttachment='../private';assert.throws(()=>validate(w),/managed attachment/);});
