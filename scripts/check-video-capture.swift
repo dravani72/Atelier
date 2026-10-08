@@ -1,8 +1,9 @@
 // Inspect the actual window-server capture, rather than a decoder framebuffer.
 import AppKit
 let args = CommandLine.arguments
-guard args.count == 3, let image = NSBitmapImageRep(contentsOfFile: args[1]),
-      let color = image.colorAt(x: image.pixelsWide / 2, y: image.pixelsHigh / 2)?.usingColorSpace(.deviceRGB) else {
+guard args.count == 3, let data = try? Data(contentsOf: URL(fileURLWithPath: args[1])),
+      let image = NSBitmapImageRep(data: data),
+      let color = image.colorAt(x: image.pixelsWide / 2, y: image.pixelsHigh / 2)?.usingColorSpace(NSColorSpace.deviceRGB) else {
     fatalError("Cannot inspect native video window capture")
 }
 let channels = [color.redComponent, color.greenComponent, color.blueComponent]
