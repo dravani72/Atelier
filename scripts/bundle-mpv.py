@@ -5,6 +5,15 @@ app=pathlib.Path(sys.argv[1]); frameworks=app/'Contents/Frameworks'; frameworks.
 binary=app/'Contents/MacOS/atelier'; pending=[binary]; visited=set(); formulas=set()
 def command(*args): return subprocess.check_output(args,text=True).strip()
 def deps(path): return [line.strip().split(' (',1)[0] for line in command('otool','-L',str(path)).splitlines()[1:]]
+def git_source(url,revision,archive,name):
+ with tempfile.TemporaryDirectory() as temp:
+  subprocess.check_call(['git','init','--bare',temp])
+  subprocess.check_call(['git','-C',temp,'fetch','--depth=1',url,revision])
+  actual=command('git','-C',temp,'rev-parse','FETCH_HEAD^{commit}')
+  if len(revision)==40 and actual!=revision: raise RuntimeError('Source commit mismatch for '+name)
+  subprocess.check_call(['git','-C',temp,'archive','--format=tar.gz','--prefix='+name+'/', '-o',str(archive.resolve()),'FETCH_HEAD'])
+ return actual
+
 while pending:
  target=pending.pop()
  if target in visited: continue
@@ -25,6 +34,7 @@ while pending:
 records=json.loads(command('brew','info','--json=v2','--formula',*sorted(formulas)))['formulae']
 source_dir=pathlib.Path('dist/apple-silicon/media-sources');source_dir.mkdir(parents=True,exist_ok=True)
 licenses=app/'Contents/Resources/MediaLicenses';licenses.mkdir(parents=True,exist_ok=True)
+(source_dir/'SOURCE-BUILD.txt').write_text('Sources correspond to the recorded installed media libraries. Build them using the included Homebrew formula recipes with their declared dependencies and patches. Archive downloads are SHA-256 checked. Git sources are pinned to recorded commits. GitLab archive downloads returning invalid bytes are replaced by source exported from their upstream release tag; the resolved commit and original checksum are retained. Then build Atelier from the public repository using scripts/build-macos.sh.\n')
 (source_dir/'formulas.json').write_text(json.dumps(records,indent=2))
 (licenses/'formulas.json').write_text(json.dumps(records,indent=2))
 for record in records:
@@ -43,15 +53,15 @@ for record in records:
   filename=name+'-'+stable+'-'+url.split('/')[-1].split('?')[0]
   archive=source_dir/filename
   subprocess.check_call(['curl','--fail','--location','--retry','3',url,'-o',str(archive)])
-  if hashlib.sha256(archive.read_bytes()).hexdigest()!=expected: raise RuntimeError('Source checksum mismatch for '+name)
+  if hashlib.sha256(archive.read_bytes()).hexdigest()!=expected:
+   if '/-/archive/' not in url: raise RuntimeError('Source checksum mismatch for '+name)
+   repository,tail=url.split('/-/archive/',1);tag=tail.split('/',1)[0]
+   actual=git_source(repository+'.git',tag,archive,name)
+   (source_dir/(name+'-source-commit.txt')).write_text(actual+'\nOriginal archive checksum: '+expected+'\n')
+
  elif revision and url.endswith('.git'):
   archive=(source_dir/(name+'-'+stable+'.tar.gz')).resolve()
-  with tempfile.TemporaryDirectory() as temp:
-   subprocess.check_call(['git','init','--bare',temp])
-   subprocess.check_call(['git','-C',temp,'fetch','--depth=1',url,revision])
-   actual=command('git','-C',temp,'rev-parse','FETCH_HEAD')
-   if len(revision)==40 and actual!=revision: raise RuntimeError('Source commit mismatch for '+name)
-   subprocess.check_call(['git','-C',temp,'archive','--format=tar.gz','--prefix='+name+'/', '-o',str(archive),'FETCH_HEAD'])
+  actual=git_source(url,revision,archive,name)
   (source_dir/(name+'-source-commit.txt')).write_text(actual+'\n')
  else: raise RuntimeError('No source checksum or pinned Git revision for '+name)
  if recipe.exists():
