@@ -30,6 +30,7 @@ ffmpeg -v error -f lavfi -i color=c=green:s=320x180:r=24 -t 3 -c:v libx265 -tag:
 ffmpeg -v error -f lavfi -i color=c=blue:s=320x180:r=24 -t 3 -c:v mpeg4 "$ATELIER_TEST_MEDIA/mpeg4.avi"
 for ATELIER_VIDEO in "$ATELIER_TEST_MEDIA"/*; do
   ATELIER_LOG="$ATELIER_DIST/mpv-$(basename "$ATELIER_VIDEO").json"
+  rm -f "$ATELIER_LOG"
   ATELIER_MPV_SMOKE_FILE="$ATELIER_VIDEO" ATELIER_MPV_SMOKE_LOG="$ATELIER_LOG" "$ATELIER_BIN" >> "$ATELIER_DIST/native-launch.log" 2>&1 &
   ATELIER_PID=$!
   ATELIER_PLAYED=no
@@ -41,7 +42,7 @@ for ATELIER_VIDEO in "$ATELIER_TEST_MEDIA"/*; do
   [ "$ATELIER_PLAYED" = yes ] || { echo "libmpv failed to render $ATELIER_VIDEO"; cat "$ATELIER_DIST/native-launch.log"; exit 1; }
   python3 - "$ATELIER_LOG" <<'PYTEST'
 import json,sys
-s=json.load(open(sys.argv[1]));assert s['frames']>10 and s['time']>0.15 and s['icc'] and s['codec'] and not s['error'];print('Native libmpv rendered:',s)
+s=json.load(open(sys.argv[1]));assert s['frames']>10 and s['time']>0.15 and s['icc'] and s['codec'] and not s['error'];assert max(s['samplePixel'])-min(s['samplePixel'])>40;print('Native libmpv rendered:',s)
 PYTEST
   kill "$ATELIER_PID" 2>/dev/null || true
   wait "$ATELIER_PID" 2>/dev/null || true

@@ -16,6 +16,7 @@
 @property(nonatomic,copy) NSString *error;
 @property(nonatomic) NSUInteger frames;
 @property(nonatomic) BOOL dirty;
+@property(nonatomic,strong) NSArray *samplePixel;
 @property(nonatomic,strong) NSMutableDictionary *properties;
 @end
 static AtelierMPVView *active;
@@ -23,7 +24,19 @@ char *atelier_mpv_status(void);
 static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, name); }
 @implementation AtelierMPVView
 - (BOOL)acceptsFirstResponder { return NO; }
-- (void)reshape { [super reshape]; self.dirty=YES; }
+- (BOOL)isOpaque { return YES; }
+- (void)reshape {
+    [super reshape];
+    [self.openGLContext update];
+    self.dirty=YES;
+    [self setNeedsDisplay:YES];
+}
+- (void)viewDidMoveToWindow {
+    [super viewDidMoveToWindow];
+    [self.openGLContext update];
+    self.dirty=YES;
+    [self setNeedsDisplay:YES];
+}
 - (void)refreshProfile {
     NSData *data=self.window.screen.colorSpace.ICCProfileData;
     if (data && ![data isEqual:self.profile]) {
@@ -51,19 +64,36 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     }
     uint64_t updates=mpv_render_context_update(self.render);
     if (!(updates&MPV_RENDER_UPDATE_FRAME) && !self.dirty) return;
-    self.dirty=NO;
+    // Cocoa owns presentation: drawing outside drawRect can be overwritten by
+    // NSOpenGLView's default drawing when the WebView composites or resizes.
+    [self setNeedsDisplay:YES];
+}
+- (void)drawRect:(NSRect)dirtyRect {
+    if (!self.render) return;
+    [self.openGLContext makeCurrentContext];
+    [self.openGLContext update];
     NSRect r=[self convertRectToBacking:self.bounds];
     if(r.size.width<1||r.size.height<1)return;
     mpv_opengl_fbo fbo={0,(int)r.size.width,(int)r.size.height,0};
     int flip=1,block=0;
     mpv_render_param params[]={{MPV_RENDER_PARAM_OPENGL_FBO,&fbo},{MPV_RENDER_PARAM_FLIP_Y,&flip},{MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME,&block},{0,NULL}};
-    mpv_render_context_render(self.render,params);
+    int result=mpv_render_context_render(self.render,params);
+    if(result<0) {
+        self.error=[NSString stringWithFormat:@"Video rendering failed: %s",mpv_error_string(result)];
+        return;
+    }
+    self.dirty=NO;
     self.frames++;
     const char *smoke=getenv("ATELIER_MPV_SMOKE_LOG");
     if(smoke && self.frames>10) {
         double time=[self.properties[@"time-pos"] doubleValue];
         unsigned char pixel[4]={0};glReadPixels((int)r.size.width/2,(int)r.size.height/2,1,1,GL_RGBA,GL_UNSIGNED_BYTE,pixel);
-        if(time>0.15 && (pixel[0]+pixel[1]+pixel[2])>30 && self.profile.length>0) {
+        self.samplePixel=@[@(pixel[0]),@(pixel[1]),@(pixel[2])];
+        // The generated smoke clips are saturated RGB. Grey UI/background
+        // pixels must never count as successfully rendered video.
+        int hi=MAX(pixel[0],MAX(pixel[1],pixel[2]));
+        int lo=MIN(pixel[0],MIN(pixel[1],pixel[2]));
+        if(time>0.15 && hi-lo>40 && self.profile.length>0) {
             char *json=atelier_mpv_status();FILE *f=fopen(smoke,"w");if(f){fputs(json,f);fclose(f);}free(json);
         }
     }
@@ -87,9 +117,16 @@ int atelier_mpv_open(void *window_ptr,const char *path,double x,double y,double 
     NSOpenGLPixelFormat *format=[[NSOpenGLPixelFormat alloc]initWithAttributes:attrs];
     active=[[AtelierMPVView alloc]initWithFrame:NSMakeRect(x,window.contentView.bounds.size.height-y-h,w,h) pixelFormat:format];
     if(!active){return -100;}
+    // Tauri's WKWebView is layer-backed. Give the sibling OpenGL view its own
+    // layer so Cocoa composites its drawable above the WebView reliably.
+    active.wantsLayer=YES;
     active.wantsBestResolutionOpenGLSurface=YES;
     [window.contentView addSubview:active positioned:NSWindowAbove relativeTo:nil];
+    if(!active.openGLContext){atelier_mpv_close();return -102;}
     [active.openGLContext setView:active];
+    [active.openGLContext update];
+    GLint opaque=1;
+    [active.openGLContext setValues:&opaque forParameter:NSOpenGLContextParameterSurfaceOpacity];
     [active.openGLContext makeCurrentContext];
     GLint interval=1;[active.openGLContext setValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
     active.player=mpv_create();if(!active.player){atelier_mpv_close();return -101;}
@@ -127,7 +164,7 @@ static NSString *strprop(const char *name){return active.properties[[NSString st
 char *atelier_mpv_status(void) {
     if(!active)return strdup("{}");
     double time=[active.properties[@"time-pos"] doubleValue],duration=[active.properties[@"duration"] doubleValue];int pause=[active.properties[@"pause"] intValue];
-    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
+    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"icc":@(active.profile.length>0),@"samplePixel":active.samplePixel?:@[],@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
     NSData *json=[NSJSONSerialization dataWithJSONObject:data options:0 error:nil];return strndup(json.bytes,json.length);
 }
 void atelier_mpv_free(char *ptr){free(ptr);}
