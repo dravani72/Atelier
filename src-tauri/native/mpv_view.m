@@ -65,6 +65,7 @@ static void reset_gl_state(void) {
     NSData *data=self.window.screen.colorSpace.ICCProfileData;
     if (data && ![data isEqual:self.profile]) {
         self.profile=data;self.dirty=YES;
+        if(getenv("ATELIER_MPV_NO_ICC") && !strcmp(getenv("ATELIER_MPV_NO_ICC"),"yes"))return;
         mpv_byte_array bytes={(void *)data.bytes,data.length};
         mpv_render_param p={MPV_RENDER_PARAM_ICC_PROFILE,&bytes};
         if (mpv_render_context_set_parameter(self.render,p)<0) self.error=@"Display ICC profile could not be applied";
@@ -194,8 +195,10 @@ int atelier_mpv_open(void *window_ptr,const char *path,double x,double y,double 
     active.player=mpv_create();if(!active.player){atelier_mpv_close();return -101;}
     const char *options[][2]={{"config","no"},{"terminal","no"},{"vo","libmpv"},{"hwdec","no"},{"gpu-sw","yes"},{"icc-profile-auto","yes"},{"keep-open","yes"},{"input-default-bindings","no"},{"input-vo-keyboard","no"},{"audio-display","no"},{"access-references","no"},{"ytdl","no"},{"osc","no"},{"target-colorspace-hint","no"}};
     for(size_t i=0;i<sizeof(options)/sizeof(options[0]);i++)mpv_set_option_string(active.player,options[i][0],options[i][1]);
+    if(getenv("ATELIER_MPV_NO_ICC") && !strcmp(getenv("ATELIER_MPV_NO_ICC"),"yes"))mpv_set_option_string(active.player,"icc-profile-auto","no");
+    if(getenv("ATELIER_MPV_SMOKE_LOG"))mpv_set_option_string(active.player,"opengl-debug","yes");
     int result=mpv_initialize(active.player);if(result<0){atelier_mpv_close();return result;}
-    mpv_request_log_messages(active.player,"warn");
+    mpv_request_log_messages(active.player,getenv("ATELIER_MPV_SMOKE_LOG")?"debug":"warn");
     active.dirty=YES;active.error=@"";active.properties=[NSMutableDictionary dictionary];active.path=[NSString stringWithUTF8String:path];
     mpv_observe_property(active.player,100,"time-pos",MPV_FORMAT_DOUBLE);
     mpv_observe_property(active.player,101,"duration",MPV_FORMAT_DOUBLE);
@@ -226,7 +229,7 @@ static NSString *strprop(const char *name){return active.properties[[NSString st
 char *atelier_mpv_status(void) {
     if(!active)return strdup("{}");
     double time=[active.properties[@"time-pos"] doubleValue],duration=[active.properties[@"duration"] doubleValue];int pause=[active.properties[@"pause"] intValue];
-    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"displayProfile":active.window.screen.colorSpace.localizedName?:@"",@"videoFBO":@(active.videoFBO),@"targetFBO":@(active.targetFBO),@"sampleRGB":active.sampleRGB?:@[],@"surfaceWindow":@(surface.windowNumber),@"surfaceVisible":@(surface.visible),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
+    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"displayProfile":active.window.screen.colorSpace.localizedName?:@"",@"videoFBO":@(active.videoFBO),@"targetFBO":@(active.targetFBO),@"sampleRGB":active.sampleRGB?:@[],@"surfaceWindow":@(surface.windowNumber),@"surfaceVisible":@(surface.visible),@"icc":@(active.profile.length>0 && !(getenv("ATELIER_MPV_NO_ICC") && !strcmp(getenv("ATELIER_MPV_NO_ICC"),"yes"))),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
     NSData *json=[NSJSONSerialization dataWithJSONObject:data options:0 error:nil];return strndup(json.bytes,json.length);
 }
 void atelier_mpv_free(char *ptr){free(ptr);}
