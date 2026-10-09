@@ -31,11 +31,11 @@ jobs:
           targets: x86_64-apple-darwin
       - name: Build and verify Intel app and DMG
         run: bash scripts/build-macos.sh
-      - name: Native launch and libmpv playback smoke test
-        run: bash scripts/smoke-macos.sh
       - uses: actions/upload-artifact@v4
         with:
           name: Atelier-macOS-Intel
           path: dist/intel/
           if-no-files-found: error
           retention-days: 14
+      - name: Native launch and libmpv playback smoke test
+        run: bash scripts/smoke-macos.sh
