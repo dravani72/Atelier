@@ -192,7 +192,7 @@ int atelier_mpv_open(void *window_ptr,const char *path,double x,double y,double 
     GLint opaque=1;[active.openGLContext setValues:&opaque forParameter:NSOpenGLContextParameterSurfaceOpacity];
     GLint interval=1;[active.openGLContext setValues:&interval forParameter:NSOpenGLContextParameterSwapInterval];
     active.player=mpv_create();if(!active.player){atelier_mpv_close();return -101;}
-    const char *options[][2]={{"config","no"},{"terminal","no"},{"vo","libmpv"},{"hwdec","videotoolbox-copy"},{"icc-profile-auto","yes"},{"keep-open","yes"},{"input-default-bindings","no"},{"input-vo-keyboard","no"},{"audio-display","no"},{"access-references","no"},{"ytdl","no"},{"osc","no"},{"target-colorspace-hint","no"}};
+    const char *options[][2]={{"config","no"},{"terminal","no"},{"vo","libmpv"},{"hwdec","no"},{"gpu-sw","yes"},{"icc-profile-auto","yes"},{"keep-open","yes"},{"input-default-bindings","no"},{"input-vo-keyboard","no"},{"audio-display","no"},{"access-references","no"},{"ytdl","no"},{"osc","no"},{"target-colorspace-hint","no"}};
     for(size_t i=0;i<sizeof(options)/sizeof(options[0]);i++)mpv_set_option_string(active.player,options[i][0],options[i][1]);
     int result=mpv_initialize(active.player);if(result<0){atelier_mpv_close();return result;}
     mpv_request_log_messages(active.player,"warn");

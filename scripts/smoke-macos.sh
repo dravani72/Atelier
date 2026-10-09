@@ -41,7 +41,7 @@ for ATELIER_VIDEO in "$ATELIER_TEST_MEDIA"/*; do
   [ "$ATELIER_PLAYED" = yes ] || { echo "libmpv failed to render $ATELIER_VIDEO"; cat "$ATELIER_DIST/native-launch.log"; exit 1; }
   python3 - "$ATELIER_LOG" <<'PYTEST'
 import json,sys
-s=json.load(open(sys.argv[1]));assert s['frames']>10 and s['time']>0.15 and s['icc'] and s['codec'] and s['surfaceVisible'] and s['surfaceWindow'] > 0 and not s['error'];print('Native libmpv rendered:',s)
+s=json.load(open(sys.argv[1]));print('Native libmpv status:',s);assert s['frames']>10 and s['time']>0.15 and s['icc'] and s['codec'] and s['surfaceVisible'] and s['surfaceWindow'] > 0 and not s['error'],s
 PYTEST
   ATELIER_SURFACE_ID="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["surfaceWindow"])' "$ATELIER_LOG")"
   ATELIER_CAPTURE="$ATELIER_DIST/mpv-$(basename "$ATELIER_VIDEO").png"
