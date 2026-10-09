@@ -41,6 +41,19 @@ static NSRect screen_rect(NSWindow *parent,double x,double y,double w,double h) 
 }
 char *atelier_mpv_status(void);
 static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, name); }
+// The libmpv GL API requires standard state on entry; AppKit's drawing pass
+// and our texture/FBO allocation are allowed to change that state.
+static void reset_gl_state(void) {
+    glDisable(GL_BLEND);glDisable(GL_SCISSOR_TEST);glDisable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);glDisable(GL_CULL_FACE);glDisable(GL_FRAMEBUFFER_SRGB);
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glDepthMask(GL_TRUE);
+    glUseProgram(0);glBindVertexArray(0);glBindBuffer(GL_ARRAY_BUFFER,0);
+    glActiveTexture(GL_TEXTURE0);glBindTexture(GL_TEXTURE_2D,0);glBindSampler(0,0);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER,0);glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0);
+    glPixelStorei(GL_PACK_ROW_LENGTH,0);glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+    glPixelStorei(GL_PACK_ALIGNMENT,4);glPixelStorei(GL_UNPACK_ALIGNMENT,4);
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
+}
 @implementation AtelierMPVView
 - (BOOL)acceptsFirstResponder { return NO; }
 - (BOOL)isOpaque { return YES; }
@@ -86,6 +99,7 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     if(target)self.targetFBO=target;
     target=self.targetFBO;
     if(!self.render){
+        reset_gl_state();
         mpv_opengl_init_params gl={get_proc,NULL};
         mpv_render_param init[]={{MPV_RENDER_PARAM_API_TYPE,MPV_RENDER_API_TYPE_OPENGL},{MPV_RENDER_PARAM_OPENGL_INIT_PARAMS,&gl},{0,NULL}};
         mpv_render_context *context=NULL;int result=mpv_render_context_create(&context,self.player,init);
@@ -114,6 +128,7 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     mpv_opengl_fbo fbo={(int)self.videoFBO,(int)r.size.width,(int)r.size.height,GL_RGBA8};
     int flip=1,block=0;
     mpv_render_param params[]={{MPV_RENDER_PARAM_OPENGL_FBO,&fbo},{MPV_RENDER_PARAM_FLIP_Y,&flip},{MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME,&block},{0,NULL}};
+    reset_gl_state();
     int result=mpv_render_context_render(self.render,params);
     if(result<0){self.error=[NSString stringWithUTF8String:mpv_error_string(result)];return;}
     self.frames++;
@@ -202,7 +217,7 @@ static NSString *strprop(const char *name){return active.properties[[NSString st
 char *atelier_mpv_status(void) {
     if(!active)return strdup("{}");
     double time=[active.properties[@"time-pos"] doubleValue],duration=[active.properties[@"duration"] doubleValue];int pause=[active.properties[@"pause"] intValue];
-    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"videoFBO":@(active.videoFBO),@"targetFBO":@(active.targetFBO),@"sampleRGB":active.sampleRGB?:@[],@"surfaceWindow":@(surface.windowNumber),@"surfaceVisible":@(surface.visible),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
+    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"displayProfile":active.window.screen.colorSpace.localizedName?:@"",@"videoFBO":@(active.videoFBO),@"targetFBO":@(active.targetFBO),@"sampleRGB":active.sampleRGB?:@[],@"surfaceWindow":@(surface.windowNumber),@"surfaceVisible":@(surface.visible),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
     NSData *json=[NSJSONSerialization dataWithJSONObject:data options:0 error:nil];return strndup(json.bytes,json.length);
 }
 void atelier_mpv_free(char *ptr){free(ptr);}
