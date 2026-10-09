@@ -18,6 +18,9 @@
 @property(nonatomic) BOOL dirty;
 @property(nonatomic,copy) NSString *path;
 @property(nonatomic) GLint targetFBO;
+@property(nonatomic) GLuint videoFBO;
+@property(nonatomic) GLuint videoTexture;
+@property(nonatomic) NSSize videoSize;
 @property(nonatomic,strong) NSArray *sampleRGB;
 @property(nonatomic,strong) NSMutableDictionary *properties;
 @end
@@ -95,7 +98,20 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     self.dirty=NO;
     NSRect r=[self convertRectToBacking:self.bounds];
     if(r.size.width<1||r.size.height<1)return;
-    mpv_opengl_fbo fbo={target,(int)r.size.width,(int)r.size.height,0};
+    if(!self.videoFBO)glGenFramebuffers(1,&_videoFBO);
+    if(!self.videoTexture)glGenTextures(1,&_videoTexture);
+    glBindTexture(GL_TEXTURE_2D,self.videoTexture);
+    if(!NSEqualSizes(self.videoSize,r.size)){
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,(int)r.size.width,(int)r.size.height,0,GL_RGBA,GL_UNSIGNED_BYTE,NULL);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        self.videoSize=r.size;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER,self.videoFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,self.videoTexture,0);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);glReadBuffer(GL_COLOR_ATTACHMENT0);
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE){self.error=@"Video framebuffer is incomplete";return;}
+    mpv_opengl_fbo fbo={(int)self.videoFBO,(int)r.size.width,(int)r.size.height,GL_RGBA8};
     int flip=1,block=0;
     mpv_render_param params[]={{MPV_RENDER_PARAM_OPENGL_FBO,&fbo},{MPV_RENDER_PARAM_FLIP_Y,&flip},{MPV_RENDER_PARAM_BLOCK_FOR_TARGET_TIME,&block},{0,NULL}};
     int result=mpv_render_context_render(self.render,params);
@@ -104,13 +120,16 @@ static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, 
     const char *smoke=getenv("ATELIER_MPV_SMOKE_LOG");
     if(smoke && self.frames>10) {
         double time=[self.properties[@"time-pos"] doubleValue];
-        glBindFramebuffer(GL_READ_FRAMEBUFFER,target);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER,self.videoFBO);glReadBuffer(GL_COLOR_ATTACHMENT0);
         unsigned char pixel[4]={0};glReadPixels((int)r.size.width/2,(int)r.size.height/2,1,1,GL_RGBA,GL_UNSIGNED_BYTE,pixel);
         self.sampleRGB=@[@(pixel[0]),@(pixel[1]),@(pixel[2])];
         if(time>0.15 && (pixel[0]+pixel[1]+pixel[2])>30 && self.profile.length>0) {
             char *json=atelier_mpv_status();FILE *f=fopen(smoke,"w");if(f){fputs(json,f);fclose(f);}free(json);
         }
     }
+    glBindFramebuffer(GL_READ_FRAMEBUFFER,self.videoFBO);glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER,target);glDrawBuffer(target?GL_COLOR_ATTACHMENT0:GL_BACK);
+    glBlitFramebuffer(0,0,(int)r.size.width,(int)r.size.height,0,0,(int)r.size.width,(int)r.size.height,GL_COLOR_BUFFER_BIT,GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER,target);
     [self.openGLContext flushBuffer];mpv_render_context_report_swap(self.render);
 }
@@ -121,6 +140,8 @@ void atelier_mpv_close(void) {
     [active.openGLContext makeCurrentContext];
     if(active.render)mpv_render_context_free(active.render);
     active.render=NULL;
+    if(active.videoFBO){GLuint fbo=active.videoFBO;glDeleteFramebuffers(1,&fbo);}
+    if(active.videoTexture){GLuint texture=active.videoTexture;glDeleteTextures(1,&texture);}
     if(active.player)mpv_terminate_destroy(active.player);
     active.player=NULL;
     [active removeFromSuperview];[active clearGLContext];active=nil;
@@ -181,7 +202,7 @@ static NSString *strprop(const char *name){return active.properties[[NSString st
 char *atelier_mpv_status(void) {
     if(!active)return strdup("{}");
     double time=[active.properties[@"time-pos"] doubleValue],duration=[active.properties[@"duration"] doubleValue];int pause=[active.properties[@"pause"] intValue];
-    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"targetFBO":@(active.targetFBO),@"sampleRGB":active.sampleRGB?:@[],@"surfaceWindow":@(surface.windowNumber),@"surfaceVisible":@(surface.visible),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
+    NSDictionary *data=@{@"time":@(time),@"duration":@(duration),@"pause":@(pause),@"frames":@(active.frames),@"videoFBO":@(active.videoFBO),@"targetFBO":@(active.targetFBO),@"sampleRGB":active.sampleRGB?:@[],@"surfaceWindow":@(surface.windowNumber),@"surfaceVisible":@(surface.visible),@"icc":@(active.profile.length>0),@"error":active.error?:@"",@"codec":strprop("video-codec"),@"hwdec":strprop("hwdec-current"),@"primaries":strprop("video-params/primaries"),@"gamma":strprop("video-params/gamma"),@"matrix":strprop("video-params/colormatrix"),@"range":strprop("video-params/colorlevels"),@"width":strprop("width"),@"height":strprop("height")};
     NSData *json=[NSJSONSerialization dataWithJSONObject:data options:0 error:nil];return strndup(json.bytes,json.length);
 }
 void atelier_mpv_free(char *ptr){free(ptr);}
