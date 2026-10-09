@@ -468,3 +468,17 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
   .board-header{padding:20px}
   .card{break-inside:avoid;box-shadow:none}
 }
+
+/* Explicit user colors stay consistent across themes; unset colors use theme tokens. */
+.card .card-title,.card .card-body,.card .task-item,.card .board-sub{color:var(--card-ink,var(--ink))}
+.card .card-header{border-bottom:2px solid var(--label-fill,transparent)}
+.card .shape-body{background:var(--card-fill,var(--tint-stone));color:var(--card-ink,var(--ink))}
+.card .tag{background:var(--label-fill,var(--tag-bg));color:var(--label-ink,var(--muted))}
+.object-colors{padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.palette-picker{display:grid;gap:8px;margin:12px 0}.palette-picker label,.object-colors label{font-size:12px;color:var(--muted)}
+.palette-picker select,#color-target{background:var(--field);color:var(--ink);border:1px solid var(--line-2);border-radius:6px;padding:7px;width:100%}
+.palette-swatches{display:flex;gap:6px;flex-wrap:wrap}.palette-chip{width:28px;height:28px;border:1px solid var(--line-2);border-radius:6px;padding:0}
+.color-fields{display:flex;gap:12px;margin:15px 0}.color-fields label{display:flex;flex-direction:column;gap:6px}.color-fields input{width:50px;height:32px;padding:2px;border:1px solid var(--line-2);background:var(--field);border-radius:6px}
+.sketch-tools{flex-wrap:wrap}.sketch-tools label{display:flex;align-items:center;gap:6px}.sketch-tools input[type=color]{width:40px;height:30px}.sketch-tools button[aria-pressed=true]{background:var(--accent-soft);outline:1px solid var(--accent)}
+.card.heading .card-title,.card.heading .card-body{color:var(--card-ink,var(--ink))}
+#modal:has(#video-player){overflow:hidden}.model-dialog:has(#video-player) .native-video-stage{height:min(48vh,540px);min-height:220px}

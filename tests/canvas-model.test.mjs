@@ -3,6 +3,11 @@ import assert from 'node:assert/strict';
 import {board,card,validate,clone,uid,duplicateCards,removeCards,markdown} from '../ui/model.js';
 import * as C from '../ui/canvas-model.js';
 function workspace(){const b=board('Canvas');return {version:1,active:b.id,boards:[b]};}
+test('custom card colors survive JSON and reject CSS injection',()=>{
+ const w=workspace();w.boards[0].cards=[card('note')];w.boards[0].cards[0].style={fill:'#18181b',ink:'#ffffff',label:'#2563eb'};
+ assert.deepEqual(validate(clone(w)).boards[0].cards[0].style,w.boards[0].cards[0].style);
+ for(const style of [null,[],{fill:'red'},{fill:'#fff;position:fixed'},{unknown:'#ffffff'}]){const bad=clone(w);bad.boards[0].cards[0].style=style;assert.throws(()=>validate(bad));}
+});
 test('new canvas objects validate and malformed imports fail',()=>{
  const w=workspace(),b=w.boards[0];b.layers=[{id:uid(),name:'References',hidden:false,locked:false}];
  b.cards=['sticky','shape','frame','table'].map(t=>({...card(t),layerId:b.layers[0].id}));assert.equal(validate(w),w);

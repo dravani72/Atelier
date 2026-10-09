@@ -33,6 +33,7 @@ jobs:
           npm run test:advanced
           npm run test:timeline
           npm run test:canvas
+          npm run test:palettes
           npm run test:bridge
           node tests/video-bridge.mjs
           node tests/templates-drop.mjs

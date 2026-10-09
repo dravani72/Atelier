@@ -20,7 +20,7 @@ fn main() {
         println!("cargo:rustc-link-search=native={prefix}/lib");
         println!("cargo:rustc-link-lib=mpv");
         println!("cargo:rustc-link-lib=framework=AppKit");
-        println!("cargo:rustc-link-lib=framework=OpenGL");
+        println!("cargo:rustc-link-lib=framework=CoreGraphics");
         println!("cargo:rerun-if-changed=native/mpv_view.m");
         println!("cargo:rerun-if-env-changed=ATELIER_MPV_PREFIX");
     }

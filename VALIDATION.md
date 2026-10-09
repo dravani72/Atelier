@@ -75,3 +75,16 @@ Completed 2026-10-08 in a Linux container against the uncommitted working tree. 
 
 Not checked: WKWebView rendering and its native date picker, real Finder drops and trackpad gestures in the desktop app, very large boards, and boards with hundreds of clips.
 
+
+## Grey video, palettes and graphite icon
+
+The earlier 0.4.0 native checks counted frames and verified ICC availability; they did **not** establish that the window displayed correctly colored video. A grey framebuffer could satisfy the former pixel-sum check. Those checks are superseded by the captured-color checks below.
+
+- Software rendering replaces the grey-only OpenGL presentation. Libmpv converts into aligned `rgb0` memory; immutable sRGB-tagged CGImages are presented in a native Cocoa child surface. Preview conversion is capped at 1280 × 720, uses CPU decoding/conversion, and is intended for SDR viewing. Original video files are unchanged. HDR accuracy and demanding-codec performance are not established by these tests.
+- Apple Silicon packaging and native startup passed for source `9190fe405256f3f6119afa6a12b3c3e822d65df5` in [run 37865778797](https://github.com/dravani72/Atelier/actions/runs/37865778797). H.264, HEVC and MPEG-4 produced center RGB values `[252, 0, 0]`, `[0, 128, 0]` and `[0, 0, 255]`. WindowServer screen captures independently verified visible red, green and blue regions. Code signature, portable dependencies and DMG integrity checks passed.
+- Intel packaging and the same three captured-color playback checks passed for the same source in [run 37865778919](https://github.com/dravani72/Atelier/actions/runs/37865778919). The package retains macOS 15.0+; Apple Silicon retains macOS 14.0+.
+- 19 Node model tests and 12 real Rust/SQLite tests passed. Browser checks cover custom card fill/text/label colors, persistence and reset, drawing palettes, exact pixel colors, undo/redo, eraser, reopening an existing sketch and browser video cleanup. Existing editing, timeline, canvas and native-bridge regression suites passed. The playback mock is updated for the new ColorSync status and passes locally.
+- Icon PNGs, ICNS, ICO and SVG are regenerated from the bundled Geist sans font as a white A on graphite. The icon and light/dark palette layouts were visually inspected.
+- The Obsidian document is a design proposal only: no vault adapter, plugin, file watcher or vault write was implemented.
+
+Physical Mac interaction, long-video performance, every media codec and monitor-specific color accuracy still require user-machine acceptance checks.

@@ -70,6 +70,20 @@ fn validate_canvas(board: &Board) -> Result<(), String> {
         }
     }
     for card in &board.cards {
+        if let Some(style) = card.get("style") {
+            if !style.as_object().is_some_and(|fields| {
+                fields.iter().all(|(key, value)| {
+                    ["fill", "ink", "label"].contains(&key.as_str())
+                        && value.as_str().is_some_and(|color| {
+                            color.len() == 7
+                                && color.starts_with('#')
+                                && color[1..].bytes().all(|c| c.is_ascii_hexdigit())
+                        })
+                })
+            }) {
+                return Err("Invalid card colors".into());
+            }
+        }
         if card.get("locked").is_some_and(|v| !v.is_boolean()) {
             return Err("Invalid lock".into());
         }
@@ -603,6 +617,7 @@ mod tests {
         c["layerId"] = "creative".into();
         c["groupId"] = "group-1".into();
         c["locked"] = true.into();
+        c["style"] = serde_json::json!({"fill":"#18181b","ink":"#ffffff","label":"#2563eb"});
         w["boards"][0]["edges"][0]["style"] = "elbow".into();
         w["boards"][0]["edges"][0]["arrow"] = false.into();
         let parsed = validate(&w.to_string()).unwrap();
@@ -616,6 +631,16 @@ mod tests {
             serde_json::from_str::<serde_json::Value>(&store.load().unwrap().unwrap()).unwrap(),
             w
         );
+        for style in [
+            serde_json::json!({"fill":"#fff;position:fixed"}),
+            serde_json::json!({"fill":"red"}),
+            serde_json::json!({"unknown":"#ffffff"}),
+            serde_json::Value::Null,
+        ] {
+            let mut bad = w.clone();
+            bad["boards"][0]["cards"][0]["style"] = style;
+            assert!(store.save(&bad.to_string()).is_err());
+        }
         w["boards"][0]["cards"][0]["cells"] = serde_json::json!([["a"], ["b", "c"]]);
         assert!(validate(&w.to_string()).is_err());
         assert!(store.save(&w.to_string()).is_err());

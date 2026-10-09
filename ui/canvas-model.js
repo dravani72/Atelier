@@ -14,6 +14,7 @@ export function remap(copies,map,uid){const groups=new Map();for(const c of copi
 export function checkCanvas(b,safeId){
  if(b.layers!==undefined&&(!Array.isArray(b.layers)||b.layers.length>100||new Set(b.layers.map(l=>l.id)).size!==b.layers.length||b.layers.some(l=>!safeId(l.id)||typeof l.name!=='string'||l.name.length>1000||typeof l.hidden!=='boolean'||typeof l.locked!=='boolean')))throw Error('Invalid layers');
  for(const c of b.cards){
+  if(c.style!==undefined&&(!c.style||typeof c.style!=='object'||Array.isArray(c.style)||Object.entries(c.style).some(([k,v])=>!['fill','ink','label'].includes(k)||typeof v!=='string'||!/^#[0-9a-f]{6}$/i.test(v))))throw Error('Invalid card colors');
   if(c.locked!==undefined&&typeof c.locked!=='boolean')throw Error('Invalid lock');
   if(c.groupId!==undefined&&!safeId(c.groupId))throw Error('Invalid group');
   if(c.layerId!==undefined&&!b.layers?.some(l=>l.id===c.layerId))throw Error('Missing layer');
