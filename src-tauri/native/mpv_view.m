@@ -1,6 +1,5 @@
 #import <AppKit/AppKit.h>
 #import <OpenGL/gl3.h>
-#include <dlfcn.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -40,7 +39,11 @@ static NSRect screen_rect(NSWindow *parent,double x,double y,double w,double h) 
     return [parent convertRectToScreen:[content convertRect:local toView:nil]];
 }
 char *atelier_mpv_status(void);
-static void *get_proc(void *ctx, const char *name) { return dlsym(RTLD_DEFAULT, name); }
+static void *get_proc(void *ctx, const char *name) {
+    CFStringRef symbol=CFStringCreateWithCString(kCFAllocatorDefault,name,kCFStringEncodingASCII);
+    void *address=CFBundleGetFunctionPointerForName(CFBundleGetBundleWithIdentifier(CFSTR("com.apple.opengl")),symbol);
+    CFRelease(symbol);return address;
+}
 // The libmpv GL API requires standard state on entry; AppKit's drawing pass
 // and our texture/FBO allocation are allowed to change that state.
 static void reset_gl_state(void) {
@@ -81,6 +84,11 @@ static void reset_gl_state(void) {
             if(p->format==MPV_FORMAT_DOUBLE)self.properties[name]=@(*(double *)p->data);
             else if(p->format==MPV_FORMAT_FLAG)self.properties[name]=@(*(int *)p->data);
             else if(p->format==MPV_FORMAT_STRING){char *v=*(char **)p->data;self.properties[name]=v?[NSString stringWithUTF8String:v]:@"";}
+        }
+        if(event->event_id==MPV_EVENT_LOG_MESSAGE){
+            mpv_event_log_message *message=event->data;
+            fprintf(stderr,"libmpv [%s] %s",message->prefix,message->text);
+            if(message->log_level<=MPV_LOG_LEVEL_ERROR)self.error=[NSString stringWithUTF8String:message->text];
         }
         if(event->event_id==MPV_EVENT_COMMAND_REPLY && event->error<0)self.error=[NSString stringWithUTF8String:mpv_error_string(event->error)];
         if (event->event_id==MPV_EVENT_END_FILE) { mpv_event_end_file *end=event->data; if(end->error<0)self.error=[NSString stringWithUTF8String:mpv_error_string(end->error)]; }
@@ -187,6 +195,7 @@ int atelier_mpv_open(void *window_ptr,const char *path,double x,double y,double 
     const char *options[][2]={{"config","no"},{"terminal","no"},{"vo","libmpv"},{"hwdec","videotoolbox-copy"},{"icc-profile-auto","yes"},{"keep-open","yes"},{"input-default-bindings","no"},{"input-vo-keyboard","no"},{"audio-display","no"},{"access-references","no"},{"ytdl","no"},{"osc","no"},{"target-colorspace-hint","no"}};
     for(size_t i=0;i<sizeof(options)/sizeof(options[0]);i++)mpv_set_option_string(active.player,options[i][0],options[i][1]);
     int result=mpv_initialize(active.player);if(result<0){atelier_mpv_close();return result;}
+    mpv_request_log_messages(active.player,"warn");
     active.dirty=YES;active.error=@"";active.properties=[NSMutableDictionary dictionary];active.path=[NSString stringWithUTF8String:path];
     mpv_observe_property(active.player,100,"time-pos",MPV_FORMAT_DOUBLE);
     mpv_observe_property(active.player,101,"duration",MPV_FORMAT_DOUBLE);
