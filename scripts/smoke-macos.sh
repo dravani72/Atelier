@@ -30,10 +30,8 @@ ffmpeg -v error -f lavfi -i color=c=green:s=320x180:r=24 -t 3 -c:v libx265 -tag:
 ffmpeg -v error -f lavfi -i color=c=blue:s=320x180:r=24 -t 3 -c:v mpeg4 "$ATELIER_TEST_MEDIA/mpeg4.avi"
 ATELIER_FAILURE=no
 for ATELIER_VIDEO in "$ATELIER_TEST_MEDIA"/*; do
- for ATELIER_ICC in yes no; do
-  ATELIER_LOG="$ATELIER_DIST/mpv-$(basename "$ATELIER_VIDEO")-icc-$ATELIER_ICC.json"
-  ATELIER_NO_ICC=no; [ "$ATELIER_ICC" = yes ] || ATELIER_NO_ICC=yes
-  ATELIER_MPV_NO_ICC="$ATELIER_NO_ICC" ATELIER_MPV_SMOKE_FILE="$ATELIER_VIDEO" ATELIER_MPV_SMOKE_LOG="$ATELIER_LOG" "$ATELIER_BIN" >> "$ATELIER_DIST/native-launch.log" 2>&1 &
+  ATELIER_LOG="$ATELIER_DIST/mpv-$(basename "$ATELIER_VIDEO").json"
+  ATELIER_MPV_SMOKE_FILE="$ATELIER_VIDEO" ATELIER_MPV_SMOKE_LOG="$ATELIER_LOG" "$ATELIER_BIN" >> "$ATELIER_DIST/native-launch.log" 2>&1 &
   ATELIER_PID=$!
   ATELIER_PLAYED=no
   for ATELIER_ATTEMPT in {1..20}; do
@@ -42,13 +40,13 @@ for ATELIER_VIDEO in "$ATELIER_TEST_MEDIA"/*; do
     sleep 1
   done
   [ "$ATELIER_PLAYED" = yes ] || { echo "libmpv failed to render $ATELIER_VIDEO"; cat "$ATELIER_DIST/native-launch.log"; exit 1; }
-  if ! python3 - "$ATELIER_LOG" "$ATELIER_ICC" <<'PYTEST'
+  if ! python3 - "$ATELIER_LOG" <<'PYTEST'
 import json,sys
-s=json.load(open(sys.argv[1]));print('Native libmpv status:',s);assert s['frames']>10 and s['time']>0.15 and s['codec'] and s['surfaceVisible'] and s['surfaceWindow'] > 0 and s['icc']==(sys.argv[2]=='yes') and not s['error'],s
+s=json.load(open(sys.argv[1]));print('Native libmpv status:',s);assert s['frames']>10 and s['time']>0.15 and s['codec'] and s['surfaceVisible'] and s['surfaceWindow'] > 0 and s['renderer']=='software' and s['colorManagement']=='ColorSync sRGB' and not s['error'],s
 PYTEST
   then ATELIER_FAILURE=yes; fi
   ATELIER_SURFACE_ID="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["surfaceWindow"])' "$ATELIER_LOG")"
-  ATELIER_CAPTURE="$ATELIER_DIST/mpv-$(basename "$ATELIER_VIDEO")-icc-$ATELIER_ICC.png"
+  ATELIER_CAPTURE="$ATELIER_DIST/mpv-$(basename "$ATELIER_VIDEO").png"
   /usr/sbin/screencapture -x -l "$ATELIER_SURFACE_ID" "$ATELIER_CAPTURE"
   case "$(basename "$ATELIER_VIDEO")" in
     h264.mp4) ATELIER_EXPECTED=red ;;
@@ -56,13 +54,12 @@ PYTEST
     mpeg4.avi) ATELIER_EXPECTED=blue ;;
   esac
   if ! swift "$ATELIER_ROOT/scripts/check-video-capture.swift" "$ATELIER_CAPTURE" "$ATELIER_EXPECTED"; then
-    echo "Displayed pixels failed with ICC $ATELIER_ICC"
+    echo "Displayed pixels failed for $ATELIER_VIDEO"
     ATELIER_FAILURE=yes
   fi
   kill "$ATELIER_PID" 2>/dev/null || true
   wait "$ATELIER_PID" 2>/dev/null || true
- done
 done
 rm -rf "$ATELIER_TEST_MEDIA"
 [ "$ATELIER_FAILURE" = no ] || { tail -n 200 "$ATELIER_DIST/native-launch.log"; exit 1; }
-echo 'Native libmpv playback passed: H.264 MP4, HEVC MOV, MPEG-4 AVI, rendered pixels and display ICC profile.'
+echo 'Native libmpv playback passed: H.264 MP4, HEVC MOV, MPEG-4 AVI, software-rendered pixels and captured native display colors.'
