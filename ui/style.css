@@ -1,4 +1,4 @@
-/* Atelier — neutral graphite interface.
+/* Atelier — neutral graphite interface, with one pigment per card type.
    Every color comes from the tokens below; body.dark swaps the whole set. */
 
 @font-face{font-family:Geist;src:url(fonts/Geist-Variable.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
@@ -43,6 +43,28 @@
   --shadow:0 1px 2px rgba(24,24,27,.04),0 6px 20px rgba(24,24,27,.05);
   --shadow-lg:0 24px 64px rgba(24,24,27,.16);
 
+  /* Feature pigments: one per card type, used only on that type's icon.
+     -ink is the glyph color on a tinted tile and -on the glyph on a solid tile, where the pigment alone would not read. */
+  --k-note:#2563eb;
+  --k-task:#15803d;
+  --k-image:#c026d3;
+  --k-video:#dc2626;
+  --k-link:#0284c7;      --k-link-ink:#0369a1;
+  --k-board:#8b5cf6;     --k-board-ink:#7c3aed;
+  --k-column:#9a5b2b;
+  --k-heading:#27272a;
+  --k-sketch:#ea580c;    --k-sketch-ink:#c2410c;
+  --k-file:#64748b;
+  --k-model:#3730a3;     --k-model-ink:var(--k-model);   --k-model-on:var(--k-on);
+  --k-timeline:#db2777;
+  --k-sticky:#facc15;    --k-sticky-ink:#a16207;         --k-sticky-on:#18181b;
+  --k-shape:#9f1239;     --k-shape-ink:var(--k-shape);   --k-shape-on:var(--k-on);
+  --k-frame:#84cc16;     --k-frame-ink:#4d7c0f;          --k-frame-on:#18181b;
+  --k-table:#0d9488;     --k-table-ink:#0f766e;
+  --k-on:#ffffff;
+  --k-tint:15%;
+  --k-edge:rgba(24,24,27,.1);
+
   /* legacy name kept for markup/scripts that still reference it */
   --sage:var(--primary);
 }
@@ -79,6 +101,26 @@
   --tint-rose:#262020;
   --tint-border:#2e2e33;
 
+  --k-note:#6b8cff;
+  --k-task:#4ade80;
+  --k-image:#e879f9;
+  --k-video:#f87171;
+  --k-link:#38bdf8;      --k-link-ink:var(--k-link);
+  --k-board:#c4b5fd;     --k-board-ink:var(--k-board);
+  --k-column:#b98a68;
+  --k-heading:#e4e4e7;
+  --k-sketch:#fb923c;    --k-sketch-ink:var(--k-sketch);
+  --k-file:#94a3b8;
+  --k-model:#6366f1;     --k-model-ink:#818cf8;          --k-model-on:#ffffff;
+  --k-timeline:#f472b6;
+  --k-sticky:#facc15;    --k-sticky-ink:var(--k-sticky); --k-sticky-on:var(--k-on);
+  --k-shape:#e11d48;     --k-shape-ink:#fb5a7a;          --k-shape-on:#ffffff;
+  --k-frame:#a3e635;     --k-frame-ink:var(--k-frame);   --k-frame-on:var(--k-on);
+  --k-table:#2dd4bf;     --k-table-ink:var(--k-table);
+  --k-on:#131315;
+  --k-tint:22%;
+  --k-edge:rgba(255,255,255,.1);
+
   --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.3);
   --shadow-lg:0 24px 64px rgba(0,0,0,.55);
   color-scheme:dark;
@@ -95,6 +137,29 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 kbd{font-family:var(--mono)}
 svg.icon{width:18px;height:18px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .hidden{display:none!important}
+
+/* ---------- Feature marks ----------
+   Each card type owns one pigment. The add-card toolbar shows it at full strength, like a row of paint pans;
+   everywhere else the same hue is a quiet tint behind a colored glyph, so the board's content stays in front. */
+.kind-note{--k:var(--k-note)}
+.kind-task{--k:var(--k-task)}
+.kind-image{--k:var(--k-image)}
+.kind-video{--k:var(--k-video)}
+.kind-link{--k:var(--k-link);--ki:var(--k-link-ink)}
+.kind-board{--k:var(--k-board);--ki:var(--k-board-ink)}
+.kind-column{--k:var(--k-column)}
+.kind-heading{--k:var(--k-heading)}
+.kind-sketch{--k:var(--k-sketch);--ki:var(--k-sketch-ink)}
+.kind-file{--k:var(--k-file)}
+.kind-model{--k:var(--k-model);--ki:var(--k-model-ink);--ko:var(--k-model-on)}
+.kind-timeline{--k:var(--k-timeline)}
+.kind-sticky{--k:var(--k-sticky);--ki:var(--k-sticky-ink);--ko:var(--k-sticky-on)}
+.kind-shape{--k:var(--k-shape);--ki:var(--k-shape-ink);--ko:var(--k-shape-on)}
+.kind-frame{--k:var(--k-frame);--ki:var(--k-frame-ink);--ko:var(--k-frame-on)}
+.kind-table{--k:var(--k-table);--ki:var(--k-table-ink)}
+.kind-connect{--k:var(--ink-2)}
+.kind{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:22px;height:22px;border-radius:6px;color:var(--ki,var(--k));background:color-mix(in srgb,var(--k) var(--k-tint),transparent)}
+.kind .icon{width:14px;height:14px;stroke-width:1.8}
 
 /* ---------- Layout ---------- */
 #app{display:flex;height:100vh;overflow:hidden}
@@ -178,8 +243,8 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .card-header{position:relative;display:flex;align-items:center;gap:8px;padding:14px 16px 6px;cursor:grab;min-height:40px}
 .card-header:active{cursor:grabbing}
 .card-header:has(.card-title){min-width:0}
-.card-type{color:var(--muted);display:inline-flex}
-.card-type .icon{width:14px;height:14px}
+.card-type{width:20px;height:20px;border-radius:5px}
+.card-type .icon{width:13px;height:13px}
 .card-title{font-weight:600;font-size:14px;letter-spacing:-.01em;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .card-more{position:absolute;right:8px;top:11px;padding:0;width:24px;height:24px;border-radius:6px;opacity:0;color:var(--muted)}
 .card:hover .card-more{opacity:1}
@@ -215,8 +280,10 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .card-media{width:100%;height:100%;object-fit:cover;min-height:0;flex:1;background:var(--tint-stone)}
 .card.image .card-header,.card.sketch .card-header,.card.video .card-header{padding:9px 14px;min-height:36px;font-size:12px;order:2}
 .card.image .card-title,.card.sketch .card-title,.card.video .card-title{font-size:12px;font-weight:500}
+.card.image .card-type,.card.sketch .card-type,.card.video .card-type{width:18px;height:18px}
+.card.image .card-type .icon,.card.sketch .card-type .icon,.card.video .card-type .icon{width:12px;height:12px}
 .board-cover{margin:14px 14px 4px;flex:1;min-height:60px;border-radius:7px;background:var(--tint-stone);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
-.board-cover svg{width:36px;height:36px;color:var(--muted);stroke-width:1.2;z-index:1}
+.board-cover svg{width:36px;height:36px;color:var(--k-board-ink);stroke-width:1.2;z-index:1}
 .board-cover:before,.board-cover:after{content:'';position:absolute;width:30px;height:38px;background:var(--tint-sky);transform:rotate(-10deg) translate(-20px,-3px);border:2px solid var(--surface);border-radius:4px}
 .board-cover:after{transform:rotate(8deg) translate(20px,5px);background:var(--tint-sand)}
 .board-sub{font-size:11px;color:var(--muted);margin:0 16px 14px}
@@ -245,12 +312,17 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .canvas-marquee{position:absolute;pointer-events:none;border:1px solid var(--accent);background:var(--accent-soft);z-index:10000}
 
 /* ---------- Add-card toolbar ---------- */
-#tools{position:absolute;top:24px;left:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:12px;padding:4px;z-index:20;display:flex;flex-direction:column;gap:2px;max-height:calc(100% - 100px);overflow-y:auto;overflow-x:hidden}
-.tool{width:40px;height:40px;flex-shrink:0;border-radius:8px;color:var(--ink-2);position:relative}
-.tool:hover{background:var(--hover);color:var(--ink)}
-.tool.active{background:var(--active);color:var(--ink)}
+#tools{position:absolute;top:24px;left:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:14px;padding:7px;z-index:20;display:flex;flex-direction:column;gap:6px;max-height:calc(100% - 100px);overflow-y:auto;overflow-x:hidden}
+.tool{width:34px;height:34px;flex-shrink:0;border-radius:9px;padding:0;position:relative}
+.tool:hover,.tool.active{background:none}
 .tool:hover:after{display:none}
-.tool-separator{height:1px;background:var(--line);margin:4px 8px;flex-shrink:0}
+.tool .kind{width:100%;height:100%;border-radius:inherit;background:var(--k);color:var(--ko,var(--k-on));box-shadow:inset 0 0 0 1px var(--k-edge);transition:box-shadow .15s}
+.tool .kind .icon{width:18px;height:18px}
+.tool:hover .kind,.tool:focus-visible .kind{box-shadow:inset 0 0 0 1px var(--k-edge),0 0 0 2px var(--surface),0 0 0 4px color-mix(in srgb,var(--k) 55%,transparent)}
+/* Connect is a mode, not a card type, so it stays graphite: outlined at rest, filled while it is on. */
+.tool .kind-connect{background:none;color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--line-2)}
+.tool.active .kind-connect{background:var(--primary);color:var(--on-primary);box-shadow:none}
+.tool-separator{height:1px;background:var(--line);margin:1px 5px;flex-shrink:0}
 
 /* ---------- Canvas footer ---------- */
 .canvas-bottom{position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;z-index:20}
@@ -271,7 +343,8 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 /* ---------- Inspector ---------- */
 #inspector{width:288px;min-width:288px;border-left:1px solid var(--line);background:var(--surface);overflow:auto;padding:20px}
 .inspector-head{display:flex;justify-content:space-between;align-items:center;margin:-4px 0 20px}
-.inspector-head span{font-size:13px;font-weight:600;color:var(--ink);text-transform:capitalize}
+.inspector-kind{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:var(--ink);text-transform:capitalize}
+.inspector-head>span:not(.inspector-kind){font-size:13px;font-weight:600;color:var(--ink);text-transform:capitalize}
 .field{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
 .field label,.label{font-size:12px;font-weight:500;color:var(--muted)}
 .field input,.field textarea,.field select,.text-input{width:100%;padding:8px 11px;min-height:36px;border:1px solid var(--line-2);border-radius:8px;background:var(--field);color:var(--ink);font-size:13px}
@@ -331,6 +404,8 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .export-option small{display:block;color:var(--muted);margin-top:4px;font-size:12px}
 .search-results{margin-top:14px;max-height:400px;overflow:auto}
 .search-result{display:flex;justify-content:flex-start;gap:12px;width:100%;padding:12px 8px;border-bottom:1px solid var(--line);border-radius:0;text-align:left}
+.search-result .kind{width:30px;height:30px;border-radius:8px}
+.search-result .kind .icon{width:16px;height:16px}
 .search-result strong{font-size:13px;font-weight:600;display:block}
 .search-result small{font-size:12px;color:var(--muted);display:block;margin-top:3px}
 .shortcuts{display:grid;grid-template-columns:1fr auto;gap:14px;font-size:13px}
@@ -394,7 +469,7 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .tl-item:not(.marker):hover,.tl-item:not(.marker).active{overflow:visible;z-index:4}
 .tl-item:not(.marker):hover .tl-text,.tl-item:not(.marker).active .tl-text{flex-shrink:0;align-self:stretch;margin-right:-9px;padding-right:9px;border-radius:0 4px 4px 0;background:inherit;box-shadow:5px 0 8px -4px rgba(0,0,0,.25)}
 .tl-item img{height:100%;aspect-ratio:1;object-fit:cover;flex-shrink:0;border-radius:4px 0 0 4px}
-.tl-kind{display:inline-flex;color:var(--muted);margin-left:8px;flex-shrink:0}
+.tl-kind{display:inline-flex;color:var(--ki,var(--k,var(--muted)));margin-left:8px;flex-shrink:0}
 .tl-kind .icon{width:13px;height:13px}
 .tl-text{display:flex;flex-direction:column;justify-content:center;min-width:0;line-height:1.25}
 .tl-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -420,6 +495,8 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .tl-row-head{display:flex;align-items:center;gap:4px;margin-bottom:6px}
 .tl-row-name{flex:1;min-width:0;justify-content:flex-start;padding:4px;border-radius:5px;font-size:12px;font-weight:600}
 .tl-row-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-row-name{gap:7px}
+.tl-row-name .kind{width:20px;height:20px;border-radius:5px}
 .tl-row-name .icon,.tl-row-remove .icon{width:13px;height:13px}
 .tl-row-remove{width:24px;height:24px;border-radius:5px;color:var(--muted)}
 .tl-row input{padding:6px;border:1px solid var(--line-2);border-radius:5px;background:var(--field);color:var(--ink);font-size:12px;font-variant-numeric:tabular-nums}
