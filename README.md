@@ -9,7 +9,9 @@ A standalone visual workspace for creative projects. Original interface inspired
 - Freeform boards with drag, resize, zoom, pan, fit-to-content, and optional grid snapping.
 - Notes with Markdown bold, italic, headings, lists, quotes, and inline code; headings, checklists with progress, images, video, files, links, sketches, columns, and nested board cards.
 - Columns act as visual containers: dragging a column also moves cards fully inside it.
-- Card colors, tags, personal annotations, moving between boards, multi-selection, alignment, and grid arrangement.
+- Every card type has its own color: its toolbar icon, its icon tile, and the shade of the card itself. A card can also be set to plain or a named tint.
+- Each board can sit on any backing color, from presets, the system color picker, or a hex value. Cards keep the app's theme, headings and connectors switch to an ink that reads on the backing, and a card type whose shade would sit too close to it deepens.
+- Tags, personal annotations, moving between boards, multi-selection, alignment, and grid arrangement.
 - Directed connectors with editable labels; delete and duplication preserve connection integrity.
 - Timeline cards that run left to right in timecode or calendar dates, with any card on the board connected as a clip or marker.
 - Workspace-wide search across board titles, notes, tasks, tags, links, and annotations.

@@ -40,7 +40,7 @@ These are real gaps, not buttons backed by placeholders. They require further im
 | Tables | Plain text cells; no formulas, merged cells, sorting/filtering or spreadsheet import | Formula engine, typed cell model, table operations and import/export contracts. |
 | Structured planning | Templates/columns are available; no dedicated Kanban, mind-map, user-story-map or dependency engine | Explicit data models, keyboard branch creation, layout rules and task-card semantics. |
 | Drawing and image editing | Sketch cards are available; no continuous board pen/highlighter/eraser, image crop or editable image markup | Vector strokes, hit testing, stroke undo and raster export composition. |
-| Object styling | Six colors and three shapes; no arbitrary color, opacity, rotation or expanded diagram symbol libraries | Style schema, handles and inspector controls with matching export renderers. |
+| Object styling | Cards take their type's shade, or plain, or one of five named tints; boards take any backing color; three shapes. No arbitrary card color, opacity, rotation or expanded diagram symbol libraries | Style schema, handles and inspector controls with matching export renderers. |
 | Advanced layout | Reflow is explicit; no automatic insertion/reordering in columns, smart guides or sticky clustering | Drop-target insertion, live layout and cluster rules. |
 | Comments and review | Local annotations only; no threads, resolve/reopen, mentions, notifications or approval status | Review schema and local UI; identity and delivery services for shared reviews. |
 | Facilitation | Local frame presentation; no timer, voting, reactions, private brainstorm mode or breakout sessions | Workshop state and facilitator UI; multi-user session service for shared activity. |

@@ -16,7 +16,8 @@
     "build:mac": "bash scripts/build-macos.sh",
     "verify:mac": "bash scripts/verify-macos.sh",
     "build:ui": "node scripts/build-ui.mjs",
-    "test:canvas": "node tests/canvas-ui.mjs"
+    "test:canvas": "node tests/canvas-ui.mjs",
+    "test:backing": "node tests/backing-ui.mjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

@@ -79,6 +79,8 @@ export function createCanvasUX(a){
   const frames=a.board().cards.filter(c=>c.type==='frame'&&C.visible(a.board(),c));if(!frames.length){a.toast('Add a frame, or use Frame selection, to present.');return;}
   presentation={frames,index:0,view:clone(a.board().view),focus:document.activeElement};
   const overlay=document.createElement('div');overlay.id='canvas-presentation';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Frame presentation');
+  // Present on the board's own backing: carry over the color variables the app set on the canvas.
+  const canvas=$('#canvas');overlay.classList.toggle('has-backing',canvas.classList.contains('has-backing'));for(const name of canvas.style)if(name.startsWith('--'))overlay.style.setProperty(name,canvas.style.getPropertyValue(name));
   overlay.innerHTML='<div id="presentation-stage"></div><div class="presentation-controls"><button id="presentation-prev" class="button">Previous</button><span id="presentation-title"></span><button id="presentation-next" class="button">Next</button><button id="presentation-close" class="button">Exit presentation · Esc</button></div>';document.body.append(overlay);
   $('#presentation-prev').onclick=()=>slide(-1);$('#presentation-next').onclick=()=>slide(1);$('#presentation-close').onclick=exit;$('#presentation-close').focus();paintSlide();
  }

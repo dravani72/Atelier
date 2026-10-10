@@ -62,8 +62,14 @@
   --k-frame:#84cc16;     --k-frame-ink:#4d7c0f;          --k-frame-on:#18181b;
   --k-table:#0d9488;     --k-table-ink:#0f766e;
   --k-on:#ffffff;
-  --k-tint:15%;
+  --k-tint:15%;          /* pigment behind a tinted icon tile */
+  --k-shade:18%;         /* pigment in a card that takes its type's shade */
+  --k-shade-bright:45%;  /* the same for sticky notes, whose pigment is pale to begin with */
   --k-edge:rgba(24,24,27,.1);
+
+  /* Ink for things drawn straight on the board rather than on a card. A custom backing replaces both. */
+  --on-canvas:var(--ink);
+  --on-canvas-muted:var(--muted);
 
   /* legacy name kept for markup/scripts that still reference it */
   --sage:var(--primary);
@@ -119,7 +125,12 @@
   --k-table:#2dd4bf;     --k-table-ink:var(--k-table);
   --k-on:#131315;
   --k-tint:22%;
+  --k-shade:18%;
+  --k-shade-bright:26%;
   --k-edge:rgba(255,255,255,.1);
+
+  --on-canvas:var(--ink);
+  --on-canvas-muted:var(--muted);
 
   --shadow:0 1px 2px rgba(0,0,0,.35),0 10px 28px rgba(0,0,0,.3);
   --shadow-lg:0 24px 64px rgba(0,0,0,.55);
@@ -140,25 +151,27 @@ svg.icon{width:18px;height:18px;stroke:currentColor;stroke-width:1.6;fill:none;s
 
 /* ---------- Feature marks ----------
    Each card type owns one pigment. The add-card toolbar shows it at full strength, like a row of paint pans;
-   everywhere else the same hue is a quiet tint behind a colored glyph, so the board's content stays in front. */
-.kind-note{--k:var(--k-note)}
-.kind-task{--k:var(--k-task)}
-.kind-image{--k:var(--k-image)}
-.kind-video{--k:var(--k-video)}
-.kind-link{--k:var(--k-link);--ki:var(--k-link-ink)}
-.kind-board{--k:var(--k-board);--ki:var(--k-board-ink)}
-.kind-column{--k:var(--k-column)}
-.kind-heading{--k:var(--k-heading)}
-.kind-sketch{--k:var(--k-sketch);--ki:var(--k-sketch-ink)}
-.kind-file{--k:var(--k-file)}
-.kind-model{--k:var(--k-model);--ki:var(--k-model-ink);--ko:var(--k-model-on)}
-.kind-timeline{--k:var(--k-timeline)}
-.kind-sticky{--k:var(--k-sticky);--ki:var(--k-sticky-ink);--ko:var(--k-sticky-on)}
-.kind-shape{--k:var(--k-shape);--ki:var(--k-shape-ink);--ko:var(--k-shape-on)}
-.kind-frame{--k:var(--k-frame);--ki:var(--k-frame-ink);--ko:var(--k-frame-on)}
-.kind-table{--k:var(--k-table);--ki:var(--k-table-ink)}
-.kind-connect{--k:var(--ink-2)}
-.kind{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:22px;height:22px;border-radius:6px;color:var(--ki,var(--k));background:color-mix(in srgb,var(--k) var(--k-tint),transparent)}
+   everywhere else the same hue is a quiet tint behind a colored glyph, so the board's content stays in front.
+   --k is the pigment, --ki the glyph on a tint, --ko the glyph on the solid pigment, and --ks how much pigment goes
+   into a card's shade. The app sets --s-<type> on the canvas when a shade must deepen to stand apart from the backing. */
+.kind-note{--k:var(--k-note);--ki:var(--k-note);--ko:var(--k-on);--ks:var(--s-note,var(--k-shade))}
+.kind-task{--k:var(--k-task);--ki:var(--k-task);--ko:var(--k-on);--ks:var(--s-task,var(--k-shade))}
+.kind-image{--k:var(--k-image);--ki:var(--k-image);--ko:var(--k-on);--ks:var(--s-image,var(--k-shade))}
+.kind-video{--k:var(--k-video);--ki:var(--k-video);--ko:var(--k-on);--ks:var(--s-video,var(--k-shade))}
+.kind-link{--k:var(--k-link);--ki:var(--k-link-ink);--ko:var(--k-on);--ks:var(--s-link,var(--k-shade))}
+.kind-board{--k:var(--k-board);--ki:var(--k-board-ink);--ko:var(--k-on);--ks:var(--s-board,var(--k-shade))}
+.kind-column{--k:var(--k-column);--ki:var(--k-column);--ko:var(--k-on);--ks:var(--s-column,var(--k-shade))}
+.kind-heading{--k:var(--k-heading);--ki:var(--k-heading);--ko:var(--k-on);--ks:var(--s-heading,var(--k-shade))}
+.kind-sketch{--k:var(--k-sketch);--ki:var(--k-sketch-ink);--ko:var(--k-on);--ks:var(--s-sketch,var(--k-shade))}
+.kind-file{--k:var(--k-file);--ki:var(--k-file);--ko:var(--k-on);--ks:var(--s-file,var(--k-shade))}
+.kind-model{--k:var(--k-model);--ki:var(--k-model-ink);--ko:var(--k-model-on);--ks:var(--s-model,var(--k-shade))}
+.kind-timeline{--k:var(--k-timeline);--ki:var(--k-timeline);--ko:var(--k-on);--ks:var(--s-timeline,var(--k-shade))}
+.kind-sticky{--k:var(--k-sticky);--ki:var(--k-sticky-ink);--ko:var(--k-sticky-on);--ks:var(--s-sticky,var(--k-shade-bright))}
+.kind-shape{--k:var(--k-shape);--ki:var(--k-shape-ink);--ko:var(--k-shape-on);--ks:var(--s-shape,var(--k-shade))}
+.kind-frame{--k:var(--k-frame);--ki:var(--k-frame-ink);--ko:var(--k-frame-on);--ks:var(--s-frame,var(--k-shade))}
+.kind-table{--k:var(--k-table);--ki:var(--k-table-ink);--ko:var(--k-on);--ks:var(--s-table,var(--k-shade))}
+.kind-connect{--k:var(--ink-2);--ki:var(--ink-2);--ko:var(--on-primary)}
+.kind{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:22px;height:22px;border-radius:6px;color:var(--ki);background:color-mix(in srgb,var(--k) var(--k-tint),transparent)}
 .kind .icon{width:14px;height:14px;stroke-width:1.8}
 
 /* ---------- Layout ---------- */
@@ -222,22 +235,42 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 
 /* ---------- Canvas ---------- */
 #canvas{position:relative;flex:1;overflow:hidden;border-top:1px solid var(--line);background-color:var(--canvas);background-image:radial-gradient(var(--dot) 1px,transparent 1.3px);background-size:22px 22px;background-position:11px 11px;outline:none;touch-action:none}
+/* ---------- Board backing ----------
+   A board can sit on any color. Cards stay in the app's theme, so they read the same on every board; the app puts the
+   backing in --canvas and the ink that reads on it in --on-canvas, and everything drawn straight on the board (dots,
+   connectors, headings, hints) is mixed from those two. Card shades deepen separately; see --s-<type> above. */
+#canvas.has-backing,#canvas-presentation.has-backing{--dot:color-mix(in srgb,var(--on-canvas) 16%,var(--canvas));--connector:color-mix(in srgb,var(--on-canvas) 60%,var(--canvas));--on-canvas-muted:color-mix(in srgb,var(--on-canvas) 68%,var(--canvas))}
+.backing-dot{width:16px;height:16px;border-radius:50%;background:var(--canvas);box-shadow:inset 0 0 0 1px var(--k-edge),0 0 0 1.5px var(--line-2)}
+#backing-pop{position:fixed;z-index:80;width:268px;padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg)}
+.backing-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.backing-swatch,.backing-swatch:hover{aspect-ratio:1;padding:0;border-radius:50%;background:var(--b);box-shadow:inset 0 0 0 1px var(--k-edge)}
+.backing-swatch.active{box-shadow:inset 0 0 0 1px var(--k-edge),0 0 0 2px var(--surface),0 0 0 3.5px var(--ink)}
+.backing-custom{display:flex;gap:8px}
+.backing-custom input[type=color]{width:36px;height:36px;flex-shrink:0;padding:3px;border:1px solid var(--line-2);border-radius:8px;background:var(--field);cursor:pointer}
+.backing-custom .text-input{font-family:var(--mono);font-size:12px}
+#backing-default{align-self:flex-start}
 #world{position:absolute;left:0;top:0;transform-origin:0 0}
 #cards{position:absolute;top:0;left:0}
 #edges{position:absolute;overflow:visible;width:1px;height:1px;z-index:1}
 .edge-path{fill:none;stroke:var(--connector);stroke-width:1.4;pointer-events:stroke;cursor:pointer}
-.edge-label{font-size:11px;fill:var(--muted);cursor:pointer}
+.edge-label{font-size:11px;fill:var(--on-canvas-muted);cursor:pointer}
+#edges marker path{fill:var(--connector)}
 
 /* ---------- Cards ---------- */
-.card{position:absolute;border:1px solid var(--line);background:var(--surface);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;user-select:none;z-index:2}
+/* A card takes the shade of its own type unless it is set to Plain or one of the named tints.
+   --card is the fill, --card-line its edge and inner rules, --card-fill quiet panels inside it, --card-strong outlines in its color. */
+.card{--card:color-mix(in srgb,var(--k) var(--ks),var(--surface));--card-line:color-mix(in srgb,var(--k) 30%,var(--surface));--card-fill:color-mix(in srgb,var(--k) 10%,transparent);--card-strong:var(--ki);position:absolute;border:1px solid var(--card-line);background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;user-select:none;z-index:2}
 .card.selected{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),var(--shadow)}
-.card.color-sage{background:var(--tint-sage);border-color:var(--tint-border)}
-.card.color-sand{background:var(--tint-sand);border-color:var(--tint-border)}
-.card.color-rose{background:var(--tint-rose);border-color:var(--tint-border)}
-.card.color-sky{background:var(--tint-sky);border-color:var(--tint-border)}
-.card.color-stone{background:var(--tint-stone);border-color:var(--tint-border)}
+.card.color-plain{--card:var(--surface);--card-line:var(--line);--card-fill:var(--tint-stone);--card-strong:var(--ink-2)}
+.card.color-sage,.card.color-sand,.card.color-rose,.card.color-sky,.card.color-stone{--card-line:var(--tint-border);--card-fill:color-mix(in srgb,var(--ink) 5%,transparent);--card-strong:var(--ink-2)}
+.card.color-sage{--card:var(--tint-sage)}
+.card.color-sand{--card:var(--tint-sand)}
+.card.color-rose{--card:var(--tint-rose)}
+.card.color-sky{--card:var(--tint-sky)}
+.card.color-stone{--card:var(--tint-stone)}
 .card.selected[class*=color-]{border-color:var(--accent)}
-.card.column{z-index:0;box-shadow:none;background:color-mix(in srgb,var(--tint-stone) 70%,transparent)}
+.card.column{z-index:0;box-shadow:none;background:color-mix(in srgb,var(--card) 70%,transparent)}
+.has-backing .card.column{background:color-mix(in srgb,var(--card) 92%,transparent)}
 .card.heading{border:0;background:transparent;box-shadow:none;overflow:visible}
 .card.heading.selected{box-shadow:none;outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
 .card-header{position:relative;display:flex;align-items:center;gap:8px;padding:14px 16px 6px;cursor:grab;min-height:40px}
@@ -254,8 +287,11 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .tag{font-size:11px;font-weight:500;border:0;border-radius:999px;color:var(--ink-2);padding:2px 9px;background:var(--tag-bg)}
 .comment-count{font-size:11px;color:var(--muted);margin-left:auto}
 .card.heading .card-header{padding:4px 0}
-.card.heading .card-title{font:600 22px/1.2 var(--font);letter-spacing:-.02em;color:var(--ink)}
-.card.heading .card-body{padding:2px 0;font-size:13px;color:var(--muted)}
+.card.heading .card-title{font:600 22px/1.2 var(--font);letter-spacing:-.02em;color:var(--on-canvas)}
+/* Headings and shapes have no card behind their title, so on a custom backing the icon tile turns opaque. */
+.card.shape .card-title{color:var(--on-canvas)}
+.has-backing .card.heading .card-type,.has-backing .card.shape .card-type{background:var(--card)}
+.card.heading .card-body{padding:2px 0;font-size:13px;color:var(--on-canvas-muted)}
 .card.column .card-title{font-size:12px;font-weight:600;color:var(--ink-2)}
 
 /* Notes with Markdown */
@@ -273,8 +309,8 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .task-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.45;margin:0 0 10px;color:var(--ink)}
 .task-item input{accent-color:var(--primary);margin:2px 0 0;width:14px;height:14px}
 .task-item.done span{text-decoration:line-through;color:var(--muted)}
-.progress-track{height:3px;background:var(--line);margin:4px 16px 12px;border-radius:3px;overflow:hidden}
-.progress-track i{display:block;height:3px;background:var(--ink);border-radius:3px}
+.progress-track{height:3px;background:var(--card-line);margin:4px 16px 12px;border-radius:3px;overflow:hidden}
+.progress-track i{display:block;height:3px;background:var(--card-strong);border-radius:3px}
 
 /* Media, boards, links */
 .card-media{width:100%;height:100%;object-fit:cover;min-height:0;flex:1;background:var(--tint-stone)}
@@ -282,7 +318,7 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .card.image .card-title,.card.sketch .card-title,.card.video .card-title{font-size:12px;font-weight:500}
 .card.image .card-type,.card.sketch .card-type,.card.video .card-type{width:18px;height:18px}
 .card.image .card-type .icon,.card.sketch .card-type .icon,.card.video .card-type .icon{width:12px;height:12px}
-.board-cover{margin:14px 14px 4px;flex:1;min-height:60px;border-radius:7px;background:var(--tint-stone);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.board-cover{margin:14px 14px 4px;flex:1;min-height:60px;border-radius:7px;background:var(--cover,var(--card-fill));display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
 .board-cover svg{width:36px;height:36px;color:var(--k-board-ink);stroke-width:1.2;z-index:1}
 .board-cover:before,.board-cover:after{content:'';position:absolute;width:30px;height:38px;background:var(--tint-sky);transform:rotate(-10deg) translate(-20px,-3px);border:2px solid var(--surface);border-radius:4px}
 .board-cover:after{transform:rotate(8deg) translate(20px,5px);background:var(--tint-sand)}
@@ -298,14 +334,15 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 /* Canvas objects */
 .card.sticky{border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.05),0 8px 20px rgba(0,0,0,.07)}
 .sticky-body{font-size:17px;line-height:1.5}
-.card.frame{background:color-mix(in srgb,var(--canvas) 30%,transparent);border:1.5px dashed var(--line-2);box-shadow:none;overflow:visible}
-.card.frame .card-header{height:40px;background:var(--surface);border:1px solid var(--line);align-self:flex-start;max-width:100%;border-radius:7px}
-.frame-caption{padding:8px 16px;color:var(--muted);font-size:11px;pointer-events:none}
+.card.frame{background:color-mix(in srgb,var(--k) 6%,transparent);border:1.5px dashed color-mix(in srgb,var(--k) 45%,var(--on-canvas));box-shadow:none;overflow:visible}
+.card.frame:not(.color-paper){background:color-mix(in srgb,var(--on-canvas) 4%,transparent);border-color:color-mix(in srgb,var(--on-canvas) 42%,transparent)}
+.card.frame .card-header{height:40px;background:var(--card);border:1px solid var(--card-line);align-self:flex-start;max-width:100%;border-radius:7px}
+.frame-caption{padding:8px 16px;color:var(--on-canvas-muted);font-size:11px;pointer-events:none}
 .canvas-table{overflow:auto;flex:1;padding:6px 14px 14px}
 .canvas-table table{width:100%;border-collapse:collapse;font-size:12px;user-select:text}
-.canvas-table th,.canvas-table td{border:1px solid var(--line);padding:8px 9px;min-width:75px;white-space:pre-wrap}
-.canvas-table th{background:var(--tint-stone);text-align:left;font-weight:600}
-.shape-body{position:relative;margin:10px 24px 24px;flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;background:var(--surface);border:1.5px solid var(--ink-2);white-space:pre-wrap;min-height:0}
+.canvas-table th,.canvas-table td{border:1px solid var(--card-line);padding:8px 9px;min-width:75px;white-space:pre-wrap}
+.canvas-table th{background:var(--card-fill);text-align:left;font-weight:600}
+.shape-body{position:relative;margin:10px 24px 24px;flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;background:var(--card);border:1.5px solid var(--card-strong);white-space:pre-wrap;min-height:0}
 .shape-ellipse{border-radius:50%}
 .shape-diamond{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);padding:20%}
 .card.shape{box-shadow:none;background:transparent!important;border:0}
@@ -326,7 +363,7 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 
 /* ---------- Canvas footer ---------- */
 .canvas-bottom{position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;z-index:20}
-.canvas-hint{color:var(--muted);font-size:12px;display:flex;gap:8px;align-items:center}
+.canvas-hint{color:var(--on-canvas-muted);font-size:12px;display:flex;gap:8px;align-items:center}
 .canvas-hint svg{width:14px;height:14px}
 .zoom-controls{display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;pointer-events:auto;box-shadow:var(--shadow)}
 .zoom-controls button{height:32px;min-width:32px;border-radius:7px;color:var(--ink-2)}
@@ -335,9 +372,9 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 #zoom-label{font-family:var(--mono);font-size:12px;width:52px;color:var(--ink)}
 
 /* ---------- Empty state ---------- */
-#empty{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);text-align:center;color:var(--muted);display:none}
-#empty svg{width:32px;height:32px;color:var(--muted)}
-#empty h2{font:600 22px/1.2 var(--font);letter-spacing:-.02em;color:var(--ink);margin:14px 0 6px}
+#empty{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);text-align:center;color:var(--on-canvas-muted);display:none}
+#empty svg{width:32px;height:32px;color:var(--on-canvas-muted)}
+#empty h2{font:600 22px/1.2 var(--font);letter-spacing:-.02em;color:var(--on-canvas);margin:14px 0 6px}
 #empty p{font-size:13px;margin:0 0 22px}
 
 /* ---------- Inspector ---------- */
@@ -349,9 +386,11 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .field label,.label{font-size:12px;font-weight:500;color:var(--muted)}
 .field input,.field textarea,.field select,.text-input{width:100%;padding:8px 11px;min-height:36px;border:1px solid var(--line-2);border-radius:8px;background:var(--field);color:var(--ink);font-size:13px}
 .field textarea{resize:vertical;min-height:140px;line-height:1.55}
-.swatches{display:flex;gap:8px}
-.swatch{width:28px;height:28px;border:1px solid var(--line-2);border-radius:50%}
-.swatch-paper{background:var(--surface)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:28px;height:28px;padding:0;border:1px solid var(--line-2);border-radius:50%}
+.swatch-paper{background:color-mix(in srgb,var(--k) var(--ks),var(--surface));border-color:color-mix(in srgb,var(--k) 45%,var(--surface));color:var(--ki)}
+.swatch-paper .icon{width:13px;height:13px;stroke-width:1.8}
+.swatch-plain{background:var(--surface)}
 .swatch-stone{background:var(--tint-stone)}
 .swatch-sand{background:var(--tint-sand)}
 .swatch-sage{background:var(--tint-sage)}
@@ -451,11 +490,12 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .tl.timecode .tl-ruler,.tl.timecode .tl-when,.tl.timecode .tl-cursor b{font-family:var(--mono);letter-spacing:0}
 .tl-ruler span{position:absolute;top:3px;bottom:0;padding-left:5px;border-left:1px solid var(--line-2);white-space:nowrap;line-height:14px}
 .tl-ruler i{position:absolute;bottom:0;height:5px;border-left:1px solid var(--line)}
-.tl-lanes{position:relative;flex:1;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:6px;background-color:var(--tint-stone);background-image:linear-gradient(to bottom,transparent calc(100% - 1px),var(--line) calc(100% - 1px));background-size:100% calc(100%/var(--lanes))}
-.tl-grid{position:absolute;top:0;bottom:0;border-left:1px solid var(--line)}
+.tl-lanes{position:relative;flex:1;min-height:0;overflow:hidden;border:1px solid var(--card-line);border-radius:6px;background-color:var(--card-fill);background-image:linear-gradient(to bottom,transparent calc(100% - 1px),var(--card-line) calc(100% - 1px));background-size:100% calc(100%/var(--lanes))}
+.tl-grid{position:absolute;top:0;bottom:0;border-left:1px solid var(--card-line)}
 .tl-today{position:absolute;top:0;bottom:0;min-width:2px;background:var(--accent-soft);border-left:1px solid var(--accent)}
 .tl-item{position:absolute;display:flex;align-items:center;gap:6px;min-width:8px;padding:0 9px 0 0;border:1px solid var(--line-2);border-radius:5px;background:var(--surface);color:var(--ink);overflow:hidden;cursor:grab;box-shadow:0 1px 2px rgba(0,0,0,.05);touch-action:none}
 .tl-item:active{cursor:grabbing}
+.tl-item.tint-paper{background:color-mix(in srgb,var(--k) var(--ks),var(--surface));border-color:color-mix(in srgb,var(--k) 40%,var(--surface))}
 .tl-item.tint-sage{background:var(--tint-sage)}
 .tl-item.tint-sand{background:var(--tint-sand)}
 .tl-item.tint-rose{background:var(--tint-rose)}
@@ -469,7 +509,7 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .tl-item:not(.marker):hover,.tl-item:not(.marker).active{overflow:visible;z-index:4}
 .tl-item:not(.marker):hover .tl-text,.tl-item:not(.marker).active .tl-text{flex-shrink:0;align-self:stretch;margin-right:-9px;padding-right:9px;border-radius:0 4px 4px 0;background:inherit;box-shadow:5px 0 8px -4px rgba(0,0,0,.25)}
 .tl-item img{height:100%;aspect-ratio:1;object-fit:cover;flex-shrink:0;border-radius:4px 0 0 4px}
-.tl-kind{display:inline-flex;color:var(--ki,var(--k,var(--muted)));margin-left:8px;flex-shrink:0}
+.tl-kind{display:inline-flex;color:var(--ki);margin-left:8px;flex-shrink:0}
 .tl-kind .icon{width:13px;height:13px}
 .tl-text{display:flex;flex-direction:column;justify-content:center;min-width:0;line-height:1.25}
 .tl-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -487,7 +527,8 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .tl-foot span{overflow:hidden;text-overflow:ellipsis}
 .tl-foot span:first-child{flex-shrink:0;max-width:70%}
 .tl-link{pointer-events:none}
-.tl-link path{stroke-width:1.3}
+.tl-link path{stroke:var(--connector);stroke-width:1.3}
+.tl-link circle{fill:var(--connector)}
 .tl-link.linked path,.tl-link.hover path{stroke:var(--accent);stroke-width:2;stroke-dasharray:none}
 .card.tl-source{outline:2px solid var(--accent);outline-offset:3px}
 .tl-row{border:1px solid var(--line);border-radius:8px;padding:8px;margin:8px 0;background:var(--surface)}
@@ -540,7 +581,9 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 @media print{
   #sidebar,header,#tools,.canvas-bottom,#inspector,.board-actions,.canvas-navigation,#canvas-outline,#canvas-minimap,#canvas-context{display:none!important}
   #app,main{height:auto;overflow:visible}
-  #canvas{height:1800px;overflow:visible;background:white;border:0}
+  /* Print on white whatever the board's backing, with ink that reads on it. */
+  #canvas{height:1800px;overflow:visible;background:white;border:0;--canvas:#fff!important;--on-canvas:#18181b!important}
+  #backing-pop{display:none!important}
   #world{transform:scale(.65)!important}
   .board-header{padding:20px}
   .card{break-inside:avoid;box-shadow:none}
