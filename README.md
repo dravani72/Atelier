@@ -10,6 +10,7 @@ A standalone visual workspace for creative projects. Original interface inspired
 - Notes with Markdown bold, italic, headings, lists, quotes, and inline code; headings, checklists with progress, images, video, files, links, sketches, columns, and nested board cards.
 - Columns act as visual containers: dragging a column also moves cards fully inside it.
 - Every card type has its own color: its toolbar icon, its icon tile, and the shade of the card itself. A card can also be set to plain or a named tint.
+- In Settings, use **Board background color** to choose a custom color for the current board, or **Use theme background** to reset it. Save preferences applies the change; closing Settings discards it. The toolbar’s Board color picker also provides presets.
 - Each board can sit on any backing color, from presets, the system color picker, or a hex value. Cards keep the app's theme, headings and connectors switch to an ink that reads on the backing, and a card type whose shade would sit too close to it deepens.
 - Tags, personal annotations, moving between boards, multi-selection, alignment, and grid arrangement.
 - Directed connectors with editable labels; delete and duplication preserve connection integrity.

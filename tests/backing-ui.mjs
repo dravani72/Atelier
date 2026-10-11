@@ -57,6 +57,18 @@ try{
  await page.locator('#board-color').click();await page.getByRole('button',{name:'Use the default',exact:true}).click();
  assert.equal(await page.locator('#canvas.has-backing').count(),0);assert.equal(await paint('#canvas'),await token('--canvas'));assert.equal(await inline('--on-canvas'),'');assert.ok(await page.getByRole('button',{name:'Use the default',exact:true}).isDisabled());
  await page.mouse.click(700,600);assert.equal(await page.locator('#backing-pop').count(),0,'clicking the board closes the picker');
+ // Settings stages the current board background until Save preferences, validates hex, and supports undo.
+ await page.locator('#settings-open').click();await page.locator('#setting-background').fill('#123456');await page.locator('#modal-close').click();
+ assert.equal(await page.locator('#canvas.has-backing').count(),0,'closing settings discards the draft');
+ await page.locator('#settings-open').click();await page.locator('#setting-background').fill('invalid');await page.locator('#save-settings').click();
+ assert.ok(await page.locator('#modal').evaluate(el=>el.open));assert.equal(await page.locator('#canvas.has-backing').count(),0);
+ await page.locator('#setting-background').fill('abc');await page.locator('#save-settings').click();assert.equal(await paint('#canvas'),'#aabbcc');
+ await page.locator('#undo').click();assert.equal(await page.locator('#canvas.has-backing').count(),0);await page.locator('#redo').click();assert.equal(await paint('#canvas'),'#aabbcc');
+ await page.waitForTimeout(700);await page.reload();await page.waitForSelector('.card.note');assert.equal(await paint('#canvas'),'#aabbcc');
+ await page.locator('#settings-open').click();assert.equal(await page.locator('#setting-background').inputValue(),'#aabbcc');
+ await page.locator('#setting-background-picker').fill('#654321');assert.equal(await page.locator('#setting-background').inputValue(),'#654321');
+ await page.locator('#dark-setting').check();await page.locator('#save-settings').click();assert.equal(await paint('#canvas'),'#654321');
+ await page.locator('#settings-open').click();await page.locator('#setting-background-default').click();await page.locator('#save-settings').click();assert.equal(await page.locator('#canvas.has-backing').count(),0);
  // The dark theme keeps its own cards and its own default canvas.
  await page.evaluate(()=>localStorage.setItem('atelier-dark','yes'));await page.reload();await page.waitForSelector('.card.note');
  near(await paint('.card.note'),K.mix(await token('--k-note'),await token('--surface'),.18),'dark note shade');assert.equal(await page.locator('.dark').count(),1);
