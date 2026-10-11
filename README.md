@@ -8,6 +8,7 @@ A standalone visual workspace for creative projects. Original interface inspired
 
 - Freeform boards with drag, resize, zoom, pan, fit-to-content, and optional grid snapping.
 - Notes with Markdown bold, italic, headings, lists, quotes, and inline code; headings, checklists with progress, images, video, files, links, sketches, columns, and nested board cards.
+- Sketch cards drawn in a built-in editor: pen, highlighter, eraser, line, arrow, rectangle, ellipse and fill, with ink colors, stroke size, undo/redo and Shift to constrain. A saved sketch can be reopened and drawn on again.
 - Columns act as visual containers: dragging a column also moves cards fully inside it.
 - Every card type has its own color: its toolbar icon, its icon tile, and the shade of the card itself. A card can also be set to plain or a named tint.
 - Each board can sit on any backing color, from presets, the system color picker, or a hex value. Cards keep the app's theme, headings and connectors switch to an ink that reads on the backing, and a card type whose shade would sit too close to it deepens.

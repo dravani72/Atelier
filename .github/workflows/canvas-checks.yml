@@ -34,6 +34,7 @@ jobs:
           npm run test:timeline
           npm run test:canvas
           npm run test:backing
+          npm run test:sketch
           npm run test:bridge
           node tests/video-bridge.mjs
           node tests/templates-drop.mjs
