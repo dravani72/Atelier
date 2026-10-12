@@ -634,6 +634,22 @@ mod tests {
         assert!(validate(&w.to_string()).is_err());
     }
     #[test]
+    fn package_boards_save_as_a_workspace() {
+        // An imported package's boards are saved through the same contract as the rest of the workspace (INTERCHANGE.md).
+        let package: serde_json::Value =
+            serde_json::from_str(include_str!("../../tests/fixtures/package.json")).unwrap();
+        assert_eq!(package["format"], "atelier-package");
+        let w = serde_json::json!({"version":1,"active":package["boards"][0]["id"],"boards":package["boards"]});
+        let restored = serde_json::to_value(validate(&w.to_string()).unwrap()).unwrap();
+        for (i, board) in w["boards"].as_array().unwrap().iter().enumerate() {
+            for field in ["id", "parent", "color", "cards", "edges", "view", "presentationOrder"] {
+                assert_eq!(restored["boards"][i][field], board[field], "{field}");
+            }
+        }
+        let mut store = Store::open(Path::new(":memory:")).unwrap();
+        store.save(&w.to_string()).unwrap();
+    }
+    #[test]
     fn frontend_fixture_matches_backend_contract() {
         let fixture = include_str!("../../tests/fixtures/starter.json");
         validate(fixture).unwrap();

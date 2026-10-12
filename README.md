@@ -19,7 +19,8 @@ A standalone visual workspace for creative projects. Original interface inspired
 - Undo/redo (60 steps per session), copy/paste within the app, keyboard shortcuts, and light/dark workspace preferences.
 - Blank, film pre-production, moodboard, story-development, and creative-campaign templates.
 - Offline SQLite autosave with atomic transactions and ten recovery snapshots, taken at most once every five minutes when saving an existing workspace.
-- Workspace JSON backups with embedded attachments, import validation, SVG visual exports, and Markdown exports.
+- Atelier packages for sharing: export a board and everything nested in it as one `.atelier.json` file; importing it adds the boards beside your own, nothing replaced. The format is documented in [INTERCHANGE.md](INTERCHANGE.md) with a JSON Schema.
+- Workspace JSON backups with embedded attachments, import validation (added beside your boards or replacing the workspace), SVG visual exports, and Markdown exports.
 - Browser preview with IndexedDB persistence; the same canvas is embedded in the desktop app.
 
 ## Included Linux installer
@@ -60,7 +61,7 @@ Installers are written to `src-tauri/target/release/bundle/` for the operating s
 npm run dev
 ```
 
-Open `http://localhost:4173`. The preview saves to that browser's IndexedDB; it is a separate workspace from the desktop database. Transfer work with JSON export/import. Keep the same origin and port when returning to the preview.
+Open `http://localhost:4173`. The preview saves to that browser's IndexedDB; it is a separate workspace from the desktop database. Transfer work with JSON export/import, or share single boards as Atelier packages. Keep the same origin and port when returning to the preview.
 
 ## Test
 

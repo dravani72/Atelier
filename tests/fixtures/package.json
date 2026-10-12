@@ -1,0 +1,331 @@
+{
+ "format": "atelier-package",
+ "version": 1,
+ "name": "Shot plan",
+ "exported": "2026-10-11T00:00:00.000Z",
+ "generator": "Atelier 0.4.0",
+ "boards": [
+  {
+   "id": "board-plan",
+   "name": "Shot plan",
+   "parent": null,
+   "description": "A small package: one board with a nested board.",
+   "color": "#1b2a5c",
+   "cards": [
+    {
+     "id": "card-frame",
+     "type": "frame",
+     "x": 0,
+     "y": 0,
+     "w": 1200,
+     "h": 760,
+     "title": "1 · The opening",
+     "body": "",
+     "color": "paper",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null
+    },
+    {
+     "id": "card-column",
+     "type": "column",
+     "x": 860,
+     "y": 70,
+     "w": 300,
+     "h": 300,
+     "title": "Ideas",
+     "body": "",
+     "color": "stone",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null
+    },
+    {
+     "id": "card-logline",
+     "type": "note",
+     "x": 40,
+     "y": 70,
+     "w": 260,
+     "h": 170,
+     "title": "Logline",
+     "body": "A lighthouse keeper finds a signal that **should not exist**.",
+     "color": "paper",
+     "tags": [
+      "story"
+     ],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null,
+     "groupId": "group-story"
+    },
+    {
+     "id": "card-todo",
+     "type": "task",
+     "x": 320,
+     "y": 70,
+     "w": 250,
+     "h": 170,
+     "title": "Before the shoot",
+     "body": "",
+     "color": "paper",
+     "tags": [],
+     "comments": [],
+     "items": [
+      {
+       "id": "item-script",
+       "text": "Lock the script",
+       "done": true
+      },
+      {
+       "id": "item-scout",
+       "text": "Scout the coast",
+       "done": false
+      }
+     ],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null,
+     "groupId": "group-story"
+    },
+    {
+     "id": "card-shots",
+     "type": "table",
+     "x": 40,
+     "y": 260,
+     "w": 530,
+     "h": 150,
+     "title": "Shot list",
+     "body": "",
+     "color": "paper",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null,
+     "cells": [
+      [
+       "Shot",
+       "Lens",
+       "Notes"
+      ],
+      [
+       "Wide, tower",
+       "24mm",
+       "Dawn"
+      ],
+      [
+       "Close, lamp",
+       "85mm",
+       "Practical light"
+      ]
+     ]
+    },
+    {
+     "id": "card-choice",
+     "type": "shape",
+     "x": 590,
+     "y": 70,
+     "w": 240,
+     "h": 170,
+     "title": "Decision",
+     "body": "Shoot on location?",
+     "color": "paper",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null,
+     "shape": "diamond"
+    },
+    {
+     "id": "card-fog",
+     "type": "note",
+     "x": 876,
+     "y": 125,
+     "w": 268,
+     "h": 110,
+     "title": "Fog machine",
+     "body": "Rent two.",
+     "color": "paper",
+     "tags": [],
+     "comments": [
+      {
+       "text": "Check the budget first.",
+       "author": "Dana",
+       "date": 1760000000000
+      }
+     ],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null,
+     "sectionId": "card-column"
+    },
+    {
+     "id": "card-refs",
+     "type": "board",
+     "x": 590,
+     "y": 260,
+     "w": 240,
+     "h": 150,
+     "title": "References",
+     "body": "",
+     "color": "paper",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": "board-refs"
+    },
+    {
+     "id": "card-edit",
+     "type": "timeline",
+     "x": 40,
+     "y": 440,
+     "w": 1120,
+     "h": 280,
+     "title": "Edit",
+     "body": "",
+     "color": "paper",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null,
+     "timeline": {
+      "mode": "timecode",
+      "fps": [
+       24,
+       1
+      ],
+      "drop": false,
+      "start": 0,
+      "end": 1440,
+      "links": true,
+      "items": [
+       {
+        "id": "clip-logline",
+        "card": "card-logline",
+        "at": 0,
+        "len": 480,
+        "lane": 0
+       },
+       {
+        "id": "clip-shots",
+        "card": "card-shots",
+        "at": 480,
+        "len": 720,
+        "lane": 0
+       },
+       {
+        "id": "mark-todo",
+        "card": "card-todo",
+        "at": 1080,
+        "len": 0,
+        "lane": 1
+       }
+      ]
+     }
+    }
+   ],
+   "edges": [
+    {
+     "id": "edge-then",
+     "from": "card-logline",
+     "to": "card-todo",
+     "label": "then"
+    },
+    {
+     "id": "edge-ask",
+     "from": "card-todo",
+     "to": "card-choice",
+     "label": "decide",
+     "style": "straight",
+     "arrow": true
+    }
+   ],
+   "view": {
+    "x": 60,
+    "y": 40,
+    "zoom": 0.8
+   },
+   "updated": 1760000000000,
+   "presentationOrder": [
+    "card-frame"
+   ]
+  },
+  {
+   "id": "board-refs",
+   "name": "References",
+   "parent": "board-plan",
+   "description": "Opened from the Shot plan.",
+   "color": "sage",
+   "cards": [
+    {
+     "id": "card-tides",
+     "type": "link",
+     "x": 60,
+     "y": 60,
+     "w": 260,
+     "h": 160,
+     "title": "Tide tables",
+     "body": "Access at low water only.",
+     "color": "paper",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "https://example.com/tides",
+     "media": "",
+     "filename": "",
+     "boardId": null
+    },
+    {
+     "id": "card-hour",
+     "type": "sticky",
+     "x": 340,
+     "y": 60,
+     "w": 220,
+     "h": 160,
+     "title": "Remember",
+     "body": "Golden hour is 40 minutes.",
+     "color": "sand",
+     "tags": [],
+     "comments": [],
+     "items": [],
+     "url": "",
+     "media": "",
+     "filename": "",
+     "boardId": null
+    }
+   ],
+   "edges": [],
+   "view": {
+    "x": 60,
+    "y": 50,
+    "zoom": 1
+   },
+   "updated": 1760000000000
+  }
+ ]
+}
