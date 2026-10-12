@@ -1,0 +1,632 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://github.com/dravani72/Atelier/blob/main/schema/atelier-package.schema.json",
+ "title": "Atelier package",
+ "description": "Boards from an Atelier workspace, with every board nested in them, as one file that can be added to another workspace. INTERCHANGE.md is the prose specification; it also lists the rules a schema cannot express (unique IDs, references that resolve, no cycles).",
+ "type": "object",
+ "required": [
+  "format",
+  "version",
+  "boards"
+ ],
+ "properties": {
+  "format": {
+   "const": "atelier-package"
+  },
+  "version": {
+   "const": 1,
+   "description": "Format version. A reader rejects a version higher than the one it knows."
+  },
+  "name": {
+   "type": "string",
+   "maxLength": 1000,
+   "description": "Shown when the file is imported. Defaults to the first top-level board's name."
+  },
+  "exported": {
+   "type": "string",
+   "format": "date-time",
+   "description": "When the file was written. Informational."
+  },
+  "generator": {
+   "type": "string",
+   "description": "What wrote the file. Informational."
+  },
+  "boards": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 1000,
+   "items": {
+    "$ref": "#/$defs/board"
+   },
+   "description": "At least one board has parent null. Every other parent, and every board card's boardId, names a board in this array."
+  }
+ },
+ "$defs": {
+  "id": {
+   "type": "string",
+   "pattern": "^[a-zA-Z0-9_-]{1,100}$",
+   "description": "Unique within the file for boards and for cards. Replaced by a fresh ID on import."
+  },
+  "board": {
+   "type": "object",
+   "required": [
+    "id",
+    "name",
+    "parent",
+    "description",
+    "color",
+    "cards",
+    "edges",
+    "view",
+    "updated"
+   ],
+   "properties": {
+    "id": {
+     "$ref": "#/$defs/id"
+    },
+    "name": {
+     "type": "string",
+     "maxLength": 1000
+    },
+    "parent": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/id"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "description": "The board this one is nested in, or null for a top-level board."
+    },
+    "description": {
+     "type": "string"
+    },
+    "color": {
+     "type": "string",
+     "description": "The board's backing as #rrggbb. Any other value means the theme's default canvas."
+    },
+    "cards": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/card"
+     },
+     "description": "In drawing order, back to front. Frames in this order are the presentation order unless presentationOrder is given."
+    },
+    "edges": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/edge"
+     }
+    },
+    "view": {
+     "type": "object",
+     "required": [
+      "x",
+      "y",
+      "zoom"
+     ],
+     "properties": {
+      "x": {
+       "type": "number"
+      },
+      "y": {
+       "type": "number"
+      },
+      "zoom": {
+       "type": "number",
+       "minimum": 0.2,
+       "maximum": 2
+      }
+     },
+     "description": "Where the board opens: pan offset in screen pixels and zoom."
+    },
+    "updated": {
+     "type": "number",
+     "description": "Milliseconds since 1970-01-01 UTC. Set to the time of import when the board is added."
+    },
+    "layers": {
+     "type": "array",
+     "maxItems": 100,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "name",
+       "hidden",
+       "locked"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "name": {
+        "type": "string",
+        "maxLength": 1000
+       },
+       "hidden": {
+        "type": "boolean"
+       },
+       "locked": {
+        "type": "boolean"
+       }
+      }
+     }
+    },
+    "presentationOrder": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/id"
+     },
+     "description": "Frame card IDs in the order they are presented."
+    },
+    "projectId": {
+     "$ref": "#/$defs/id",
+     "description": "The board that heads the project this board belongs to."
+    },
+    "projectFields": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[a-zA-Z0-9_-]{1,100}$"
+     },
+     "additionalProperties": {
+      "type": "string",
+      "maxLength": 10000
+     }
+    },
+    "template": {
+     "type": "object",
+     "required": [
+      "id",
+      "version"
+     ],
+     "properties": {
+      "id": {
+       "$ref": "#/$defs/id"
+      },
+      "version": {
+       "type": "string"
+      }
+     },
+     "description": "The template the board was started from."
+    }
+   }
+  },
+  "card": {
+   "type": "object",
+   "required": [
+    "id",
+    "type",
+    "x",
+    "y",
+    "w",
+    "h",
+    "title",
+    "body",
+    "color",
+    "tags",
+    "comments",
+    "items",
+    "url",
+    "media",
+    "filename"
+   ],
+   "properties": {
+    "id": {
+     "$ref": "#/$defs/id"
+    },
+    "type": {
+     "enum": [
+      "note",
+      "task",
+      "image",
+      "video",
+      "file",
+      "link",
+      "heading",
+      "column",
+      "board",
+      "sketch",
+      "model",
+      "timeline",
+      "sticky",
+      "shape",
+      "frame",
+      "table"
+     ]
+    },
+    "x": {
+     "type": "number",
+     "minimum": -100000,
+     "maximum": 100000
+    },
+    "y": {
+     "type": "number",
+     "minimum": -100000,
+     "maximum": 100000
+    },
+    "w": {
+     "type": "number",
+     "minimum": 20,
+     "maximum": 100000
+    },
+    "h": {
+     "type": "number",
+     "minimum": 20,
+     "maximum": 100000
+    },
+    "title": {
+     "type": "string"
+    },
+    "body": {
+     "type": "string",
+     "description": "Text of the card. Notes read it as light Markdown; every other type shows it as plain text."
+    },
+    "color": {
+     "type": "string",
+     "description": "paper (the type's own shade), plain, sage, sand, rose, sky or stone. Any other value means paper."
+    },
+    "tags": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "comments": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "text",
+       "author",
+       "date"
+      ],
+      "properties": {
+       "text": {
+        "type": "string"
+       },
+       "author": {
+        "type": "string"
+       },
+       "date": {
+        "type": "number"
+       }
+      }
+     }
+    },
+    "items": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "text",
+       "done"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "text": {
+        "type": "string"
+       },
+       "done": {
+        "type": "boolean"
+       }
+      }
+     },
+     "description": "Checklist lines of a task card. Empty for other types."
+    },
+    "url": {
+     "type": "string",
+     "description": "Address of a link card. Only http and https addresses are opened."
+    },
+    "media": {
+     "type": "string",
+     "pattern": "^$|^data:(image/(png|jpeg|webp|gif)|video/(mp4|webm|ogg|quicktime|x-msvideo|x-matroska)|application/octet-stream|application/pdf|text/plain);base64,[A-Za-z0-9+/=]*$",
+     "description": "An embedded file as a base64 data URI, or an empty string."
+    },
+    "filename": {
+     "type": "string"
+    },
+    "boardId": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/id"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "description": "For a board card: the board it opens."
+    },
+    "shape": {
+     "enum": [
+      "rectangle",
+      "ellipse",
+      "diamond"
+     ]
+    },
+    "cells": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 100,
+     "items": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+       "type": "string",
+       "maxLength": 10000
+      }
+     },
+     "description": "Rows of a table card, all the same width. The first row is the header."
+    },
+    "timeline": {
+     "$ref": "#/$defs/timeline"
+    },
+    "sectionId": {
+     "type": "string",
+     "description": "The column card this card is filed in."
+    },
+    "groupId": {
+     "$ref": "#/$defs/id",
+     "description": "Cards that share a groupId move together."
+    },
+    "layerId": {
+     "$ref": "#/$defs/id",
+     "description": "A layer of the same board."
+    },
+    "locked": {
+     "type": "boolean"
+    },
+    "preview": {
+     "type": "string",
+     "pattern": "^data:image/png;base64,[A-Za-z0-9+/=]*$",
+     "description": "Saved view of a 3D model card."
+    },
+    "assets": {
+     "type": "array",
+     "maxItems": 100,
+     "items": {
+      "type": "object",
+      "required": [
+       "name",
+       "data"
+      ],
+      "properties": {
+       "name": {
+        "type": "string",
+        "maxLength": 1024
+       },
+       "data": {
+        "type": "string",
+        "pattern": "^data:(image/(png|jpeg|webp|gif)|application/octet-stream|text/plain);base64,[A-Za-z0-9+/=]*$"
+       }
+      }
+     },
+     "description": "Materials and textures of a 3D model card."
+    },
+    "modelView": {
+     "type": "object",
+     "propertyNames": {
+      "enum": [
+       "position",
+       "rotation",
+       "scale",
+       "camera",
+       "target"
+      ]
+     },
+     "additionalProperties": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+       "type": "number"
+      }
+     }
+    }
+   },
+   "allOf": [
+    {
+     "if": {
+      "properties": {
+       "type": {
+        "const": "board"
+       }
+      },
+      "required": [
+       "type"
+      ]
+     },
+     "then": {
+      "required": [
+       "boardId"
+      ],
+      "properties": {
+       "boardId": {
+        "$ref": "#/$defs/id"
+       }
+      }
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "type": {
+        "const": "shape"
+       }
+      },
+      "required": [
+       "type"
+      ]
+     },
+     "then": {
+      "required": [
+       "shape"
+      ]
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "type": {
+        "const": "table"
+       }
+      },
+      "required": [
+       "type"
+      ]
+     },
+     "then": {
+      "required": [
+       "cells"
+      ]
+     }
+    },
+    {
+     "if": {
+      "properties": {
+       "type": {
+        "const": "timeline"
+       }
+      },
+      "required": [
+       "type"
+      ]
+     },
+     "then": {
+      "required": [
+       "timeline"
+      ]
+     },
+     "else": {
+      "not": {
+       "required": [
+        "timeline"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  "edge": {
+   "type": "object",
+   "required": [
+    "id",
+    "from",
+    "to",
+    "label"
+   ],
+   "properties": {
+    "id": {
+     "$ref": "#/$defs/id"
+    },
+    "from": {
+     "$ref": "#/$defs/id",
+     "description": "A card of the same board."
+    },
+    "to": {
+     "$ref": "#/$defs/id",
+     "description": "A different card of the same board."
+    },
+    "label": {
+     "type": "string"
+    },
+    "style": {
+     "enum": [
+      "curve",
+      "straight",
+      "elbow"
+     ]
+    },
+    "arrow": {
+     "type": "boolean"
+    }
+   }
+  },
+  "timeline": {
+   "type": "object",
+   "required": [
+    "mode",
+    "fps",
+    "drop",
+    "start",
+    "end",
+    "links",
+    "items"
+   ],
+   "properties": {
+    "mode": {
+     "enum": [
+      "timecode",
+      "date"
+     ],
+     "description": "timecode counts frames; date counts days since 1970-01-01."
+    },
+    "fps": {
+     "type": "array",
+     "minItems": 2,
+     "maxItems": 2,
+     "items": {
+      "type": "integer"
+     },
+     "description": "Frame rate as numerator and denominator, for example [24,1] or [30000,1001]. One of the rates Atelier offers."
+    },
+    "drop": {
+     "type": "boolean",
+     "description": "Drop-frame timecode. Only with 30000/1001 and 60000/1001."
+    },
+    "start": {
+     "type": "integer"
+    },
+    "end": {
+     "type": "integer",
+     "description": "Greater than start."
+    },
+    "links": {
+     "type": "boolean",
+     "description": "Whether dashed lines are drawn from each clip to its card."
+    },
+    "items": {
+     "type": "array",
+     "maxItems": 500,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "card",
+       "at",
+       "len",
+       "lane"
+      ],
+      "properties": {
+       "id": {
+        "$ref": "#/$defs/id"
+       },
+       "card": {
+        "$ref": "#/$defs/id",
+        "description": "A card of the same board that is neither a timeline nor a column."
+       },
+       "at": {
+        "type": "integer",
+        "description": "Where it starts, in frames or days."
+       },
+       "len": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "How long it runs. 0 is a marker (timecode only); a date item is at least 1 day."
+       },
+       "lane": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 11
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
