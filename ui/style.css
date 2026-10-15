@@ -326,7 +326,8 @@ h1{font-family:var(--font);font-size:26px;line-height:1.15;font-weight:600;lette
 .link-domain{color:var(--muted);font-size:11px;display:block;margin-bottom:8px}
 .open-link{padding:0;color:var(--ink);font-size:12px;font-weight:500;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-2)}
 .open-link:hover{background:none;text-decoration-color:var(--ink)}
-.resize-handle{position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;cursor:nwse-resize;opacity:0;background:var(--surface);border:1.5px solid var(--accent);border-radius:3px}
+/* Above the header: on image, sketch and video cards the caption sits at the bottom and would otherwise cover the handle. */
+.resize-handle{position:absolute;z-index:3;bottom:-1px;right:-1px;width:12px;height:12px;cursor:nwse-resize;opacity:0;background:var(--surface);border:1.5px solid var(--accent);border-radius:3px}
 .selected .resize-handle{opacity:1}
 .card.model .card-body{padding:10px 14px}
 .model-preview{width:100%;height:110px;object-fit:cover}
@@ -449,9 +450,24 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .search-result small{font-size:12px;color:var(--muted);display:block;margin-top:3px}
 .shortcuts{display:grid;grid-template-columns:1fr auto;gap:14px;font-size:13px}
 .shortcuts kbd{background:var(--tint-stone);border:1px solid var(--line);padding:2px 6px;border-radius:5px;font-size:11px}
-#sketch-canvas{background:#fff;border:1px solid var(--line);border-radius:8px;width:100%;touch-action:none}
-.sketch-tools{display:flex;gap:15px;align-items:center;margin-bottom:12px}
-.sketch-tools input{width:60px}
+/* Sketch editor. The paper is always white, whatever the theme; the canvas shrinks to fit the dialog's height so the
+   tools above it and the save button below it stay on screen. */
+.sketch-dialog{width:min(1040px,95vw);max-width:95vw;max-height:94vh;padding:22px 28px}
+.sketch-dialog .modal-header{margin-bottom:14px}
+#sketch-canvas{display:block;margin:0 auto;max-width:100%;max-height:calc(94vh - 266px);min-height:160px;background:#fff;border:1px solid var(--line);border-radius:8px;touch-action:none;cursor:crosshair}
+.sketch-bar,.sketch-options{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-bottom:10px}
+.sketch-group{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:10px}
+.sketch-tool{width:34px;height:34px;border-radius:7px;color:var(--ink-2)}
+.sketch-tool[aria-pressed=true],.sketch-tool[aria-pressed=true]:hover{background:var(--primary);color:var(--on-primary)}
+.sketch-inks{display:flex;align-items:center;gap:7px}
+/* The ring keeps the black and grey inks visible on the dark theme's dialog. */
+.sketch-ink,.sketch-ink:hover{--ring:inset 0 0 0 1px color-mix(in srgb,var(--ink) 30%,transparent);width:24px;height:24px;padding:0;border-radius:50%;background:var(--chip);box-shadow:var(--ring)}
+.sketch-ink[aria-pressed=true]{box-shadow:var(--ring),0 0 0 2px var(--surface),0 0 0 3.5px var(--ink)}
+#sketch-color{width:30px;height:30px;margin-left:5px;padding:2px;border:1px solid var(--line-2);border-radius:7px;background:var(--field);cursor:pointer}
+.sketch-size{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:500;color:var(--muted)}
+.sketch-size input{width:150px;accent-color:var(--primary)}
+.sketch-size output{min-width:2ch;font-family:var(--mono);color:var(--ink)}
+.sketch-dialog .modal-footer{align-items:center;justify-content:space-between;margin-top:14px}
 .edge-option{display:flex;gap:8px;margin-bottom:8px}
 .edge-option input{flex:1;min-width:0}
 

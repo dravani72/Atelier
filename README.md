@@ -8,6 +8,7 @@ A standalone visual workspace for creative projects. Original interface inspired
 
 - Freeform boards with drag, resize, zoom, pan, fit-to-content, and optional grid snapping.
 - Notes with Markdown bold, italic, headings, lists, quotes, and inline code; headings, checklists with progress, images, video, files, links, sketches, columns, and nested board cards.
+- Sketch cards drawn in a built-in editor: pen, highlighter, eraser, line, arrow, rectangle, ellipse and fill, with ink colors, stroke size, undo/redo and Shift to constrain. A saved sketch can be reopened and drawn on again.
 - Columns act as visual containers: dragging a column also moves cards fully inside it.
 - Every card type has its own color: its toolbar icon, its icon tile, and the shade of the card itself. A card can also be set to plain or a named tint.
 - In Settings, use **Board background color** to choose a custom color for the current board, or **Use theme background** to reset it. Save preferences applies the change; closing Settings discards it. The toolbar’s Board color picker also provides presets.
@@ -19,7 +20,8 @@ A standalone visual workspace for creative projects. Original interface inspired
 - Undo/redo (60 steps per session), copy/paste within the app, keyboard shortcuts, and light/dark workspace preferences.
 - Blank, film pre-production, moodboard, story-development, and creative-campaign templates.
 - Offline SQLite autosave with atomic transactions and ten recovery snapshots, taken at most once every five minutes when saving an existing workspace.
-- Workspace JSON backups with embedded attachments, import validation, SVG visual exports, and Markdown exports.
+- Atelier packages for sharing: export a board and everything nested in it as one `.atelier.json` file; importing it adds the boards beside your own, nothing replaced. The format is documented in [INTERCHANGE.md](INTERCHANGE.md) with a JSON Schema.
+- Workspace JSON backups with embedded attachments, import validation (added beside your boards or replacing the workspace), SVG visual exports, and Markdown exports.
 - Browser preview with IndexedDB persistence; the same canvas is embedded in the desktop app.
 
 ## Included Linux installer
@@ -60,7 +62,7 @@ Installers are written to `src-tauri/target/release/bundle/` for the operating s
 npm run dev
 ```
 
-Open `http://localhost:4173`. The preview saves to that browser's IndexedDB; it is a separate workspace from the desktop database. Transfer work with JSON export/import. Keep the same origin and port when returning to the preview.
+Open `http://localhost:4173`. The preview saves to that browser's IndexedDB; it is a separate workspace from the desktop database. Transfer work with JSON export/import, or share single boards as Atelier packages. Keep the same origin and port when returning to the preview.
 
 ## Test
 
