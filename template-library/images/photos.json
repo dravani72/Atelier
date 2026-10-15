@@ -1,0 +1,1892 @@
+{
+ "ph-ab-neighbours": {
+  "title": "",
+  "want": "Neighbours chatting on a residential street",
+  "ratio": 0.7
+ },
+ "ph-ab-phone-map": {
+  "title": "",
+  "want": "Phone showing a map app",
+  "ratio": 0.7
+ },
+ "ph-ab-tools-shelf": {
+  "title": "",
+  "want": "Shelf of household tools like drills and ladders",
+  "ratio": 0.66
+ },
+ "ph-ac-community-garden": {
+  "title": "",
+  "want": "Older adults working together in a community garden",
+  "ratio": 0.62
+ },
+ "ph-ad-commuter-bike": {
+  "title": "",
+  "want": "Commuter riding a bicycle in a city in business clothes",
+  "ratio": 0.66
+ },
+ "ph-ad-cycle-lane": {
+  "title": "",
+  "want": "Protected cycle lane in a city",
+  "ratio": 0.7
+ },
+ "ph-ad-traffic": {
+  "title": "",
+  "want": "Traffic jam in a city at rush hour",
+  "ratio": 0.7
+ },
+ "ph-ag-studio": {
+  "title": "",
+  "want": "Creative agency studio with people working at desks",
+  "ratio": 0.62
+ },
+ "ph-an-city-bus": {
+  "title": "",
+  "want": "Small city bus in a colourful street",
+  "ratio": 0.66
+ },
+ "ph-an-kids-watching": {
+  "title": "",
+  "want": "Young children watching a screen together",
+  "ratio": 0.7
+ },
+ "ph-an-toy-town": {
+  "title": "",
+  "want": "Toy town or miniature city model",
+  "ratio": 0.7
+ },
+ "ph-ar-charred-timber": {
+  "title": "",
+  "want": "Charred timber cladding shou sugi ban texture",
+  "ratio": 0.8
+ },
+ "ph-ar-coast": {
+  "title": "",
+  "want": "Rugged coastline with grasses and dunes",
+  "ratio": 0.8
+ },
+ "ph-ar-concrete": {
+  "title": "",
+  "want": "Board-marked concrete wall",
+  "ratio": 0.8
+ },
+ "ph-ar-corrugated": {
+  "title": "",
+  "want": "Corrugated metal roof on a rural building",
+  "ratio": 0.8
+ },
+ "ph-ar-north-light": {
+  "title": "",
+  "want": "Artist studio interior with large skylight or north-facing window",
+  "ratio": 0.8
+ },
+ "ph-ar-timber-cabin": {
+  "title": "",
+  "want": "Contemporary timber cabin in a coastal or rural landscape",
+  "ratio": 0.7
+ },
+ "ph-ar-timber-frame": {
+  "title": "",
+  "want": "Exposed timber frame structure under construction",
+  "ratio": 0.8
+ },
+ "ph-ar-weathered-wood": {
+  "title": "",
+  "want": "Weathered silver grey wood texture",
+  "ratio": 0.66
+ },
+ "ph-ar-zinc": {
+  "title": "",
+  "want": "Zinc standing seam roof detail",
+  "ratio": 0.66
+ },
+ "ph-ba-clinic-sign": {
+  "title": "",
+  "want": "Dental clinic sign on a building",
+  "ratio": 0.62
+ },
+ "ph-ba-leaflets": {
+  "title": "",
+  "want": "Medical leaflets in a rack",
+  "ratio": 0.62
+ },
+ "ph-ba-reception": {
+  "title": "",
+  "want": "Dental reception desk with staff",
+  "ratio": 0.62
+ },
+ "ph-ba-website-old": {
+  "title": "",
+  "want": "Outdated website on a computer screen",
+  "ratio": 0.62
+ },
+ "ph-br-acorns": {
+  "title": "",
+  "want": "Acorns and oak leaves",
+  "ratio": 0.8
+ },
+ "ph-br-barista": {
+  "title": "",
+  "want": "Barista making coffee",
+  "ratio": 0.8
+ },
+ "ph-br-beans": {
+  "title": "",
+  "want": "Roasted coffee beans close-up",
+  "ratio": 0.8
+ },
+ "ph-br-cafe": {
+  "title": "",
+  "want": "Cosy independent coffee shop interior with wood and plants",
+  "ratio": 0.7
+ },
+ "ph-br-coffee-bag": {
+  "title": "",
+  "want": "Kraft paper coffee bag packaging",
+  "ratio": 0.8
+ },
+ "ph-br-latte": {
+  "title": "",
+  "want": "Latte art in a ceramic cup on wood",
+  "ratio": 0.8
+ },
+ "ph-br-roaster": {
+  "title": "",
+  "want": "Coffee roasting machine in a roastery",
+  "ratio": 0.8
+ },
+ "ph-br-stamp": {
+  "title": "",
+  "want": "Rubber stamp on kraft paper",
+  "ratio": 0.66
+ },
+ "ph-br-wood": {
+  "title": "",
+  "want": "Oak wood texture",
+  "ratio": 0.66
+ },
+ "ph-brain-ferry": {
+  "title": "",
+  "want": "Passenger ferry at sea at night or dusk",
+  "ratio": 0.75
+ },
+ "ph-brain-sea-night": {
+  "title": "",
+  "want": "Dark sea at night with lights on the horizon",
+  "ratio": 0.75
+ },
+ "ph-brain-ship-corridor": {
+  "title": "",
+  "want": "Narrow corridor inside a ship with doors and fluorescent lighting",
+  "ratio": 0.75
+ },
+ "ph-bs-calm-waiting": {
+  "title": "",
+  "want": "Calm modern waiting room with plants and natural light",
+  "ratio": 0.66
+ },
+ "ph-bs-dentist-chair": {
+  "title": "",
+  "want": "Modern dental clinic room",
+  "ratio": 0.7
+ },
+ "ph-bs-hand-hold": {
+  "title": "",
+  "want": "Two hands holding reassuringly",
+  "ratio": 0.7
+ },
+ "ph-ca-comp1": {
+  "title": "",
+  "want": "Premium coffee website product page on a laptop",
+  "ratio": 0.62
+ },
+ "ph-ca-comp2": {
+  "title": "",
+  "want": "Coffee subscription box being unboxed",
+  "ratio": 0.62
+ },
+ "ph-ca-comp3": {
+  "title": "",
+  "want": "Coffee bags on a supermarket shelf",
+  "ratio": 0.62
+ },
+ "ph-call-car-park": {
+  "title": "",
+  "want": "Coastal car park by the sea with vans parked",
+  "ratio": 0.6
+ },
+ "ph-ch-gears": {
+  "title": "",
+  "want": "Brass gears and clockwork mechanism",
+  "ratio": 0.8
+ },
+ "ph-ch-goggles": {
+  "title": "",
+  "want": "Vintage goggles",
+  "ratio": 0.8
+ },
+ "ph-ch-gull": {
+  "title": "",
+  "want": "Seagull close-up",
+  "ratio": 0.8
+ },
+ "ph-ch-lighthouse": {
+  "title": "",
+  "want": "Lighthouse on a rocky coast",
+  "ratio": 0.7
+ },
+ "ph-ch-oilskin": {
+  "title": "",
+  "want": "Yellow oilskin raincoat",
+  "ratio": 0.8
+ },
+ "ph-ch-rope": {
+  "title": "",
+  "want": "Coiled rope texture on a dock",
+  "ratio": 0.66
+ },
+ "ph-ch-toolbelt": {
+  "title": "",
+  "want": "Leather tool belt with tools",
+  "ratio": 0.8
+ },
+ "ph-ch-windswept": {
+  "title": "",
+  "want": "Person in raincoat on a windy beach",
+  "ratio": 0.8
+ },
+ "ph-cp-billboard": {
+  "title": "",
+  "want": "Billboard in a city street",
+  "ratio": 0.66
+ },
+ "ph-cp-coast-rail": {
+  "title": "",
+  "want": "Railway line along the coast",
+  "ratio": 0.8
+ },
+ "ph-cp-reading-train": {
+  "title": "",
+  "want": "Person reading a book on a train",
+  "ratio": 0.8
+ },
+ "ph-cp-spring-fields": {
+  "title": "",
+  "want": "Spring fields with flowers",
+  "ratio": 0.8
+ },
+ "ph-cp-station": {
+  "title": "",
+  "want": "Old railway station platform",
+  "ratio": 0.8
+ },
+ "ph-cp-tea-train": {
+  "title": "",
+  "want": "Cup of tea on a train table",
+  "ratio": 0.8
+ },
+ "ph-cp-ticket": {
+  "title": "",
+  "want": "Vintage railway ticket",
+  "ratio": 0.66
+ },
+ "ph-cp-train-window": {
+  "title": "",
+  "want": "View from a train window of mountains or countryside",
+  "ratio": 0.7
+ },
+ "ph-cp-viaduct": {
+  "title": "",
+  "want": "Train crossing a stone viaduct in the countryside",
+  "ratio": 0.8
+ },
+ "ph-cr-mugs": {
+  "title": "",
+  "want": "Handmade ceramic mugs on a shelf",
+  "ratio": 0.62
+ },
+ "ph-crb-glaze": {
+  "title": "",
+  "want": "Glazed pottery with drips close-up",
+  "ratio": 0.75
+ },
+ "ph-crm-fisherman": {
+  "title": "",
+  "want": "Old fisherman wearing a knitted jumper on a harbour",
+  "ratio": 0.75
+ },
+ "ph-crm-harbour": {
+  "title": "",
+  "want": "Small fishing harbour with boats",
+  "ratio": 0.75
+ },
+ "ph-crm-knit": {
+  "title": "",
+  "want": "Close-up of cable knit wool texture",
+  "ratio": 0.75
+ },
+ "ph-crm-needles": {
+  "title": "",
+  "want": "Knitting needles and a work in progress",
+  "ratio": 0.75
+ },
+ "ph-crm-sheep": {
+  "title": "",
+  "want": "Sheep grazing on a hillside",
+  "ratio": 0.75
+ },
+ "ph-crm-yarn": {
+  "title": "",
+  "want": "Skeins of natural undyed wool yarn",
+  "ratio": 0.75
+ },
+ "ph-cs-1": {
+  "title": "",
+  "want": "Breakfast table with coffee and ceramics in soft morning window light",
+  "ratio": 0.8
+ },
+ "ph-cs-2": {
+  "title": "",
+  "want": "Coffee cup and bread on a wooden table by a window",
+  "ratio": 0.8
+ },
+ "ph-cs-3": {
+  "title": "",
+  "want": "Ceramic bowls and linen on a table in morning light",
+  "ratio": 0.8
+ },
+ "ph-cs-4": {
+  "title": "",
+  "want": "Pouring coffee from a pot into a cup in morning light",
+  "ratio": 0.8
+ },
+ "ph-cs-5": {
+  "title": "",
+  "want": "Hands breaking bread at a breakfast table",
+  "ratio": 0.8
+ },
+ "ph-cs-6": {
+  "title": "",
+  "want": "Morning breakfast table with flowers in a vase",
+  "ratio": 0.8
+ },
+ "ph-cs-7": {
+  "title": "",
+  "want": "Empty chair at a breakfast table in sunlight",
+  "ratio": 0.8
+ },
+ "ph-cs-8": {
+  "title": "",
+  "want": "Cup of coffee with steam in backlight",
+  "ratio": 0.8
+ },
+ "ph-db-annual-report": {
+  "title": "",
+  "want": "Printed booklet or magazine spread on a table",
+  "ratio": 0.7
+ },
+ "ph-db-ceramics": {
+  "title": "",
+  "want": "Handmade ceramics on shelves",
+  "ratio": 0.7
+ },
+ "ph-db-pottery-class": {
+  "title": "",
+  "want": "Pottery class with people at wheels",
+  "ratio": 0.66
+ },
+ "ph-dc-dripping-tap": {
+  "title": "",
+  "want": "Dripping kitchen tap close-up",
+  "ratio": 0.7
+ },
+ "ph-dc-handyperson": {
+  "title": "",
+  "want": "Handyperson repairing a door in a home",
+  "ratio": 0.7
+ },
+ "ph-dc-renter-phone": {
+  "title": "",
+  "want": "Young person using a phone in a rented apartment",
+  "ratio": 0.66
+ },
+ "ph-dl-cafe-evening": {
+  "title": "",
+  "want": "Small neighbourhood café in the early evening",
+  "ratio": 0.7
+ },
+ "ph-dl-commute": {
+  "title": "",
+  "want": "Person commuting on a train looking at a phone",
+  "ratio": 0.7
+ },
+ "ph-dl-desk": {
+  "title": "",
+  "want": "Person working at a desk with a laptop and a coffee mug",
+  "ratio": 0.7
+ },
+ "ph-dl-evening-sofa": {
+  "title": "",
+  "want": "Person relaxing on a sofa in the evening with a book",
+  "ratio": 0.7
+ },
+ "ph-dl-grinder": {
+  "title": "",
+  "want": "Coffee grinder and pour-over set on a kitchen counter in the morning",
+  "ratio": 0.7
+ },
+ "ph-dl-phone-lunch": {
+  "title": "",
+  "want": "Person using a smartphone in a café at lunchtime",
+  "ratio": 0.7
+ },
+ "ph-doc-bakery": {
+  "title": "",
+  "want": "Small traditional bakery shopfront in the early morning",
+  "ratio": 0.75
+ },
+ "ph-doc-bread": {
+  "title": "",
+  "want": "Hands shaping bread dough on a floured table",
+  "ratio": 0.75
+ },
+ "ph-eb-craft-market": {
+  "title": "",
+  "want": "Indoor craft market with stalls and visitors",
+  "ratio": 0.66
+ },
+ "ph-eb-food-stalls": {
+  "title": "",
+  "want": "Street food stalls with people queuing",
+  "ratio": 0.7
+ },
+ "ph-eb-tram-depot": {
+  "title": "",
+  "want": "Industrial warehouse event venue with high ceilings",
+  "ratio": 0.7
+ },
+ "ph-em-person": {
+  "title": "",
+  "want": "Person looking thoughtful sitting in a waiting room",
+  "ratio": 1.1
+ },
+ "ph-ev-candles": {
+  "title": "",
+  "want": "Many candles on a dinner table",
+  "ratio": 0.8
+ },
+ "ph-ev-festoon": {
+  "title": "",
+  "want": "Festoon string lights over an outdoor space at dusk",
+  "ratio": 0.8
+ },
+ "ph-ev-fire-pit": {
+  "title": "",
+  "want": "People around an outdoor fire pit at night",
+  "ratio": 0.5625
+ },
+ "ph-ev-harvest-food": {
+  "title": "",
+  "want": "Sharing platters of seasonal food",
+  "ratio": 0.8
+ },
+ "ph-ev-kraft-tag": {
+  "title": "",
+  "want": "Handwritten kraft paper name tag",
+  "ratio": 0.66
+ },
+ "ph-ev-linen-napkin": {
+  "title": "",
+  "want": "Linen napkin and ceramic plate place setting",
+  "ratio": 0.8
+ },
+ "ph-ev-long-table": {
+  "title": "",
+  "want": "Long outdoor dinner table set under trees with candles",
+  "ratio": 0.7
+ },
+ "ph-ev-orchard": {
+  "title": "",
+  "want": "Orchard at sunset",
+  "ratio": 0.8
+ },
+ "ph-ev-terracotta": {
+  "title": "",
+  "want": "Terracotta pots and ceramics",
+  "ratio": 0.66
+ },
+ "ph-ev-wildflowers": {
+  "title": "",
+  "want": "Wildflowers in small vases on a table",
+  "ratio": 0.8
+ },
+ "ph-fa-boots": {
+  "title": "",
+  "want": "Worn leather boots on a trail",
+  "ratio": 0.8
+ },
+ "ph-fa-brass-buttons": {
+  "title": "",
+  "want": "Brass buttons and hardware on workwear",
+  "ratio": 0.66
+ },
+ "ph-fa-field-notebook": {
+  "title": "",
+  "want": "Field notebook with botanical sketches",
+  "ratio": 0.8
+ },
+ "ph-fa-greenhouse": {
+  "title": "",
+  "want": "Victorian glass greenhouse interior",
+  "ratio": 0.8
+ },
+ "ph-fa-moss": {
+  "title": "",
+  "want": "Moss on rocks close-up in forest",
+  "ratio": 0.8
+ },
+ "ph-fa-old-map": {
+  "title": "",
+  "want": "Old topographic map detail",
+  "ratio": 0.8
+ },
+ "ph-fa-tweed": {
+  "title": "",
+  "want": "Close-up of tweed or wool fabric weave",
+  "ratio": 0.66
+ },
+ "ph-fa-wool-coat": {
+  "title": "",
+  "want": "Wool coat on a hanger, textured fabric",
+  "ratio": 0.8
+ },
+ "ph-fa-workwear": {
+  "title": "",
+  "want": "Person wearing vintage workwear jacket outdoors in nature",
+  "ratio": 0.7
+ },
+ "ph-fab-workshop-apron": {
+  "title": "",
+  "want": "Leather work apron with tools in pockets",
+  "ratio": 0.75
+ },
+ "ph-film-sandbank": {
+  "title": "",
+  "want": "Sandbank and shallow channels in an estuary at low tide, aerial or high view",
+  "ratio": 0.66
+ },
+ "ph-film-sea-fog": {
+  "title": "",
+  "want": "Sea fog rolling over a beach or harbour, muted grey palette",
+  "ratio": 0.66
+ },
+ "ph-film-sea-wall": {
+  "title": "",
+  "want": "Old concrete sea wall or promenade above a beach, grey weather",
+  "ratio": 0.66
+ },
+ "ph-film-tidal-flats": {
+  "title": "",
+  "want": "Wide tidal mudflats at low tide, overcast morning light, a lone figure far away",
+  "ratio": 0.6
+ },
+ "ph-fs-finale": {
+  "title": "",
+  "want": "Fashion show finale with models walking on a runway",
+  "ratio": 0.5625
+ },
+ "ph-gc-old-sailor": {
+  "title": "",
+  "want": "Elderly sailor or lighthouse keeper with a beard and a knitted hat",
+  "ratio": 1.1
+ },
+ "ph-gd-festival-crowd": {
+  "title": "",
+  "want": "Crowd at an outdoor music festival in daylight",
+  "ratio": 0.8
+ },
+ "ph-gd-halftone": {
+  "title": "",
+  "want": "Halftone dots print texture close-up",
+  "ratio": 0.66
+ },
+ "ph-gd-jazz-band": {
+  "title": "",
+  "want": "Jazz band with brass instruments performing outdoors",
+  "ratio": 0.7
+ },
+ "ph-gd-letterpress": {
+  "title": "",
+  "want": "Letterpress wood type blocks",
+  "ratio": 0.8
+ },
+ "ph-gd-paper-cutouts": {
+  "title": "",
+  "want": "Colourful cut paper shapes collage",
+  "ratio": 0.8
+ },
+ "ph-gd-paper-texture": {
+  "title": "",
+  "want": "Close-up texture of recycled paper or cardboard",
+  "ratio": 0.66
+ },
+ "ph-gd-poster-wall": {
+  "title": "",
+  "want": "Wall covered in colourful printed posters",
+  "ratio": 0.8
+ },
+ "ph-gd-river-summer": {
+  "title": "",
+  "want": "People sitting by a river in summer evening light",
+  "ratio": 0.8
+ },
+ "ph-gd-saxophone": {
+  "title": "",
+  "want": "Close-up of a saxophone",
+  "ratio": 0.8
+ },
+ "ph-gm-cottage": {
+  "title": "",
+  "want": "Fisherman’s cottage by the sea",
+  "ratio": 0.8
+ },
+ "ph-gm-crab": {
+  "title": "",
+  "want": "Small crab on the beach",
+  "ratio": 0.8
+ },
+ "ph-gm-island": {
+  "title": "",
+  "want": "Small island with a lighthouse seen from above",
+  "ratio": 0.8
+ },
+ "ph-gm-low-tide": {
+  "title": "",
+  "want": "Low tide revealing a path to an island",
+  "ratio": 0.8
+ },
+ "ph-gm-rock-pool": {
+  "title": "",
+  "want": "Tide pool with seaweed, shells and clear water",
+  "ratio": 0.7
+ },
+ "ph-gm-sea-glass": {
+  "title": "",
+  "want": "Sea glass pebbles on sand",
+  "ratio": 0.8
+ },
+ "ph-gm-sunset-sea": {
+  "title": "",
+  "want": "Pastel sunset over a calm sea",
+  "ratio": 0.8
+ },
+ "ph-gm-watercolour": {
+  "title": "",
+  "want": "Watercolour painting of the sea",
+  "ratio": 0.66
+ },
+ "ph-gm-wet-sand": {
+  "title": "",
+  "want": "Ripples in wet sand at low tide",
+  "ratio": 0.66
+ },
+ "ph-ib-courtyard": {
+  "title": "",
+  "want": "Hidden courtyard with ivy and old stone in a historic city",
+  "ratio": 0.66
+ },
+ "ph-ib-family-living": {
+  "title": "",
+  "want": "Family living room with sofa and toys tidied in baskets",
+  "ratio": 0.7
+ },
+ "ph-ib-hallway-storage": {
+  "title": "",
+  "want": "Hallway with built-in storage bench and coat hooks",
+  "ratio": 0.7
+ },
+ "ph-ib-kitchen-diner": {
+  "title": "",
+  "want": "Kitchen diner with a long wooden table and pendant lights",
+  "ratio": 0.66
+ },
+ "ph-ib-pen-ink": {
+  "title": "",
+  "want": "Pen and ink architectural drawing",
+  "ratio": 0.7
+ },
+ "ph-ib-walking-map": {
+  "title": "",
+  "want": "Hand-drawn illustrated map",
+  "ratio": 0.7
+ },
+ "ph-il-architecture-lines": {
+  "title": "",
+  "want": "Strong geometric lines in modern architecture",
+  "ratio": 0.75
+ },
+ "ph-il-chair": {
+  "title": "",
+  "want": "Classic wooden chair design",
+  "ratio": 0.75
+ },
+ "ph-il-fox": {
+  "title": "",
+  "want": "Red fox in the wild",
+  "ratio": 0.8
+ },
+ "ph-il-gouache": {
+  "title": "",
+  "want": "Gouache paint palette with colourful paint",
+  "ratio": 0.8
+ },
+ "ph-il-ink-sketch": {
+  "title": "",
+  "want": "Ink pen sketch in a sketchbook",
+  "ratio": 0.66
+ },
+ "ph-il-kitchen-tools": {
+  "title": "",
+  "want": "Vintage kitchen tools arranged neatly",
+  "ratio": 0.75
+ },
+ "ph-il-library": {
+  "title": "",
+  "want": "Old library interior with tall wooden bookshelves and warm lamps",
+  "ratio": 0.7
+ },
+ "ph-il-night-sky": {
+  "title": "",
+  "want": "Starry night sky over trees",
+  "ratio": 0.8
+ },
+ "ph-il-old-books": {
+  "title": "",
+  "want": "Stack of old leather-bound books",
+  "ratio": 0.8
+ },
+ "ph-il-owl": {
+  "title": "",
+  "want": "Owl sitting on a branch at night",
+  "ratio": 0.8
+ },
+ "ph-il-paint-chips": {
+  "title": "",
+  "want": "Paint colour chips swatches fanned out",
+  "ratio": 0.75
+ },
+ "ph-il-reading-lamp": {
+  "title": "",
+  "want": "Desk lamp glowing in a dark room",
+  "ratio": 0.8
+ },
+ "ph-il-shadow-stairs": {
+  "title": "",
+  "want": "Shadows on stairs in sunlight",
+  "ratio": 0.75
+ },
+ "ph-il-shop-sign": {
+  "title": "",
+  "want": "Vintage shop sign with hand-painted lettering",
+  "ratio": 0.75
+ },
+ "ph-il-spices": {
+  "title": "",
+  "want": "Colourful spices in a market",
+  "ratio": 0.75
+ },
+ "ph-il-ticket": {
+  "title": "",
+  "want": "Old printed ticket or label with typography",
+  "ratio": 0.75
+ },
+ "ph-il-watercolour-paper": {
+  "title": "",
+  "want": "Watercolour paper texture close-up",
+  "ratio": 0.66
+ },
+ "ph-in-armchair": {
+  "title": "",
+  "want": "Vintage armchair by a window",
+  "ratio": 0.8
+ },
+ "ph-in-boucle": {
+  "title": "",
+  "want": "Boucle fabric texture close-up",
+  "ratio": 0.66
+ },
+ "ph-in-fireplace": {
+  "title": "",
+  "want": "Victorian fireplace in a living room",
+  "ratio": 0.8
+ },
+ "ph-in-limewash": {
+  "title": "",
+  "want": "Limewash painted wall texture",
+  "ratio": 0.8
+ },
+ "ph-in-living-room": {
+  "title": "",
+  "want": "Warm minimal living room with a linen sofa and natural light",
+  "ratio": 0.7
+ },
+ "ph-in-oak-shelves": {
+  "title": "",
+  "want": "Built-in oak shelving in alcoves",
+  "ratio": 0.8
+ },
+ "ph-in-paper-lamp": {
+  "title": "",
+  "want": "Paper pendant lamp in a room",
+  "ratio": 0.8
+ },
+ "ph-in-travertine": {
+  "title": "",
+  "want": "Travertine stone surface texture",
+  "ratio": 0.66
+ },
+ "ph-in-wool-rug": {
+  "title": "",
+  "want": "Wool rug on a wooden floor",
+  "ratio": 0.8
+ },
+ "ph-insp-cardboard": {
+  "title": "",
+  "want": "Corrugated cardboard texture close-up",
+  "ratio": 0.66
+ },
+ "ph-insp-grid-paper": {
+  "title": "",
+  "want": "Graph paper with hand drawing",
+  "ratio": 0.8
+ },
+ "ph-insp-pencils": {
+  "title": "",
+  "want": "Coloured pencils arranged on a table",
+  "ratio": 0.8
+ },
+ "ph-insp-risograph": {
+  "title": "",
+  "want": "Risograph print with vivid ink",
+  "ratio": 0.66
+ },
+ "ph-insp-sculpture": {
+  "title": "",
+  "want": "Abstract sculpture in a gallery",
+  "ratio": 0.8
+ },
+ "ph-insp-shadow": {
+  "title": "",
+  "want": "Strong shadows of everyday objects",
+  "ratio": 0.8
+ },
+ "ph-insp-studio": {
+  "title": "",
+  "want": "Design studio desk with sketches, swatches and tools",
+  "ratio": 0.7
+ },
+ "ph-insp-tools": {
+  "title": "",
+  "want": "Workshop tools neatly arranged",
+  "ratio": 0.8
+ },
+ "ph-insp-type-sign": {
+  "title": "",
+  "want": "Old hand-painted shop sign lettering",
+  "ratio": 0.8
+ },
+ "ph-lb-beach-hut": {
+  "title": "",
+  "want": "Colourful beach huts on a promenade",
+  "ratio": 0.7
+ },
+ "ph-lb-look1": {
+  "title": "",
+  "want": "Model in a waxed cotton jacket standing on moorland",
+  "ratio": 1.3
+ },
+ "ph-lb-look2": {
+  "title": "",
+  "want": "Model in a long tweed coat walking outdoors",
+  "ratio": 1.3
+ },
+ "ph-lb-look3": {
+  "title": "",
+  "want": "Model in a moss green knit sweater in a forest",
+  "ratio": 1.3
+ },
+ "ph-lb-sea-swimmers": {
+  "title": "",
+  "want": "Group of sea swimmers in the sea at sunrise",
+  "ratio": 0.66
+ },
+ "ph-lb-swim-cap": {
+  "title": "",
+  "want": "Swimmers wearing bright swim caps",
+  "ratio": 0.7
+ },
+ "ph-lbs-badge": {
+  "title": "",
+  "want": "Vintage sports club badge or patch",
+  "ratio": 0.75
+ },
+ "ph-lbs-signal-flags": {
+  "title": "",
+  "want": "Nautical signal flags on a ship",
+  "ratio": 0.75
+ },
+ "ph-lg-arc-bridge": {
+  "title": "",
+  "want": "Elegant arched bridge structure",
+  "ratio": 0.8
+ },
+ "ph-lg-cyclist": {
+  "title": "",
+  "want": "Older cyclist riding on a country road in morning light",
+  "ratio": 0.7
+ },
+ "ph-lg-embroidery": {
+  "title": "",
+  "want": "Embroidered logo patch on fabric",
+  "ratio": 0.66
+ },
+ "ph-lg-north-star": {
+  "title": "",
+  "want": "Night sky with the north star and constellations",
+  "ratio": 0.8
+ },
+ "ph-lg-running-track": {
+  "title": "",
+  "want": "Lines of a running track",
+  "ratio": 0.8
+ },
+ "ph-lg-signage": {
+  "title": "",
+  "want": "Clean modern wayfinding signage",
+  "ratio": 0.8
+ },
+ "ph-lg-stretch": {
+  "title": "",
+  "want": "Person stretching outdoors",
+  "ratio": 0.8
+ },
+ "ph-lg-sunrise": {
+  "title": "",
+  "want": "Sunrise over hills",
+  "ratio": 0.8
+ },
+ "ph-loc-cottage": {
+  "title": "",
+  "want": "Small cottage exterior with garden in the countryside",
+  "ratio": 0.75
+ },
+ "ph-loc-cottage-kitchen": {
+  "title": "",
+  "want": "Small cottage kitchen with wooden table and old cupboards",
+  "ratio": 0.75
+ },
+ "ph-loc-farm-kitchen": {
+  "title": "",
+  "want": "Rustic farmhouse kitchen interior with a range cooker and window",
+  "ratio": 0.75
+ },
+ "ph-loc-farmhouse": {
+  "title": "",
+  "want": "Old stone farmhouse exterior in countryside",
+  "ratio": 0.75
+ },
+ "ph-loc-map": {
+  "title": "",
+  "want": "Rural road map or aerial view of countryside fields",
+  "ratio": 0.66
+ },
+ "ph-loc-set-build": {
+  "title": "",
+  "want": "Film set construction with wooden flats and scaffolding",
+  "ratio": 0.75
+ },
+ "ph-loc-studio": {
+  "title": "",
+  "want": "Empty film studio stage or warehouse interior",
+  "ratio": 0.75
+ },
+ "ph-ma-logo-stamp": {
+  "title": "",
+  "want": "Coffee shop logo stamped on a kraft paper cup",
+  "ratio": 0.75
+ },
+ "ph-mb-arts-centre": {
+  "title": "",
+  "want": "Community arts centre building exterior",
+  "ratio": 0.7
+ },
+ "ph-mb-forest-light": {
+  "title": "",
+  "want": "Sunlight through a young forest",
+  "ratio": 0.66
+ },
+ "ph-mb-life-drawing": {
+  "title": "",
+  "want": "Life drawing class in an art studio",
+  "ratio": 0.66
+ },
+ "ph-mb-model-walking": {
+  "title": "",
+  "want": "Model walking outdoors in a long coat",
+  "ratio": 0.7
+ },
+ "ph-mb-moorland": {
+  "title": "",
+  "want": "Moorland landscape with heather and big sky",
+  "ratio": 0.66
+ },
+ "ph-mb-natural-makeup": {
+  "title": "",
+  "want": "Natural minimal make-up portrait",
+  "ratio": 0.7
+ },
+ "ph-mb-paper-craft": {
+  "title": "",
+  "want": "Layered paper craft art landscape",
+  "ratio": 0.7
+ },
+ "ph-mb-seedling-hand": {
+  "title": "",
+  "want": "Hand holding a tree seedling",
+  "ratio": 0.7
+ },
+ "ph-mb-writing-group": {
+  "title": "",
+  "want": "Small writing group around a table",
+  "ratio": 0.7
+ },
+ "ph-mkt-cinema": {
+  "title": "",
+  "want": "Cinema auditorium with red seats",
+  "ratio": 0.75
+ },
+ "ph-mkt-poster-wall": {
+  "title": "",
+  "want": "Film posters on a wall or billboard in a city",
+  "ratio": 0.75
+ },
+ "ph-mo-bark": {
+  "title": "",
+  "want": "Tree bark texture close-up",
+  "ratio": 0.66
+ },
+ "ph-mo-birds": {
+  "title": "",
+  "want": "Flock of birds flying over trees",
+  "ratio": 0.8
+ },
+ "ph-mo-forest-canopy": {
+  "title": "",
+  "want": "Looking up at a forest canopy with sunlight",
+  "ratio": 0.7
+ },
+ "ph-mo-kraft-paper": {
+  "title": "",
+  "want": "Kraft paper texture",
+  "ratio": 0.66
+ },
+ "ph-mo-light-rays": {
+  "title": "",
+  "want": "Sunlight rays through forest mist",
+  "ratio": 0.8
+ },
+ "ph-mo-paper-leaves": {
+  "title": "",
+  "want": "Paper cut leaves craft",
+  "ratio": 0.8
+ },
+ "ph-mo-rain": {
+  "title": "",
+  "want": "Raindrops on leaves",
+  "ratio": 0.8
+ },
+ "ph-mo-roots": {
+  "title": "",
+  "want": "Tree roots exposed in soil",
+  "ratio": 0.8
+ },
+ "ph-mo-seedling": {
+  "title": "",
+  "want": "Seedling sprouting from soil close-up",
+  "ratio": 0.8
+ },
+ "ph-mo-tree-rings": {
+  "title": "",
+  "want": "Close-up of tree growth rings",
+  "ratio": 0.75
+ },
+ "ph-mood-diner-window": {
+  "title": "",
+  "want": "Person seen through a diner or shop window at night from outside",
+  "ratio": 0.75
+ },
+ "ph-mood-fabric": {
+  "title": "",
+  "want": "Close-up of folded laundry or crumpled cotton fabric texture",
+  "ratio": 0.75
+ },
+ "ph-mood-laundromat": {
+  "title": "",
+  "want": "Laundromat interior at night with fluorescent lights",
+  "ratio": 0.75
+ },
+ "ph-mood-neon-rain": {
+  "title": "",
+  "want": "Neon sign reflected on a wet street at night",
+  "ratio": 0.75
+ },
+ "ph-mood-street-night": {
+  "title": "",
+  "want": "Empty city street at night with a single figure walking",
+  "ratio": 0.75
+ },
+ "ph-mood-tiles": {
+  "title": "",
+  "want": "Old tiled wall or floor, worn green or white tiles",
+  "ratio": 0.75
+ },
+ "ph-mp-leaflet": {
+  "title": "",
+  "want": "Leaflet through a letterbox",
+  "ratio": 0.7
+ },
+ "ph-mp-suburb": {
+  "title": "",
+  "want": "Suburban street with houses and gardens",
+  "ratio": 0.7
+ },
+ "ph-mp-wheelie-bins": {
+  "title": "",
+  "want": "Row of wheelie bins on a residential street",
+  "ratio": 0.66
+ },
+ "ph-mr-focus-group": {
+  "title": "",
+  "want": "Focus group discussion around a table",
+  "ratio": 0.7
+ },
+ "ph-mr-plant-food": {
+  "title": "",
+  "want": "Plant-based meal in a bowl",
+  "ratio": 0.7
+ },
+ "ph-mr-pour-over": {
+  "title": "",
+  "want": "Pour-over coffee being made at home",
+  "ratio": 0.66
+ },
+ "ph-mr-ready-meal": {
+  "title": "",
+  "want": "Supermarket chilled ready meals aisle",
+  "ratio": 0.66
+ },
+ "ph-pb-ceramic-breakfast": {
+  "title": "",
+  "want": "Breakfast with ceramics and linen napkins",
+  "ratio": 0.7
+ },
+ "ph-pb-flat": {
+  "title": "",
+  "want": "Bright apartment with large windows and wooden floors",
+  "ratio": 0.66
+ },
+ "ph-pb-model-morning": {
+  "title": "",
+  "want": "Person in a linen shirt by a window with coffee",
+  "ratio": 0.7
+ },
+ "ph-pe-maya": {
+  "title": "",
+  "want": "Woman in her thirties drinking coffee at home in the morning",
+  "ratio": 1.1
+ },
+ "ph-ph-bread-board": {
+  "title": "",
+  "want": "Bread on a wooden board, rustic food styling",
+  "ratio": 0.8
+ },
+ "ph-ph-ceramic-cups": {
+  "title": "",
+  "want": "Handmade ceramic cups on a wooden table",
+  "ratio": 0.8
+ },
+ "ph-ph-hands-coffee": {
+  "title": "",
+  "want": "Hands holding a cup of coffee",
+  "ratio": 0.8
+ },
+ "ph-ph-linen-bed": {
+  "title": "",
+  "want": "Unmade bed with linen sheets in natural light",
+  "ratio": 0.8
+ },
+ "ph-ph-linen-texture": {
+  "title": "",
+  "want": "Close-up of linen fabric texture",
+  "ratio": 0.66
+ },
+ "ph-ph-morning-table": {
+  "title": "",
+  "want": "Breakfast table with coffee and ceramics in soft morning window light",
+  "ratio": 0.7
+ },
+ "ph-ph-plants-window": {
+  "title": "",
+  "want": "Houseplants on a sunny windowsill",
+  "ratio": 0.8
+ },
+ "ph-ph-research-wall": {
+  "title": "",
+  "want": "Research sticky notes on a wall during synthesis",
+  "ratio": 0.62
+ },
+ "ph-ph-window-shadow": {
+  "title": "",
+  "want": "Shadow of a window frame on a wall in sunlight",
+  "ratio": 0.8
+ },
+ "ph-ph-wood-grain": {
+  "title": "",
+  "want": "Close-up wood grain of an old table",
+  "ratio": 0.66
+ },
+ "ph-pk-botanical": {
+  "title": "",
+  "want": "Botanical illustration of wildflowers",
+  "ratio": 0.8
+ },
+ "ph-pk-dried-herbs": {
+  "title": "",
+  "want": "Dried herbs and flowers for tea",
+  "ratio": 0.8
+ },
+ "ph-pk-emboss": {
+  "title": "",
+  "want": "Blind embossed paper detail",
+  "ratio": 0.66
+ },
+ "ph-pk-kraft-box": {
+  "title": "",
+  "want": "Kraft paper box packaging",
+  "ratio": 0.8
+ },
+ "ph-pk-label": {
+  "title": "",
+  "want": "Letterpress printed label",
+  "ratio": 0.8
+ },
+ "ph-pk-meadow": {
+  "title": "",
+  "want": "Wildflower meadow",
+  "ratio": 0.8
+ },
+ "ph-pk-tea-pour": {
+  "title": "",
+  "want": "Pouring tea into a cup",
+  "ratio": 0.8
+ },
+ "ph-pk-tea-shelf": {
+  "title": "",
+  "want": "Shelf with tea packaging in a shop",
+  "ratio": 0.7
+ },
+ "ph-pk-uncoated": {
+  "title": "",
+  "want": "Uncoated textured paper close-up",
+  "ratio": 0.66
+ },
+ "ph-pl-sofa": {
+  "title": "",
+  "want": "Linen three-seat sofa in a living room",
+  "ratio": 0.8
+ },
+ "ph-pl-street-party": {
+  "title": "",
+  "want": "Neighbourhood street party with people and bunting",
+  "ratio": 0.62
+ },
+ "ph-pod-hospital-corridor": {
+  "title": "",
+  "want": "Empty hospital corridor at night with dim lighting",
+  "ratio": 0.75
+ },
+ "ph-pod-night-city": {
+  "title": "",
+  "want": "City skyline at night with few lights on",
+  "ratio": 0.6
+ },
+ "ph-pod-observatory": {
+  "title": "",
+  "want": "Astronomical observatory dome at night with stars",
+  "ratio": 0.66
+ },
+ "ph-pod-tugboat": {
+  "title": "",
+  "want": "Tugboat in a harbour at night or dusk",
+  "ratio": 0.62
+ },
+ "ph-pr-library-modern": {
+  "title": "",
+  "want": "Modern public library interior with people reading",
+  "ratio": 0.66
+ },
+ "ph-pr-makerspace": {
+  "title": "",
+  "want": "Makerspace with 3D printers and people working",
+  "ratio": 0.7
+ },
+ "ph-pr-ribbon": {
+  "title": "",
+  "want": "Ribbon cutting at an opening ceremony",
+  "ratio": 0.7
+ },
+ "ph-ps-headshot": {
+  "title": "",
+  "want": "Professional headshot portrait against a plain background",
+  "ratio": 1.2
+ },
+ "ph-ps-physio-hands": {
+  "title": "",
+  "want": "Physiotherapist hands working on a patient’s knee",
+  "ratio": 0.7
+ },
+ "ph-ps-team-outdoor": {
+  "title": "",
+  "want": "Small team of colleagues photographed outdoors on a street",
+  "ratio": 0.62
+ },
+ "ph-rb-bungalow": {
+  "title": "",
+  "want": "Mid-century modern bungalow exterior",
+  "ratio": 0.66
+ },
+ "ph-rb-mid-century-kitchen": {
+  "title": "",
+  "want": "Mid-century style kitchen with wood cabinets",
+  "ratio": 0.7
+ },
+ "ph-rb-parquet": {
+  "title": "",
+  "want": "Original parquet wooden floor",
+  "ratio": 0.7
+ },
+ "ph-rm-pink-bathroom": {
+  "title": "",
+  "want": "Pink plaster bathroom with brass fittings",
+  "ratio": 0.75
+ },
+ "ph-rm-terrazzo": {
+  "title": "",
+  "want": "Terrazzo bathroom floor or vanity",
+  "ratio": 0.75
+ },
+ "ph-rm-walk-in-shower": {
+  "title": "",
+  "want": "Level-access walk-in shower",
+  "ratio": 0.75
+ },
+ "ph-rm-wall-light": {
+  "title": "",
+  "want": "Bathroom wall light by a mirror",
+  "ratio": 0.75
+ },
+ "ph-rs-kitchen-units": {
+  "title": "",
+  "want": "Wooden kitchen cabinets in a modern kitchen",
+  "ratio": 0.8
+ },
+ "ph-rs-paint": {
+  "title": "",
+  "want": "Paint tins and brushes for decorating",
+  "ratio": 0.8
+ },
+ "ph-rs-pendants": {
+  "title": "",
+  "want": "Pendant lights over a kitchen island",
+  "ratio": 0.8
+ },
+ "ph-rs-tap": {
+  "title": "",
+  "want": "Brass kitchen tap over a sink",
+  "ratio": 0.8
+ },
+ "ph-rs-tiles": {
+  "title": "",
+  "want": "Handmade zellige tiles on a kitchen wall",
+  "ratio": 0.8
+ },
+ "ph-rs-worktop": {
+  "title": "",
+  "want": "Quartz kitchen worktop close-up",
+  "ratio": 0.8
+ },
+ "ph-seo-analytics": {
+  "title": "",
+  "want": "Laptop showing analytics charts",
+  "ratio": 0.7
+ },
+ "ph-seo-showroom": {
+  "title": "",
+  "want": "Stove showroom or fireplace shop interior",
+  "ratio": 0.7
+ },
+ "ph-seo-wood-stove": {
+  "title": "",
+  "want": "Wood burning stove in a cosy living room",
+  "ratio": 0.66
+ },
+ "ph-sf-seed": {
+  "title": "",
+  "want": "Seed or seedling held in a cupped hand, soft light",
+  "ratio": 0.5625
+ },
+ "ph-shot-bench": {
+  "title": "",
+  "want": "Bench on a seaside promenade facing the sea",
+  "ratio": 0.62
+ },
+ "ph-sm-cooking-overhead": {
+  "title": "",
+  "want": "Overhead shot of cooking vegetables in a pan",
+  "ratio": 0.7
+ },
+ "ph-sm-market-veg": {
+  "title": "",
+  "want": "Seasonal vegetables at a market",
+  "ratio": 0.7
+ },
+ "ph-sm-zero-waste": {
+  "title": "",
+  "want": "Zero waste shop with bulk jars and dispensers",
+  "ratio": 0.66
+ },
+ "ph-so-bag": {
+  "title": "",
+  "want": "Coffee bag with a label on a café counter",
+  "ratio": 1.25
+ },
+ "ph-so-coffee-cherries": {
+  "title": "",
+  "want": "Ripe red coffee cherries on a branch",
+  "ratio": 1.25
+ },
+ "ph-so-coffee-farm": {
+  "title": "",
+  "want": "Coffee farm with coffee plants on a hillside",
+  "ratio": 1.25
+ },
+ "ph-so-cupping": {
+  "title": "",
+  "want": "Coffee cupping tasting with spoons and cups",
+  "ratio": 1.25
+ },
+ "ph-so-roaster": {
+  "title": "",
+  "want": "Coffee roasting machine in a roastery",
+  "ratio": 1.25
+ },
+ "ph-tp-cliffs": {
+  "title": "",
+  "want": "Dramatic sea cliffs with grass and mist",
+  "ratio": 0.75
+ },
+ "ph-tp-village": {
+  "title": "",
+  "want": "Small village with turf-roofed houses by the sea",
+  "ratio": 0.75
+ },
+ "ph-tp-waterfall": {
+  "title": "",
+  "want": "Waterfall falling into the sea from a cliff",
+  "ratio": 0.75
+ },
+ "ph-ui-botanical": {
+  "title": "",
+  "want": "Vintage botanical illustration",
+  "ratio": 0.8
+ },
+ "ph-ui-defect": {
+  "title": "",
+  "want": "Crack in a concrete wall close-up",
+  "ratio": 0.7
+ },
+ "ph-ui-desk-laptop": {
+  "title": "",
+  "want": "Laptop on a desk with plants nearby",
+  "ratio": 0.8
+ },
+ "ph-ui-inspector": {
+  "title": "",
+  "want": "Building inspector with a tablet on a construction site",
+  "ratio": 0.66
+ },
+ "ph-ui-leaf-macro": {
+  "title": "",
+  "want": "Macro close-up of a green leaf with veins",
+  "ratio": 0.8
+ },
+ "ph-ui-paper-texture": {
+  "title": "",
+  "want": "Natural paper texture close-up",
+  "ratio": 0.66
+ },
+ "ph-ui-phone-hand": {
+  "title": "",
+  "want": "Hand holding a smartphone, close-up",
+  "ratio": 0.8
+ },
+ "ph-ui-plants": {
+  "title": "",
+  "want": "Many houseplants together in natural light",
+  "ratio": 0.7
+ },
+ "ph-ui-tablet-outdoors": {
+  "title": "",
+  "want": "Tablet used outdoors in daylight",
+  "ratio": 0.7
+ },
+ "ph-ui-terracotta": {
+  "title": "",
+  "want": "Terracotta plant pots",
+  "ratio": 0.8
+ },
+ "ph-ui-watering-can": {
+  "title": "",
+  "want": "Watering can watering plants",
+  "ratio": 0.8
+ },
+ "ph-ut-session": {
+  "title": "",
+  "want": "Usability testing session with a participant at a laptop",
+  "ratio": 0.62
+ },
+ "ph-ux-notes": {
+  "title": "",
+  "want": "Research notes and sticky notes on a wall",
+  "ratio": 0.7
+ },
+ "ph-ux-sofa-delivery": {
+  "title": "",
+  "want": "Sofa being delivered to a home",
+  "ratio": 0.7
+ },
+ "ph-ux-usability-test": {
+  "title": "",
+  "want": "Usability testing session with a participant at a laptop",
+  "ratio": 0.66
+ },
+ "ph-va-estuary": {
+  "title": "",
+  "want": "Estuary landscape at low tide with reflections",
+  "ratio": 0.62
+ },
+ "ph-va-kids-library": {
+  "title": "",
+  "want": "Children reading on cushions in a library corner",
+  "ratio": 0.66
+ },
+ "ph-vab-forest": {
+  "title": "",
+  "want": "Sunlit forest with tall trees",
+  "ratio": 0.75
+ },
+ "ph-vab-picture-book": {
+  "title": "",
+  "want": "Open illustrated children’s picture book",
+  "ratio": 0.75
+ },
+ "ph-vam-boat": {
+  "title": "",
+  "want": "Old wooden boat stranded on mud at low tide",
+  "ratio": 0.75
+ },
+ "ph-vam-mist": {
+  "title": "",
+  "want": "Morning mist over water and marsh",
+  "ratio": 0.75
+ },
+ "ph-vam-mudflat-birds": {
+  "title": "",
+  "want": "Wading birds on mudflats at low tide",
+  "ratio": 0.75
+ },
+ "ph-vam-reeds": {
+  "title": "",
+  "want": "Reeds and marsh grasses in the wind",
+  "ratio": 0.75
+ },
+ "ph-vam-sunset-mud": {
+  "title": "",
+  "want": "Sunset reflected on wet mud and channels",
+  "ratio": 0.75
+ },
+ "ph-var-palette-knife": {
+  "title": "",
+  "want": "Oil paint on a palette with a palette knife",
+  "ratio": 0.75
+ },
+ "ph-var-turner-sea": {
+  "title": "",
+  "want": "Public domain painting of a stormy sea by J. M. W. Turner",
+  "ratio": 0.75
+ },
+ "ph-var-whistler": {
+  "title": "",
+  "want": "Public domain nocturne painting of a river at night by Whistler",
+  "ratio": 0.75
+ },
+ "ph-vb-books": {
+  "title": "",
+  "want": "Stack of books and a cup of tea by a window",
+  "ratio": 0.8
+ },
+ "ph-vb-calm-face": {
+  "title": "",
+  "want": "Close-up of a calm smiling person",
+  "ratio": 0.7
+ },
+ "ph-vb-coast-path": {
+  "title": "",
+  "want": "Coastal walking path along cliffs by the sea",
+  "ratio": 0.7
+ },
+ "ph-vb-documentary-crew": {
+  "title": "",
+  "want": "Small documentary film crew filming in an office",
+  "ratio": 0.7
+ },
+ "ph-vb-friends-dinner": {
+  "title": "",
+  "want": "Friends sharing dinner outdoors",
+  "ratio": 0.8
+ },
+ "ph-vb-garden": {
+  "title": "",
+  "want": "Vegetable garden with raised beds",
+  "ratio": 0.8
+ },
+ "ph-vb-journal": {
+  "title": "",
+  "want": "Open journal with handwriting",
+  "ratio": 0.66
+ },
+ "ph-vb-pottery": {
+  "title": "",
+  "want": "Hands shaping clay on a potter’s wheel",
+  "ratio": 0.8
+ },
+ "ph-vb-reception": {
+  "title": "",
+  "want": "Friendly receptionist at a clinic front desk",
+  "ratio": 0.66
+ },
+ "ph-vb-sea-swim": {
+  "title": "",
+  "want": "Person swimming in the sea at sunrise",
+  "ratio": 0.8
+ },
+ "ph-vb-studio": {
+  "title": "",
+  "want": "Small creative studio space with natural light",
+  "ratio": 0.8
+ },
+ "ph-vb-sunrise": {
+  "title": "",
+  "want": "Sunrise over the sea",
+  "ratio": 0.66
+ },
+ "ph-wb-architect-model": {
+  "title": "",
+  "want": "Architectural model on a desk",
+  "ratio": 0.7
+ },
+ "ph-wb-modern-house": {
+  "title": "",
+  "want": "Contemporary house extension with large windows and timber",
+  "ratio": 0.66
+ },
+ "ph-wb-website-laptop": {
+  "title": "",
+  "want": "Laptop showing a minimal website on a desk",
+  "ratio": 0.7
+ },
+ "ph-wbs-coffee-flatlay": {
+  "title": "",
+  "want": "Coffee beans and brewing equipment flat lay",
+  "ratio": 0.75
+ },
+ "ph-wbs-ecommerce": {
+  "title": "",
+  "want": "Minimal e-commerce website on a laptop screen",
+  "ratio": 0.75
+ },
+ "ph-wc-home-hero": {
+  "title": "",
+  "want": "Contemporary house extension at dusk with warm interior light",
+  "ratio": 0.56
+ },
+ "ph-wc-interior": {
+  "title": "",
+  "want": "Bright kitchen extension interior with garden view",
+  "ratio": 0.75
+ },
+ "ph-wc-sketch": {
+  "title": "",
+  "want": "Architect’s hand sketch of a house section",
+  "ratio": 0.75
+ },
+ "ph-wd-barn": {
+  "title": "",
+  "want": "Rustic barn wedding venue with string lights",
+  "ratio": 0.7
+ },
+ "ph-wd-bouquet": {
+  "title": "",
+  "want": "Loose wildflower wedding bouquet",
+  "ratio": 0.8
+ },
+ "ph-wd-cake": {
+  "title": "",
+  "want": "Simple naked wedding cake with flowers",
+  "ratio": 0.8
+ },
+ "ph-wd-dance": {
+  "title": "",
+  "want": "Couple dancing under festoon lights",
+  "ratio": 0.8
+ },
+ "ph-wd-deckle": {
+  "title": "",
+  "want": "Deckle edge handmade paper invitation",
+  "ratio": 0.66
+ },
+ "ph-wd-dried-grass": {
+  "title": "",
+  "want": "Dried pampas grass and grasses arrangement",
+  "ratio": 0.8
+ },
+ "ph-wd-oak": {
+  "title": "",
+  "want": "Large oak tree in a field",
+  "ratio": 0.8
+ },
+ "ph-wd-pressed-flowers": {
+  "title": "",
+  "want": "Pressed flowers on paper",
+  "ratio": 0.66
+ },
+ "ph-wd-table": {
+  "title": "",
+  "want": "Wedding table with candles and greenery",
+  "ratio": 0.8
+ },
+ "ph-wri-bookshop-event": {
+  "title": "",
+  "want": "Author reading or book event in an independent bookshop",
+  "ratio": 0.75
+ },
+ "ph-wri-glass-beads": {
+  "title": "",
+  "want": "Handmade glass beads in many colours",
+  "ratio": 0.75
+ },
+ "ph-wri-glass-fruit": {
+  "title": "",
+  "want": "Blown glass fruit or glass apples on a table",
+  "ratio": 0.75
+ },
+ "ph-wri-glass-furnace": {
+  "title": "",
+  "want": "Glassblower working at a glowing furnace",
+  "ratio": 0.75
+ },
+ "ph-wri-glass-tools": {
+  "title": "",
+  "want": "Glassblowing tools: blowpipe, jacks and shears on a bench",
+  "ratio": 0.75
+ },
+ "ph-wri-island-ferry": {
+  "title": "",
+  "want": "Small ferry arriving at an island pier",
+  "ratio": 0.75
+ },
+ "ph-wri-island-village": {
+  "title": "",
+  "want": "Small island village with colourful houses by the sea",
+  "ratio": 0.75
+ },
+ "ph-wri-mood-glass-light": {
+  "title": "",
+  "want": "Light shining through coloured glass bottles or a stained glass window",
+  "ratio": 0.75
+ },
+ "ph-wri-mood-old-hands": {
+  "title": "",
+  "want": "Old weathered hands of an elderly person",
+  "ratio": 0.75
+ },
+ "ph-wri-mood-sea-rain": {
+  "title": "",
+  "want": "Rain falling on a grey sea, moody weather",
+  "ratio": 0.75
+ },
+ "ph-wri-mood-stone-street": {
+  "title": "",
+  "want": "Narrow cobbled street in an old island town",
+  "ratio": 0.75
+ },
+ "ph-wri-orchard": {
+  "title": "",
+  "want": "Apple orchard with old trees in soft morning light",
+  "ratio": 0.66
+ },
+ "ph-wri-portrait-woman": {
+  "title": "",
+  "want": "Portrait of a woman in her thirties, natural light, serious expression",
+  "ratio": 1.15
+ },
+ "ph-yt-charity-shop": {
+  "title": "",
+  "want": "Second-hand charity shop interior with household items",
+  "ratio": 0.75
+ },
+ "ph-yt-laundrette": {
+  "title": "",
+  "want": "Row of washing machines in a laundromat",
+  "ratio": 0.75
+ },
+ "ph-yt-pegboard": {
+  "title": "",
+  "want": "Pegboard wall with hand tools hanging",
+  "ratio": 0.75
+ },
+ "ph-yt-repair-bench": {
+  "title": "",
+  "want": "Workbench with hand tools and an item being repaired",
+  "ratio": 0.62
+ },
+ "ph-yt-thumb-ref": {
+  "title": "",
+  "want": "Hands holding pliers repairing clothing",
+  "ratio": 0.56
+ },
+ "ph-yt-washing-machine": {
+  "title": "",
+  "want": "Front-loading washing machine in a home",
+  "ratio": 0.75
+ },
+ "ph-yt-workshop": {
+  "title": "",
+  "want": "Small home workshop with a wooden workbench",
+  "ratio": 0.75
+ },
+ "ph-yt-zip": {
+  "title": "",
+  "want": "Close-up of a metal zipper on a jacket",
+  "ratio": 0.75
+ }
+}

@@ -604,3 +604,19 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
   .board-header{padding:20px}
   .card{break-inside:avoid;box-shadow:none}
 }
+/* Template library: tabs and worked-example cards with board previews. */
+.template-tabs{display:flex;gap:4px;margin:0 0 16px;border-bottom:1px solid var(--line)}
+.template-tabs button{height:36px;padding:0 14px;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);font:500 13px var(--font);margin-bottom:-1px;cursor:pointer}
+.template-tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.library-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.template.lib{padding:0 0 14px;overflow:hidden;display:flex;flex-direction:column}
+.template.lib img,.template.lib .lib-cover{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top left;background:var(--tint-stone);border-bottom:1px solid var(--line);margin-bottom:12px}
+.template.lib .lib-cover{display:flex;align-items:center;justify-content:center}
+.template.lib .lib-cover svg{margin:0;width:28px;height:28px}
+.template.lib strong,.template.lib small,.template.lib p,.template.lib .lib-meta{padding:0 14px}
+.template.lib small{text-transform:none}
+.template.lib p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px}
+.lib-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.lib-meta i{font:500 11px var(--font);font-style:normal;color:var(--ink-2);background:var(--tint-stone);border-radius:999px;padding:3px 8px}
+#modal:has(.library-grid){width:min(1200px,95vw)}
+.template.lib{text-align:left;align-items:stretch}
