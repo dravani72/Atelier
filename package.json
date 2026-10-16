@@ -22,14 +22,17 @@
     "test:interchange": "node tests/interchange-ui.mjs",
     "test:library": "node tests/library-ui.mjs",
     "templates:build": "node template-library/build.mjs",
-    "templates:thumbs": "node template-library/build.mjs --standalone && node template-library/tools/thumbs.mjs && node template-library/build.mjs"
+    "templates:thumbs": "node template-library/build.mjs --standalone && node template-library/tools/thumbs.mjs && node template-library/build.mjs",
+    "test:teams": "node tests/teams-ui.mjs"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@tauri-apps/cli": "^2.0.0",
     "esbuild": "0.28.2",
     "playwright": "1.51.1"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "three": "0.186.1"
   }
 }

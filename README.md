@@ -4,6 +4,8 @@
 
 A standalone visual workspace for creative projects. Original interface inspired by spatial creative tools such as Milanote. Rust powers the desktop shell, SQLite storage, recovery history, native export dialogs, and safe external link opening. The canvas UI is HTML/CSS/JavaScript inside Tauri's system webview. This is not an all-Rust GUI.
 
+Optional hosted accounts and team board sharing are available in source; see [HOSTED_TEAMS.md](HOSTED_TEAMS.md) to provision a service. Existing installers need a new build to include this feature.
+
 ## What works
 
 - Freeform boards with drag, resize, zoom, pan, fit-to-content, and optional grid snapping.
@@ -94,7 +96,7 @@ Embedded previews are limited to 15 MB each (3D models: 50 MB). Native Finder dr
 
 ## Scope of this release
 
-This is a local single-user application, not full parity with Milanote's hosted service. It does not include cloud synchronization, accounts, real-time collaboration, invitations, web clipping, automatic link previews, a mobile app, a WYSIWYG rich-text editor, or a built-in PDF renderer. Notes store Markdown as plain text. Columns are visual grouping, not automatically reflowing lists. Board copies retain references to existing nested boards. There is no automatic updater, signing setup, or migration beyond workspace format v1. The macOS edition bundles libmpv for video playback. The source includes build configuration for three platforms; only the validation explicitly recorded in `VALIDATION.md` has been performed.
+Atelier keeps its canvas and autosave local, with an optional team service; it does not have full parity with Milanote's hosted service. Optional hosted accounts, team invitations, role-based access and explicit shared board versions require a configured Supabase project (see [HOSTED_TEAMS.md](HOSTED_TEAMS.md)). It does not include automatic cloud synchronization, real-time collaboration, emailed invitations, per-board guest access, web clipping, automatic link previews, a mobile app, a WYSIWYG rich-text editor, or a built-in PDF renderer. Notes store Markdown as plain text. Columns are visual grouping, not automatically reflowing lists. Board copies retain references to existing nested boards. There is no automatic updater, signing setup, or migration beyond workspace format v1. The macOS edition bundles libmpv for video playback. The source includes build configuration for three platforms; only the validation explicitly recorded in `VALIDATION.md` has been performed.
 
 ## Architecture
 
@@ -106,7 +108,7 @@ This is a local single-user application, not full parity with Milanote's hosted 
 - `src-tauri/tauri.conf.json`: embedded assets, window configuration, and content-security policy.
 - `tests/`: model and browser integration tests.
 
-No remote scripts, fonts, trackers, account service, or media hosts are used. Imported note text is escaped. HTML/SVG originals can be preserved as inert attachments; active embedded HTML/SVG is rejected, and external links are restricted to HTTP/HTTPS. App commands access the app database and managed media, and import paths provided by native file drops; native exports use a user-selected save dialog. The frontend never receives unrestricted filesystem access.
+No remote scripts, fonts or trackers are used. If you connect Accounts & teams, authentication and explicitly published board packages use your configured hosted Supabase project. Other boards stay on the device. Imported note text is escaped. HTML/SVG originals can be preserved as inert attachments; active embedded HTML/SVG is rejected, and external links are restricted to HTTP/HTTPS. App commands access the app database and managed media, and import paths provided by native file drops; native exports use a user-selected save dialog. The frontend never receives unrestricted filesystem access.
 
 ## License
 
