@@ -620,3 +620,6 @@ dialog::backdrop{background:var(--scrim);backdrop-filter:blur(2px)}
 .lib-meta i{font:500 11px var(--font);font-style:normal;color:var(--ink-2);background:var(--tint-stone);border-radius:999px;padding:3px 8px}
 #modal:has(.library-grid){width:min(1200px,95vw)}
 .template.lib{text-align:left;align-items:stretch}
+
+/* Hosted teams stay inside the existing accessible modal. */
+.team-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}.team-row>span{flex:1;min-width:160px;overflow-wrap:anywhere}.team-row small{display:block;color:var(--muted)}.team-row .field{flex:1;margin:0}.team-account{padding-bottom:20px;border-bottom:1px solid var(--line)}.team-account .button{margin:4px 4px 4px 0}#team-error{color:var(--danger);white-space:pre-wrap}#modal h3{margin-top:24px}
