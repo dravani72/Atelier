@@ -61,11 +61,16 @@ export default [{
 
 Photos must be free to ship and to share: CC0, public domain, CC BY or CC BY-SA, sourced from Wikimedia Commons by `tools/fetch-photos.py`. The tool records the title, author, licence and source of each image; the build writes them to `CREDITS.md`, and every photo card carries its own credit line and source link, so attribution travels with a board when it is exported or shared. Everything else in the library — drawings, wireframes, swatches, charts — is drawn by `lib/assets.mjs`; type specimens use fonts under the SIL Open Font License, Apache 2.0 or the GUST Font License.
 
-All projects, people, brands and organisations in the examples are fictional.
+All projects, people, brands and organisations in the examples are fictional. Every one of the 378 photo slots has been reviewed by eye; the tool skips drawings, maps and scans unless a slot asks for one, and never picks released case-file evidence photographs. Pictures of identifiable public figures and real political events were swapped out for neutral alternatives.
+
+Wikimedia rate-limits busy shared IPs hard. If you see repeated 429s, run the tool from a home connection; `PACE` (seconds between requests, default 10) can be lowered there.
 
 ```sh
 python3 template-library/tools/fetch-photos.py           # fill empty slots (needs commons.wikimedia.org + upload.wikimedia.org)
 python3 template-library/tools/fetch-photos.py --sheet   # contact sheet for review
+# Replace weak picks by eye: 8 options per slot on candidate sheets, then choose one per slot.
+CANDIDATES=batch1.json python3 template-library/tools/fetch-photos.py --candidates ph-cs-4 ph-vb-books …
+CANDIDATES=batch1.json python3 template-library/tools/fetch-photos.py --pick ph-cs-4=0 ph-vb-books=4 …
 npm run templates:thumbs                                  # rebuild previews (needs npm run dev running)
 npm run templates:build
 ```
