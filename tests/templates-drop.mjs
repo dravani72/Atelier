@@ -10,7 +10,7 @@ await context.addInitScript(w=>{
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 try{
  await page.goto('http://127.0.0.1:4173');await page.waitForSelector('.card');
- await page.locator('#templates-open').click();assert.equal(await page.locator('[data-template]').count(),53);
+ await page.locator('#templates-open').click();await page.locator('[data-view="scaffolds"]').click();assert.equal(await page.locator('[data-template]').count(),53);
  await page.locator('#template-search').fill('Creative brief');await page.locator('[data-template="at-001"]').click();
  assert.equal(await page.locator('.card.column').count(),6); // Exact source section count, verified against catalog.
  await page.locator('#board-menu').click();await page.locator('#project-fields').click();await page.locator('[data-project-field="owner"]').fill('Studio');await page.locator('#save-project-fields').click();
@@ -25,6 +25,6 @@ try{
  assert.equal(imported.projectFields.owner,'Studio');assert.ok(imported.cards.some(c=>c.localAttachment==='asset-note'));
  await page.locator('.card').filter({hasText:'layered.psd'}).locator('.download-attachment').click();assert.ok(await page.evaluate(()=>window.calls.some(c=>c.name==='save_managed_attachment'&&c.args.id==='asset-psd')));
  await page.reload();await page.waitForSelector('.play-native');
- await page.locator('#templates-open').click();await page.locator('#template-family').selectOption('recipes');assert.equal(await page.locator('[data-template]').count(),4);await page.locator('[data-template="narrative_film"]').click();assert.equal(await page.locator('.card.board').count(),7);
+ await page.locator('#templates-open').click();await page.locator('[data-view="scaffolds"]').click();await page.locator('#template-family').selectOption('recipes');assert.equal(await page.locator('[data-template]').count(),4);await page.locator('[data-template="narrative_film"]').click();assert.equal(await page.locator('.card.board').count(),7);
  assert.deepEqual(errors,[]);console.log('PASS: catalog search, recipe hierarchy, editable project fields, Retina Finder coordinates, large-video import, original attachment saving and reload.');
 }finally{await browser.close();}

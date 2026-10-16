@@ -19,7 +19,10 @@
     "test:canvas": "node tests/canvas-ui.mjs",
     "test:backing": "node tests/backing-ui.mjs",
     "test:sketch": "node tests/sketch-ui.mjs",
-    "test:interchange": "node tests/interchange-ui.mjs"
+    "test:interchange": "node tests/interchange-ui.mjs",
+    "test:library": "node tests/library-ui.mjs",
+    "templates:build": "node template-library/build.mjs",
+    "templates:thumbs": "node template-library/build.mjs --standalone && node template-library/tools/thumbs.mjs && node template-library/build.mjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

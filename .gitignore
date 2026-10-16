@@ -10,3 +10,7 @@ ui/viewer.js
 dist/intel/
 __pycache__/
 *.pyc
+
+# Template library build inputs and outputs that are not committed
+template-library/.fonts/
+template-library/dist/
